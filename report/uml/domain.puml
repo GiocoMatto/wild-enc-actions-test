@@ -1,7 +1,9 @@
 @startuml Domain
+
 ' =========================
-'  Mermaid-like style
+'  Style
 ' =========================
+
 skinparam shadowing false
 skinparam roundcorner 5
 skinparam dpi 150
@@ -25,17 +27,17 @@ hide circle
 hide empty members
 
 ' =========================
-'       CLASSES
+'  Classes
 ' =========================
 
 class Map <<Interface>> {
   +addObject(obj : MapObject) : void
   +removeObject(obj : MapObject) : boolean
-  +getAll() : List<MapObject>
+  +getAllObjects() : List<MapObject>
 }
 
 class MapObject <<Interface>> {
-  +getPosition() : Point2D
+  +getPosition() : Point2D<
 }
 
 class Collectible <<Interface>> {
@@ -55,6 +57,7 @@ class Entity <<Interface>> {
 class Player <<Interface>> {
   +levelUp() : void
   +getExp(exp : int) : void
+  +setDirection(Direction d) : void
 }
 
 class Enemy <<Interface>> {
@@ -62,7 +65,7 @@ class Enemy <<Interface>> {
 }
 
 class Weapon <<Interface>> {
-  +attack(e : Enemy) : void
+  +attack() : Projectile
   +isCooldown() : boolean
   +upgrade() : void
 }
@@ -72,7 +75,7 @@ class Projectile <<Interface>> {
 }
 
 ' =========================
-'      RELATIONS
+'  Relations
 ' =========================
 
 MapObject <|-- Collectible
@@ -84,9 +87,9 @@ Movable <|-- Projectile
 Entity <|-- Enemy
 Entity <|-- Player
 
-Entity o-- Weapon
-Map o-- MapObject
+Entity *-- Weapon
+Map *-- MapObject
 
-Weapon <.. Projectile
+Weapon ..> Projectile : <<create>>
 
 @enduml

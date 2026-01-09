@@ -71,12 +71,12 @@ Durante la partita appariranno casualmente diversi tipi di nemici che arriverann
 bordi dello schermo, inseguendo il giocatore cercando di danneggiarlo.
 %
 Sia il giocatore che i nemici posseggono delle \emph{Armi}, ciascuna dotata di statistiche diverse,
-come ad esempio portata, danno e velocità di attacco, con cui attacheranno passivamente durante tutta la partita.
+come ad esempio portata, danno e velocità di attacco, con cui attaccheranno passivamente durante tutta la partita.
 %
 Per garantire una corretta progressione del gioco, i nemici, una volta eliminati, rilasceranno 
 punti esperienza, monete o bacche per recuperare vita che possono essere collezionati dal giocatore (Collezionabili).
 %
-Accumulando punti esperienza il giocatore sale di livello, che tornerà a 0 ad ogni partita.
+Accumulando punti esperienza il giocatore sale di livello, il quale tornerà a 0 ad ogni partita.
 %
 Salire di livello permette al giocatore di scegliere delle armi che lo aiuteranno ad
 affrontare i nemici sempre più forti e numerosi. Se il giocatore sceglie un'arma che 
@@ -96,7 +96,7 @@ La \autoref{uml:domain} mostra le relazioni tra gli oggetti descritti.
 L'architettura di Wild Encounter segue il pattern MVC\@.
 %
 Il motore di gioco (ossia il Controller) dovrà essere in grado
-di registrare gli input del giocatore e di associarli a delle azioni delle varie entità presenti nel gioco che costituiscono
+di registrare gli input del giocatore e di associarli alle azioni delle varie entità presenti nel gioco che costituiscono
 il Model, come ad esempio il movimento delle entità Movable o l'interazione con i Collectible. 
 %
 In quanto tale il motore di gioco si limiterà ad orchestrare i vari movimenti o eventi di gioco, gestiti poi singolarmente
@@ -108,11 +108,16 @@ ai comandi impartiti.
 Nel gioco sono presenti dei nemici che dovranno avere dei comportamenti autonomi, questi saranno calcolati tramite degli algoritmi
 all'interno del sistema di movimento dei nemici nel model. 
 %
-Nella \autoref{uml:architecture} è illustrata ed evidenziata l'architettura descritta.
+Sarà presente una fase di Menù statica, che non interesserà il Motore di Gioco in quanto non vi sono entità animate da gestire;
+%
+durante questa fase sarà possibile avviare la partita, acquistare potenziamenti permanenti tramite le monete guadagnate
+nelle varie partite e controllare il proprio Pokédex.
+
+Nella \autoref{uml:gameArchitecture} è illustrata ed evidenziata l'architettura della fase di gioco appena descritta.
 
 \begin{figure}[H]
-	\includegraphics[width=13cm]{Architecture}
-	\caption{Schema UML che evidenzia la struttura MVC delle varie componenti del progetto}\label{uml:architecture}
+	\includegraphics[width=13cm]{GameArchitecture}
+	\caption{Schema UML che evidenzia la struttura MVC del progetto}\label{uml:gameArchitecture}
 \end{figure}
 
 \end{document}

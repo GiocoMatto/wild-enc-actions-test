@@ -49,7 +49,7 @@ enum "Input\n<size:10><i>(from Controller)</i></size>" {
 }
 
 class "InputHandler\n<size:10><i>(from Controller)</i></size>" {
-  +handleCommand(Set<Input> d) : Optional<Vector2D>
+  +handleCommand(Set<Input> d) : Vector2D
   +handleAttackDirection(Point2D target) : Vector2D
 }
 

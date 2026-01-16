@@ -1,20 +1,18 @@
 package it.unibo.wildenc.Weaponary;
 
-import static org.junit.Assert.*;
-
-import java.util.*;
-
-import org.junit.Before;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import it.unibo.wildenc.Weaponary.AbstractWeapon.WeaponStats; // Make this another class.
 
-public class Test {
+public class TestWeapons {
     /**
      * Test for a FirstWeapon shooting basic Projectiles.
      */
     private Weapon firstWeaponTest;
 
-    @org.junit.Before
+    @BeforeEach
     public void initTest() {
         this.firstWeaponTest = new FirstWeapon(
             1, 1, Type.WATER,
@@ -23,7 +21,7 @@ public class Test {
         );
     }
 
-    @org.junit.Test
+    @Test
     public void testStatsCorrect() {
         final WeaponStats currentWeaponStats = firstWeaponTest.getStats();
         assertEquals("Disintegratore", this.firstWeaponTest.getName());
@@ -32,7 +30,7 @@ public class Test {
         assertTrue(currentWeaponStats.projType() == Type.WATER);
     }
 
-    @org.junit.Test
+    @Test
     public void testProjectileCreation() {
         final Projectile testProj = this.firstWeaponTest.attack(new Point2D(0, 0));
         assertTrue(testProj.getClass().getSimpleName().equals("ConcreteProjectile"));
@@ -40,7 +38,8 @@ public class Test {
         assertTrue(testProj.getType() == Type.WATER);
         assertTrue(testProj.getDamage() == 1.0);
     }
-    @org.junit.Test
+
+    @Test
     public void testProjectileMovement() {
         final Projectile testProj = this.firstWeaponTest.attack(new Point2D(0, 0));
         assertTrue(testProj.getPosition().isEqual(new Point2D(0, 0)));

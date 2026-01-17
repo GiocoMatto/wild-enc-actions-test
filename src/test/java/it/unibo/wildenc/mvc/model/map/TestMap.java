@@ -1,125 +1,74 @@
 package it.unibo.wildenc.mvc.model.map;
 
-import static it.unibo.wildenc.mvc.model.map.MapTestingVariables.*;
-
 import it.unibo.wildenc.mvc.model.GameMap;
-import it.unibo.wildenc.mvc.model.MapObject;
 import it.unibo.wildenc.mvc.model.Player;
-import it.unibo.wildenc.mvc.model.Enemy;
+import it.unibo.wildenc.mvc.model.map.MapTestingCommons.MapObjectTest;
+import it.unibo.wildenc.mvc.model.map.MapTestingCommons.MovableObjectTest;
+import it.unibo.wildenc.mvc.model.map.MapTestingCommons.TestDirections;
+import it.unibo.wildenc.mvc.model.map.MapTestingCommons.TestObject;
 
-import it.unibo.wildenc.mvc.model.enemies.CloseRangeEnemy;
-
-import it.unibo.wildenc.mvc.model.player.PlayerImpl;
-
-import it.unibo.wildenc.mvc.model.weaponary.AttackContext;
-import it.unibo.wildenc.mvc.model.weaponary.weapons.WeaponFactory;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import static it.unibo.wildenc.mvc.model.map.MapTestingCommons.TEST_TIME_NANOSECONDS;
+import static it.unibo.wildenc.mvc.model.map.MapTestingCommons.TEST_TIME_SECONDS;
+import static it.unibo.wildenc.mvc.model.map.MapTestingCommons.calculateMovement;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import org.joml.Vector2d;
-
 public class TestMap {
     
-    // TODO: refactor all tests
+    GameMap map;
+    Player player;
 
-    // private GameMap map;
-    // private final MapObject mapObj = new MapObjectTest(new Vector2d(TEST_X, TEST_Y), TEST_HITBOX);
-    // private final MovableObjectTest movableObj = new MovableObjectTest(new Vector2d(TEST_X, TEST_Y), TEST_HITBOX, TEST_SPEED);
-    // private final Player player = new PlayerImpl(new Vector2d(TEST_X, TEST_Y), TEST_HITBOX, TEST_SPEED, 100);
-    // private final Enemy enemy = new CloseRangeEnemy(
-    //     new Vector2d(TEST_X+10, TEST_Y+10), 
-    //     TEST_HITBOX, 
-    //     TEST_SPEED,
-    //     100, 
-    //     Set.of(),
-    //     "testCloseRangeEnemy",
-    //     Optional.of(player)
-    // );
+    @BeforeEach
+    void setup() {
+        player = TestObject.PlayerObject.getAsPlayer();
+        map = new GameMapImpl(player);
+    }
 
-    // @BeforeEach
-    // void setup() {
-    //     map = new GameMapImpl(player);
-    //     movableObj.setDirection(TEST_DIRECTION_UP);
-    // }
+    @Test
+    void objectsShouldBeAddedToMap() {
+        final TestObject objConf = TestObject.StaticObject;
+        final MapObjectTest obj = objConf.getAsStaticObj();
 
-    // @Test
-    // void testMapCreation() {
-    //     assertTrue(map.getAllObjects().isEmpty());
-    //     assertEquals(map.getPlayer().getDirection(), TEST_DIRECTION_STILL);
-    // }
+        map.addObject(obj);
+        assertTrue(map.getAllObjects().contains(obj));
+    }
 
-    // @Test
-    // void testAddingObjects() {
-    //     // Static object
-    //     map.addObject(mapObj);
-    //     assertEquals(1, map.getAllObjects().size());
-    //     assertTrue(map.getAllObjects().contains(mapObj));
-    //     // Movable object
-    //     map.addObject(movableObj);
-    //     assertEquals(2, map.getAllObjects().size());
-    //     assertTrue(map.getAllObjects().contains(movableObj));
-    //     // Enemy
-    //     map.addObject(enemy);
-    //     assertEquals(3, map.getAllObjects().size());
-    //     assertTrue(map.getAllObjects().contains(enemy));
-    // }
+    @Test
+    void staticObjectsShouldNotMove() {
+        final TestObject objConf = TestObject.StaticObject;
+        final MapObjectTest obj = objConf.getAsStaticObj();
 
-    // @Test
-    // void testMovementOnMap() {
-    //     testAddingObjects();
-    //     var oldPos = new Vector2d(movableObj.getPosition());
-    //     map.updateEntities(TEST_TIME_NANOSECONDS);
-    //     assertEquals(oldPos.x() + TEST_SPEED * TEST_TIME_SECONDS * TEST_DIRECTION_UP.x(), movableObj.getPosition().x());
-    //     assertEquals(oldPos.y() + TEST_SPEED * TEST_TIME_SECONDS * TEST_DIRECTION_UP.y(), movableObj.getPosition().y());
-    // }
+        map.addObject(obj);
+        map.updateEntities(TEST_TIME_NANOSECONDS);
+        assertEquals(obj.getPosition(), objConf.pos);
+    }
 
-    // @Test
-    // void testCollisions() {
-    //     testAddingObjects();
-    //     // Check that two objects spawned at the same coordinate are colliding
-    //     assertTrue(CollisionLogic.areColliding(movableObj, mapObj));
-    //     // Now move the Movable object and check if they are not colliding anymore
-    //     movableObj.setDirection(TEST_DIRECTION_DOWN);
-    //     map.updateEntities(TEST_TIME_NANOSECONDS);
-    //     assertFalse(CollisionLogic.areColliding(movableObj, mapObj));
-    // }
+    @Test
+    void movableObjWithNoDirectionShouldNotMove() {
+        final TestObject objConf = TestObject.MovableObject;
+        final MovableObjectTest obj = objConf.getAsMovableObj();
 
-    // @Test
-    // void testProjectilesCollisions() {
-    //     testAddingObjects();
+        map.addObject(obj);
+        map.updateEntities(TEST_TIME_NANOSECONDS);
+        assertEquals(obj.getPosition(), objConf.pos);
+    }
 
-    //     WeaponFactory wf = new WeaponFactory();
-    //     player.setDirection(TEST_DIRECTION_DOWN);
-    //     player.addWeapons(wf.getMeleeWeapon(TEST_HITBOX+2, 10));
-    //     player.getWeapons().forEach(e -> {
-    //         e.attack(
-    //             List.of(
-    //                 new AttackContext(
-    //                     new Vector2d(player.getPosition()), 
-    //                     360 - Math.toDegrees(player.getPosition().angle(enemy.getPosition())), 
-    //                     Optional.of(() -> new Vector2d(player.getPosition()))
-    //                 )
-    //             )
-    //         ).forEach(e2 -> {
-    //             map.addObject(e2);
-    //         });
-    //     });
+    @Test
+    void movableObjWithDirectionShouldMoveCorrectly() {
+        final TestObject objConf = TestObject.MovableObject;
+        final TestDirections direction = TestDirections.RIGHT;
+        final MovableObjectTest obj = objConf.getAsMovableObj();
 
-    //     for (int tick = 0; tick < TEST_SIMULATION_TICKS / 2; tick++) {
-    //         map.updateEntities(TEST_TIME_NANOSECONDS/10);
-    //     }
-    //     player.setDirection(new Vector2d(0,0));
-    //     for (int tick = 0; tick < TEST_SIMULATION_TICKS / 2; tick++) {
-    //         map.updateEntities(TEST_TIME_NANOSECONDS/10);
-    //     }
-    // }
+        map.addObject(obj);
+        obj.setDirection(direction.vect);
+        map.updateEntities(TEST_TIME_NANOSECONDS);
+        assertNotEquals(objConf.pos, obj.getPosition(), "Object did not move");
+        assertEquals(calculateMovement(objConf.pos, direction.vect, objConf.speed, TEST_TIME_SECONDS), obj.getPosition(), "Object moved wrong");
+    }
+
 }

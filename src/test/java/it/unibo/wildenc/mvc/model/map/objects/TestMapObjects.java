@@ -4,19 +4,18 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 
-import static it.unibo.wildenc.mvc.model.map.MapTestingVariables.MapObjectTest;
-import static it.unibo.wildenc.mvc.model.map.MapTestingVariables.MovableObjectTest;
-import static it.unibo.wildenc.mvc.model.map.MapTestingVariables.TEST_TIME_SECONDS;
+import static it.unibo.wildenc.mvc.model.map.MapTestingCommons.TEST_TIME_SECONDS;
+import static it.unibo.wildenc.mvc.model.map.MapTestingCommons.calculateMovement;
 
-import it.unibo.wildenc.mvc.model.map.MapTestingVariables.TestDirections;
-import it.unibo.wildenc.mvc.model.map.MapTestingVariables.TestObject;
+import it.unibo.wildenc.mvc.model.map.MapTestingCommons.TestDirections;
+import it.unibo.wildenc.mvc.model.map.MapTestingCommons.TestObject;
 
 public class TestMapObjects {
 
     @Test
     void mapObjectShouldBeCreatedWithCorrectCoordinates() {
         final TestObject to = TestObject.StaticObject;
-        var obj = new MapObjectTest(to.pos, to.hitbox);
+        var obj = to.getAsStaticObj();
         assertEquals(to.pos.x(), obj.getPosition().x());
         assertEquals(to.pos.y(), obj.getPosition().y());
         assertEquals(to.hitbox, obj.getHitbox());
@@ -25,8 +24,7 @@ public class TestMapObjects {
     @Test
     void movableObjectWithNoDirectionShouldNotMove() {
         final TestObject to = TestObject.MovableObject;
-        final TestDirections td = TestDirections.RIGHT;
-        var obj = new MovableObjectTest(to.pos, to.hitbox, to.speed);
+        var obj = to.getAsMovableObj();
         obj.updatePosition(TEST_TIME_SECONDS);
         assertEquals(to.pos.x(), obj.getPosition().x());
         assertEquals(to.pos.y(), obj.getPosition().y());
@@ -36,11 +34,10 @@ public class TestMapObjects {
     void movableObjectWithDirectionShouldMoveCorrectly() {
         final TestObject to = TestObject.MovableObject;
         final TestDirections td = TestDirections.RIGHT;
-        var obj = new MovableObjectTest(to.pos, to.hitbox, to.speed);
+        var obj = to.getAsMovableObj();
         // Test movement with a direction.
         obj.setDirection(td.vect);
         obj.updatePosition(TEST_TIME_SECONDS);
-        assertEquals(to.pos.x() + td.vect.x() * to.speed * TEST_TIME_SECONDS, obj.getPosition().x());
-        assertEquals(to.pos.y() + td.vect.y() * to.speed * TEST_TIME_SECONDS, obj.getPosition().y());
+        assertEquals(calculateMovement(to.pos, td.vect, to.speed, TEST_TIME_SECONDS), obj.getPosition());
     }
 }

@@ -57,7 +57,7 @@ class Entity <<Interface>> {
 class Player <<Interface>> {
   +levelUp() : void
   +getExp(exp : int) : void
-  +setDirection(Direction d) : void
+  +setDirection(Vector2D d) : void
 }
 
 class Enemy <<Interface>> {

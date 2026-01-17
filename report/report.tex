@@ -108,10 +108,13 @@ ai comandi impartiti.
 Nel gioco sono presenti dei nemici che dovranno avere dei comportamenti autonomi, questi saranno calcolati tramite degli algoritmi
 all'interno del sistema di movimento dei nemici nel model. 
 %
-Sarà presente una fase di Menù statica, che non interesserà il Motore di Gioco in quanto non vi sono entità animate da gestire;
+Sarà presente una fase di Menù statica, che non interesserà il game loop (gestito all'interno del Motore di Gioco principale) in quanto non vi sono entità animate da gestire;
 %
 durante questa fase sarà possibile avviare la partita, acquistare potenziamenti permanenti tramite le monete guadagnate
 nelle varie partite e controllare il proprio Pokédex.
+%
+La View sarà rimpiazzabile facilmente implementando tutto ciò che è richiesto dall'app per funzionare, così facendo sarebbe possiible
+in futuro anche l'implementazione dello stesso gioco per altre piattaforme come telefoni o schermi touchscreen.
 
 Nella \autoref{uml:gameArchitecture} è illustrata ed evidenziata l'architettura della fase di gioco appena descritta.
 

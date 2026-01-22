@@ -4,11 +4,11 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import it.unibo.wildenc.mvc.model.FirstWeapon;
-import it.unibo.wildenc.mvc.model.Projectile;
 import it.unibo.wildenc.mvc.model.Type;
-import it.unibo.wildenc.mvc.model.Weapon;
-import it.unibo.wildenc.mvc.model.AbstractWeapon.WeaponStats;
+import it.unibo.wildenc.mvc.model.weaponary.projectiles.Projectile;
+import it.unibo.wildenc.mvc.model.weaponary.weapons.AbstractWeapon.WeaponStats;
+import it.unibo.wildenc.mvc.model.weaponary.weapons.FirstWeapon;
+import it.unibo.wildenc.mvc.model.weaponary.weapons.Weapon;
 
 import org.joml.Vector2d;
 

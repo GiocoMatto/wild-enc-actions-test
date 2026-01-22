@@ -1,6 +1,10 @@
-package it.unibo.wildenc.mvc.model;
+package it.unibo.wildenc.mvc.model.weaponary.weapons;
 
 import org.joml.Vector2d;
+
+import it.unibo.wildenc.mvc.model.Type;
+import it.unibo.wildenc.mvc.model.weaponary.projectiles.Projectile;
+
 import java.util.function.BiFunction;
 
 /**
@@ -21,7 +25,7 @@ public abstract class AbstractWeapon implements Weapon {
      *  - The cooldown of the weapon
      *  - The characteristics of the projectile it shoots (how much damage, how it moves...)
      */
-    record WeaponStats(
+    public record WeaponStats(
         double weaponCooldown, double projDamage, double projVelocity,
         Type projType, double hbRadius, BiFunction<Vector2d, Double, Vector2d> moveFunction
     ) {}
@@ -64,6 +68,9 @@ public abstract class AbstractWeapon implements Weapon {
     @Override
     abstract public String getName();
     
+    /**
+     * 
+     */
     public WeaponStats getStats() {
         return this.weaponStats;
     }

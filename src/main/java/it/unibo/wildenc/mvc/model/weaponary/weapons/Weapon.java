@@ -1,7 +1,10 @@
-package it.unibo.wildenc.mvc.model;
+package it.unibo.wildenc.mvc.model.weaponary.weapons;
+
 import org.joml.Vector2d;
 
-import it.unibo.wildenc.mvc.model.AbstractWeapon.WeaponStats;
+import it.unibo.wildenc.mvc.model.weaponary.projectiles.Projectile;
+import it.unibo.wildenc.mvc.model.weaponary.weapons.AbstractWeapon.WeaponStats;
+
 
 /**
  * Interface for modelling a Weapon. For instance, a Weapon is a factory of {@link Projectile}s which have specific

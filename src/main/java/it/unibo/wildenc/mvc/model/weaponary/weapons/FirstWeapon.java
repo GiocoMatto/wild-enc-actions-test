@@ -1,8 +1,12 @@
-package it.unibo.wildenc.mvc.model;
+package it.unibo.wildenc.mvc.model.weaponary.weapons;
 
 import java.util.function.BiFunction;
 
 import org.joml.Vector2d;
+
+import it.unibo.wildenc.mvc.model.Type;
+import it.unibo.wildenc.mvc.model.weaponary.projectiles.ConcreteProjectile;
+import it.unibo.wildenc.mvc.model.weaponary.projectiles.Projectile;
 
 public class FirstWeapon extends AbstractWeapon {
 

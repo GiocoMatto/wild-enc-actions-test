@@ -1,4 +1,7 @@
-package it.unibo.wildenc.mvc.model;
+package it.unibo.wildenc.mvc.model.weaponary.projectiles;
+
+import it.unibo.wildenc.mvc.model.Movable;
+import it.unibo.wildenc.mvc.model.Type;
 
 /**
  * Interface that models projectiles, entities which have to move.

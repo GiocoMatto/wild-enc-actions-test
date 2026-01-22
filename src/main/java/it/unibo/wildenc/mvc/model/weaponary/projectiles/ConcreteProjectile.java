@@ -1,7 +1,9 @@
-package it.unibo.wildenc.mvc.model;
+package it.unibo.wildenc.mvc.model.weaponary.projectiles;
 
 import java.util.function.BiFunction;
 import org.joml.Vector2d;
+
+import it.unibo.wildenc.mvc.model.Type;
 
 /**
  * Basic implementation of a {@link Projectile}.

@@ -1,11 +1,12 @@
 package it.unibo.wildenc.mvc.model.enemies;
 
 import org.joml.Vector2f;
+
 import it.unibo.wildenc.mvc.model.Point2D;
 
-public class CloseRangeEnemy extends AbstractEnemy{
+public class RunAwayEnemy extends AbstractEnemy {
 
-    public CloseRangeEnemy(String name) {
+    public RunAwayEnemy(String name) {
         super(name);
         //TODO Auto-generated constructor stub
     }

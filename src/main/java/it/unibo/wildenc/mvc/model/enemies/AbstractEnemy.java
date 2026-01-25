@@ -1,11 +1,11 @@
 package it.unibo.wildenc.mvc.model.enemies;
 
-import java.util.List;
-
+import java.util.Set;
 import org.joml.Vector2d;
 import org.joml.Vector2dc;
 import it.unibo.wildenc.mvc.model.weaponary.weapons.Weapon;
 import it.unibo.wildenc.mvc.model.*;
+import it.unibo.wildenc.mvc.model.entities.AbstractEntity;
 
 public abstract class AbstractEnemy extends AbstractEntity implements Enemy {
     private final MapObject target;
@@ -22,7 +22,7 @@ public abstract class AbstractEnemy extends AbstractEntity implements Enemy {
         final double hitbox, 
         final double movementSpeedfinal,
         final int health, 
-        final List<Weapon> weapons, 
+        final Set<Weapon> weapons, 
         final String name,
         final MapObject target
     ) {
@@ -39,7 +39,17 @@ public abstract class AbstractEnemy extends AbstractEntity implements Enemy {
         return this.target;
     }
     
-    public Vector2d direction() {
-        return new Vector2d(this.getTarget().getPosition()).sub(this.getPosition());
+    public Vector2d direction(final Vector2dc v1, final Vector2dc v2) {
+        return new Vector2d(v1).sub(v2);
+    }
+
+    @Override
+    protected boolean canTakeDamage() {
+        return true;
+    }
+    
+    @Override
+    public void addWeapons(final Weapon p) {
+
     }
 }

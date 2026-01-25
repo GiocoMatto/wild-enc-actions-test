@@ -6,9 +6,12 @@ import org.joml.Vector2d;
 import org.joml.Vector2dc;
 import org.junit.jupiter.api.Test;
 
+import it.unibo.wildenc.mvc.model.map.objects.AbstractMapObject;
+import it.unibo.wildenc.mvc.model.map.objects.AbstractMovable;
+
 public class TestMapObjects {
     
-    private class MapObjectTest extends MapObjectAbstract {
+    private class MapObjectTest extends AbstractMapObject {
 
         public MapObjectTest(Vector2dc spawnPosition, double hitbox) {
             super(spawnPosition, hitbox);
@@ -22,6 +25,10 @@ public class TestMapObjects {
             super(spawnPosition, hitbox, movementSpeed);
         }
 
+        @Override
+        public void setDirection(Vector2dc direction) {
+            super.setDirection(direction);
+        }
     }
 
     

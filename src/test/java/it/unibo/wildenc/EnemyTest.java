@@ -1,7 +1,8 @@
 package it.unibo.wildenc;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import java.util.List;
+import java.util.Set;
+
 import org.joml.Vector2d;
 import org.joml.Vector2dc;
 import org.junit.jupiter.api.Test;
@@ -15,7 +16,7 @@ public class EnemyTest {
     private static final int HITBOX = 5;
     private static final int SPEED = 10;
     private static final int HEALTH = 500;
-    private static final List<Weapon> START_WEAPONS = List.of();
+    private static final Set<Weapon> START_WEAPONS = Set.of();
     private static final String NAME = "Pikachu";
     private static MapObject TARGET = new MapObject() {
 

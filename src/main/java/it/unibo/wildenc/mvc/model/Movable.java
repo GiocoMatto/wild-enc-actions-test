@@ -10,10 +10,10 @@ public interface Movable extends MapObject {
     /**
      * Update position of this movable object 
      * 
-     * @param deltaTime 
-     *                  movement decided by time
+     * @param deltaSeconds 
+     *                  movement decided by time (seconds)
      */
-    void updatePosition(long deltaTime);
+    void updatePosition(double deltaSeconds);
 
     /**
      * Getter for the direction of this Movable object.
@@ -23,16 +23,9 @@ public interface Movable extends MapObject {
     Vector2dc getDirection();
 
     /**
-     * Set the direction of this Movable object.
-     * 
-     * @param direction Direction as a normalized {@link Vector2dc}.
-     */
-    void setDirection(Vector2dc direction);
-
-    /**
      * Getter for the movement speed of this Movable object.
      * 
-     * @return The object's movement speed as a double.
+     * @return The object's movement speed as pixel per seconds.
      */
     double getSpeed();
 }

@@ -7,9 +7,9 @@ import org.joml.Vector2dc;
 import it.unibo.wildenc.mvc.model.MapObject;
 import it.unibo.wildenc.mvc.model.weaponary.weapons.Weapon;
 
-public class RunAwayEnemy extends AbstractEnemy {
+public class RoamingEnemy extends AbstractEnemy {
 
-    public RunAwayEnemy(
+    public RoamingEnemy(
         final Vector2dc spawnPosition, 
         final double hitbox, 
         final double movementSpeedfinal, 

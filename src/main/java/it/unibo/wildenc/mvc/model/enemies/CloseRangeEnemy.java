@@ -32,7 +32,7 @@ public class CloseRangeEnemy extends AbstractEnemy{
 
     @Override
     public Vector2dc specificMovement() {
-        final var movement = new Vector2d(this.getTarget().getPosition()).sub(this.getPosition());
+        final var movement = direction();
         if (movement.lengthSquared() > 0) {
             return movement.normalize();
         }

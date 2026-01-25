@@ -5,6 +5,7 @@ import it.unibo.wildenc.mvc.model.mapobjects.AbstractMovable;
 import java.util.Collections;
 import java.util.List;
 
+import org.joml.Vector2d;
 import org.joml.Vector2dc;
 
 public abstract class AbstractEntity extends AbstractMovable implements Entity {

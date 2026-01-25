@@ -44,8 +44,9 @@ public class EnemyTest {
             TARGET
         );
         int count = 0;
+        // TODO: modificare condizione con un futuro contains 
         while (!enemy.getPosition().equals(TARGET.getPosition())) {
-            enemy.updatePosition(1/60);
+            enemy.updatePosition(1);
         }
         assertEquals(5, count);
     }

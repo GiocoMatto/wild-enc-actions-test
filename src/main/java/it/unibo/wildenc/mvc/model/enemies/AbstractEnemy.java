@@ -1,6 +1,8 @@
 package it.unibo.wildenc.mvc.model.enemies;
 
 import java.util.List;
+
+import org.joml.Vector2d;
 import org.joml.Vector2dc;
 import it.unibo.wildenc.mvc.model.weaponary.weapons.Weapon;
 import it.unibo.wildenc.mvc.model.*;
@@ -32,8 +34,12 @@ public abstract class AbstractEnemy extends AbstractEntity implements Enemy {
     public String getName() {
         return this.name;
     }
-
+    
     public MapObject getTarget() {
         return this.target;
+    }
+    
+    public Vector2d direction() {
+        return new Vector2d(this.getTarget().getPosition()).sub(this.getPosition());
     }
 }

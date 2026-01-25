@@ -7,6 +7,7 @@ import it.unibo.wildenc.mvc.model.MapObject;
 import it.unibo.wildenc.mvc.model.weaponary.weapons.Weapon;
 
 public class RangedEnemy extends AbstractEnemy {
+    private static final int MIN_DISTANCE = 100;
 
     public RangedEnemy(
         final Vector2dc spawnPosition, 
@@ -30,8 +31,7 @@ public class RangedEnemy extends AbstractEnemy {
 
     @Override
     public Vector2dc specificMovement() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'specificMovement'");
+        throw new IllegalStateException();
     }
 
 }

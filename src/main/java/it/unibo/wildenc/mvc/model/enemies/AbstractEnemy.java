@@ -44,7 +44,7 @@ public abstract class AbstractEnemy extends AbstractEntity implements Enemy {
     }
 
     @Override
-    protected boolean canTakeDamage() {
+    public boolean canTakeDamage() {
         return true;
     }
     

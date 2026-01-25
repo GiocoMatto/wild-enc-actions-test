@@ -6,8 +6,7 @@ import java.util.function.Supplier;
 import org.joml.Vector2d;
 
 import it.unibo.wildenc.mvc.model.map.objects.AbstractMovable;
-import it.unibo.wildenc.mvc.model.weaponary.AttackMovementInfo;
-import it.unibo.wildenc.mvc.model.weaponary.ProjectileStats;
+import it.unibo.wildenc.mvc.model.weaponary.projectiles.ProjectileStats.StatType;
 
 /**
  * Implementation of a generic {@link Projectile}. This will be used 
@@ -36,7 +35,7 @@ public class ConcreteProjectile extends AbstractMovable implements Projectile {
         final Vector2d startPos,
         final Optional<Supplier<Vector2d>> toFollow
     ) {
-        super(startPos, pStats.getStatValue("Hitbox"), pStats.getStatValue("Velocity"));
+        super(startPos, pStats.getStatValue(StatType.HITBOX), pStats.getStatValue(StatType.VELOCITY));
         this.movementDirection = direction;
         this.projStats = pStats;
         this.followThis = toFollow;
@@ -53,7 +52,7 @@ public class ConcreteProjectile extends AbstractMovable implements Projectile {
         this.getWritablePosition().set(this.projStats.getMovementFunction().apply(
                 new Vector2d(this.getWritablePosition()),
                 new AttackMovementInfo(
-                    movementDirection, deltaTime, this.projStats.getStatValue("Velocity")
+                    movementDirection, deltaTime, this.projStats.getStatValue(StatType.VELOCITY)
                 )
             )
         );
@@ -65,7 +64,7 @@ public class ConcreteProjectile extends AbstractMovable implements Projectile {
      */
     @Override
     public double getDamage() {
-        return this.projStats.getStatValue("Damage");
+        return this.projStats.getStatValue(StatType.DAMAGE);
     }
 
     /**

@@ -4,6 +4,7 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 import org.joml.Vector2d;
+import org.joml.Vector2dc;
 
 import it.unibo.wildenc.mvc.model.map.objects.AbstractMovable;
 import it.unibo.wildenc.mvc.model.weaponary.AttackMovementInfo;
@@ -82,5 +83,23 @@ public class ConcreteProjectile extends AbstractMovable implements Projectile {
     @Override
     public boolean isAlive() {
         return (System.currentTimeMillis() - lastMovement) / MS_TO_S < this.projStats.getTTL();
+    }
+
+    @Override
+    public Vector2dc getDirection() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getDirection'");
+    }
+
+    @Override
+    public void setDirection(Vector2dc direction) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'setDirection'");
+    }
+
+    @Override
+    public double getSpeed() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getSpeed'");
     }
 }

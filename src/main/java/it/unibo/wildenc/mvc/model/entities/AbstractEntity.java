@@ -1,7 +1,6 @@
 package it.unibo.wildenc.mvc.model.entities;
 
 import java.util.Collections;
-import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.joml.Vector2dc;
@@ -31,11 +30,17 @@ public abstract class AbstractEntity extends AbstractMovable implements Entity {
      * @param movementSpeed how fast it moves in pixel per seconds;
      * @param health max health of the entity.
      */
-    protected AbstractEntity(final Vector2dc spawnPosition, final double hitbox, final double movementSpeed, final int health) {
+    protected AbstractEntity(
+        final Vector2dc spawnPosition, 
+        final double hitbox, 
+        final double movementSpeed, 
+        final int health,
+        final Set<Weapon> weapons
+    ) {
         super(spawnPosition, hitbox, movementSpeed);
         this.maxHealth = health;
-        currentHealth = health; // start with max hp
-        weapons = new LinkedHashSet<>();
+        this.currentHealth = health; // start with max hp
+        this.weapons = weapons;
     }
 
     /**

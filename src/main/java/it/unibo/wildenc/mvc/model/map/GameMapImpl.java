@@ -4,16 +4,16 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import it.unibo.wildenc.mvc.model.Map;
+import it.unibo.wildenc.mvc.model.GameMap;
 import it.unibo.wildenc.mvc.model.MapObject;
 import it.unibo.wildenc.mvc.model.Movable;
 
 /**
  * Basic {@link Map} implementation
  * 
- * @author Andrea Maria Castronovo
+ * 
  */
-public class MapImpl implements Map {
+public class GameMapImpl implements GameMap {
 
     private static final double NANO_TO_SECOND_FACTOR = 1_000_000_000.0;
 

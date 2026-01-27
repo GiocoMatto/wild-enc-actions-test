@@ -1,14 +1,11 @@
 package it.unibo.wildenc.mvc.model.weaponary.weapons;
 
-import org.joml.Vector2d;
-
-import it.unibo.wildenc.mvc.model.weaponary.ProjectileStats;
-import it.unibo.wildenc.mvc.model.weaponary.projectiles.ConcreteProjectile;
 import it.unibo.wildenc.mvc.model.weaponary.projectiles.Projectile;
+import it.unibo.wildenc.mvc.model.weaponary.projectiles.ProjectileStats;
 
 import java.util.Optional;
 import java.util.function.BiConsumer;
-import java.util.function.Supplier;
+import java.util.function.BiFunction;
 
 /**
  * Implementation of a generic {@link Weapon}. This will be used as a 
@@ -16,20 +13,28 @@ import java.util.function.Supplier;
  */
 public class GenericWeapon implements Weapon {
 
+    private static final double BURST_DELAY = 0.2;
+    private static final double MS_TO_S = 1000.0;
+
     private WeaponStats weaponStats;
     private int level = 0;
-    private long timeAtLastAtk;
+    private double timeAtLastAtk;
     private final String weaponName;
+    private int currentBullet;
+    BiFunction<AttackInfo, ProjectileStats, Projectile> atkFunc;
 
     public GenericWeapon(
         final double cooldown,
         final ProjectileStats pStats,
         final BiConsumer<Integer, WeaponStats> upgradeLogics,
+        final BiFunction<AttackInfo, ProjectileStats, Projectile> atkFunc,
+        final int initialBurst,
         final String weaponName
     ) {
         this.weaponStats = new WeaponStats(
-            cooldown, pStats, upgradeLogics
+            cooldown, pStats, initialBurst, upgradeLogics
         );
+        this.atkFunc = atkFunc;
         this.weaponName = weaponName;
     }
 
@@ -37,20 +42,16 @@ public class GenericWeapon implements Weapon {
      * {@inheritDocs}
      */
     @Override
-    public Optional<Projectile> attack(
-        Vector2d startingPoint,
-        Vector2d atkDirection, 
-        Optional<Supplier<Vector2d>> toFollow
-    ) {
-        final long timestamp = System.currentTimeMillis();
-        if(!isInCooldown(timestamp)) {
-            this.timeAtLastAtk = timestamp;
-            return Optional.ofNullable(
-                new ConcreteProjectile(this.weaponStats.pStats(), atkDirection, startingPoint, toFollow)
-            );
-        } else {
-            return Optional.empty();
+    public Optional<Projectile> attack(final AttackInfo atkInfo) {
+        if(canBurst()) {
+            if(!isInCooldown()) {
+                currentBullet = 0;
+            }
+            currentBullet++;
+            timeAtLastAtk = System.currentTimeMillis();
+            return Optional.ofNullable(this.atkFunc.apply(atkInfo, this.weaponStats.pStats()));
         }
+        return Optional.empty();
     }
 
     /**
@@ -66,8 +67,13 @@ public class GenericWeapon implements Weapon {
         return this.weaponStats;
     }
 
-    private boolean isInCooldown(final long timestamp) {
-        return timestamp - timeAtLastAtk > this.weaponStats.weaponCooldown();
+    private boolean isInCooldown() {
+        return (System.currentTimeMillis() - timeAtLastAtk) / MS_TO_S < this.weaponStats.weaponCooldown();
+    }
+
+    private boolean canBurst() {
+        return !isInCooldown() ? true :
+            (currentBullet < this.weaponStats.burstSize() && (System.currentTimeMillis() - timeAtLastAtk) / MS_TO_S >= BURST_DELAY);
     }
 
     @Override

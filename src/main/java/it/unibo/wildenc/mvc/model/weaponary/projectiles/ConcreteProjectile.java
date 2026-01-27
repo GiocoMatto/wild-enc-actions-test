@@ -6,7 +6,8 @@ import java.util.function.Supplier;
 import org.joml.Vector2d;
 
 import it.unibo.wildenc.mvc.model.map.objects.AbstractMovable;
-import it.unibo.wildenc.mvc.model.weaponary.projectiles.ProjectileStats.StatType;
+import it.unibo.wildenc.mvc.model.weaponary.projectiles.ProjectileStats.ProjStatType;
+import it.unibo.wildenc.mvc.model.weaponary.weapons.AttackInfo;
 
 /**
  * Implementation of a generic {@link Projectile}. This will be used 
@@ -17,7 +18,6 @@ public class ConcreteProjectile extends AbstractMovable implements Projectile {
     private static final double MS_TO_S = 1000.0;
 
     private ProjectileStats projStats;
-    private Vector2d movementDirection;
     private Optional<Supplier<Vector2d>> followThis;
     private long lastMovement = System.currentTimeMillis();
 
@@ -31,14 +31,12 @@ public class ConcreteProjectile extends AbstractMovable implements Projectile {
      */
     public ConcreteProjectile(
         final ProjectileStats pStats,
-        final Vector2d direction,
-        final Vector2d startPos,
-        final Optional<Supplier<Vector2d>> toFollow
+        final AttackInfo atkInfo
     ) {
-        super(startPos, pStats.getStatValue(StatType.HITBOX), pStats.getStatValue(StatType.VELOCITY));
-        this.movementDirection = direction;
+        super(atkInfo.startingPos(), pStats.getStatValue(ProjStatType.HITBOX), pStats.getStatValue(ProjStatType.VELOCITY));
+        this.setDirection(atkInfo.atkDirection());
         this.projStats = pStats;
-        this.followThis = toFollow;
+        this.followThis = atkInfo.toFollow();
     }
 
     /**
@@ -49,11 +47,10 @@ public class ConcreteProjectile extends AbstractMovable implements Projectile {
         if(followThis.isPresent()) {
             this.getWritablePosition().set(followThis.get().get());
         }
-        this.getWritablePosition().set(this.projStats.getMovementFunction().apply(
+        this.getWritablePosition().set(
+            this.projStats.getMovementFunction().apply(
                 new Vector2d(this.getWritablePosition()),
-                new AttackMovementInfo(
-                    movementDirection, deltaTime, this.projStats.getStatValue(StatType.VELOCITY)
-                )
+                new AttackMovementInfo(this.getDirection(), deltaTime, this.projStats.getStatValue(ProjStatType.VELOCITY))
             )
         );
         lastMovement = System.currentTimeMillis();
@@ -64,7 +61,7 @@ public class ConcreteProjectile extends AbstractMovable implements Projectile {
      */
     @Override
     public double getDamage() {
-        return this.projStats.getStatValue(StatType.DAMAGE);
+        return this.projStats.getStatValue(ProjStatType.DAMAGE);
     }
 
     /**

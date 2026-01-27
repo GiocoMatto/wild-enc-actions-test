@@ -2,12 +2,9 @@ package it.unibo.wildenc.mvc.model.weaponary.weapons;
 
 import java.util.Optional;
 import java.util.function.BiConsumer;
-import java.util.function.Supplier;
 
-import org.joml.Vector2d;
-
-import it.unibo.wildenc.mvc.model.weaponary.ProjectileStats;
 import it.unibo.wildenc.mvc.model.weaponary.projectiles.Projectile;
+import it.unibo.wildenc.mvc.model.weaponary.projectiles.ProjectileStats;
 /**
  * Interface for modelling a Weapon. For instance, a Weapon is a factory of {@link Projectile}s which have specific
  * characteristics which are determined by the Weapon they're generated.
@@ -15,7 +12,7 @@ import it.unibo.wildenc.mvc.model.weaponary.projectiles.Projectile;
 public interface Weapon {
     
     public record WeaponStats(
-        double weaponCooldown, ProjectileStats pStats,
+        double weaponCooldown, ProjectileStats pStats, int burstSize,
         BiConsumer<Integer, WeaponStats> upgradeLogics
     ) {}
     
@@ -27,7 +24,7 @@ public interface Weapon {
      * @param startingPoint the point where the projectile will be generated.
      * @return an {@link Optional} containing a {@link Projectile} if the attack was succesful, an empty one instead.
      */
-    Optional<Projectile> attack(Vector2d startingPoint, Vector2d atkDirection, Optional<Supplier<Vector2d>> toFollow);
+    Optional<Projectile> attack(AttackInfo atkInfo);
 
     /**
      * Method for upgrading the weapon. For mantaining the SRP, this will upgrade a {@link WeaponStats},

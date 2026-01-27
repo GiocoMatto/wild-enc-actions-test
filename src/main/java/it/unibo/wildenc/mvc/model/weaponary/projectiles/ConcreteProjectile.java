@@ -23,11 +23,9 @@ public class ConcreteProjectile extends AbstractMovable implements Projectile {
 
     /**
      * Constructor of the class.
-     * @param pStats the statistics of the generated projectile
-     * @param direction the direction the projectile has to follow
-     * @param startPos the position where the projectile starts
-     * @param toFollow a {@link Optional} containing a {@link Supplier} 
-     *  of a position that the projectile has to follow
+     * @param pStats the stats of the generated Projectile, in form of a {@link ProjectileStats}
+     * @param attackInfo the informations about the initial state of the projectile in form of
+     *  a {@link AttackInfo}
      */
     public ConcreteProjectile(
         final ProjectileStats pStats,

@@ -1,10 +1,11 @@
-package it.unibo.wildenc.mvc.model.weaponary.weapons;
+package it.unibo.wildenc.mvc.model;
 
-import java.util.Optional;
+import java.util.Set;
 import java.util.function.BiConsumer;
 
 import it.unibo.wildenc.mvc.model.weaponary.projectiles.Projectile;
 import it.unibo.wildenc.mvc.model.weaponary.projectiles.ProjectileStats;
+import it.unibo.wildenc.mvc.model.weaponary.weapons.AttackInfo;
 /**
  * Interface for modelling a Weapon. For instance, a Weapon is a factory of {@link Projectile}s which have specific
  * characteristics which are determined by the Weapon they're generated.
@@ -22,9 +23,9 @@ public interface Weapon {
      * A {@link Projectile} is generated only if the weapon is not in "cooldown".
      * 
      * @param startingPoint the point where the projectile will be generated.
-     * @return an {@link Optional} containing a {@link Projectile} if the attack was succesful, an empty one instead.
+     * @return a {@link Set} containing one or more {@link Projectile}s if the attack was succesful, an empty one instead.
      */
-    Optional<Projectile> attack(AttackInfo atkInfo);
+    Set<Projectile> attack(AttackInfo atkInfo);
 
     /**
      * Method for upgrading the weapon. For mantaining the SRP, this will upgrade a {@link WeaponStats},

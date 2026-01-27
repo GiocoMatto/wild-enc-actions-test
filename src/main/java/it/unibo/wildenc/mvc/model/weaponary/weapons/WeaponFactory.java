@@ -1,7 +1,10 @@
 package it.unibo.wildenc.mvc.model.weaponary.weapons;
 
+import java.util.Set;
+
 import org.joml.Vector2d;
 
+import it.unibo.wildenc.mvc.model.Weapon;
 import it.unibo.wildenc.mvc.model.weaponary.projectiles.ConcreteProjectile;
 import it.unibo.wildenc.mvc.model.weaponary.projectiles.ProjectileStats;
 import it.unibo.wildenc.mvc.model.weaponary.projectiles.ProjectileStats.ProjStatType;
@@ -23,10 +26,10 @@ public class WeaponFactory {
                     );
                 }
             ),
-            (lvl, stats) -> {
-                stats.pStats().setMultiplier(ProjStatType.DAMAGE, 1.5 * lvl);
+            (lvl, weaponStats) -> {
+                weaponStats.pStats().setMultiplier(ProjStatType.DAMAGE, 1.5 * lvl);
             },
-            (info, pstats) -> new ConcreteProjectile(pstats, info),
+            (info, projStats) -> Set.of(new ConcreteProjectile(projStats, info)),
             2,
             "BasicWeapon"
         );

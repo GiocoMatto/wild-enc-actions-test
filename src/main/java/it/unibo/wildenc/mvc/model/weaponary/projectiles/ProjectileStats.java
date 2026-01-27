@@ -20,7 +20,8 @@ public class ProjectileStats {
     public enum ProjStatType {
         DAMAGE("Damage"),
         VELOCITY("Velocity"),
-        HITBOX("Hitbox Radius");
+        HITBOX("Hitbox Radius"),
+        ANGULAR("Angular Velocity");
 
         private final String statName;
 
@@ -94,20 +95,23 @@ public class ProjectileStats {
      * @param baseRadius the base radius of the hitbox of the Projectile
      * @param id an identifier for the Projectile
      * @param baseVelocity the base movement velocity of the Projectile
+     * @param baseAngularVelocity the base angular velocity of the Projectile
      * @param ttl the time of life of the Projectile, after which it's considered gone
      * @param moveFunc the function that defines the Projectile's movement
      */
     public ProjectileStats(
         final double baseDamage,
         final double baseRadius,
-        final String id,
         final double baseVelocity,
+        final double baseAngularVelocity,
         final double ttl,
+        final String id,
         final BiFunction<Vector2d, AttackMovementInfo, Vector2d> moveFunc
     ) {
         projStats.add(new ProjStat(ProjStatType.DAMAGE, baseDamage));
         projStats.add(new ProjStat(ProjStatType.HITBOX, baseRadius));
         projStats.add(new ProjStat(ProjStatType.VELOCITY, baseVelocity));
+        projStats.add(new ProjStat(ProjStatType.ANGULAR, baseAngularVelocity));
         this.timeToLive = ttl;
         this.projID = id;
         this.projMovementFunction = moveFunc;

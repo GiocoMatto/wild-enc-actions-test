@@ -113,4 +113,21 @@ public class TestWeapons {
         );
         assertTrue(!generatedProj.isEmpty());
     }
+
+    @Test
+    public void testOrbitingProjectile() {
+        this.currentWeapon = weaponMaker.getDefaultOrbiting();
+        Vector2d myPosition = new Vector2d(10.0, 10.0);
+        generatedProjectiles.addAll(this.currentWeapon.attack(
+            new AttackInfo(
+                new Vector2d(0.0, 0.0),
+                new Vector2d(0.0, 0.0),
+                Optional.of(() -> myPosition)
+            )));
+        Projectile genProj = generatedProjectiles.getFirst();
+        for(int i = 1; i <= 180; i++) {
+            genProj.updatePosition(1.0);
+        }
+        assertTrue(genProj.getPosition().x() == 15.0 && genProj.getPosition().y() == 10.0);
+    }
 }

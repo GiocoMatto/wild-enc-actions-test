@@ -16,9 +16,10 @@ public class WeaponFactory {
             new ProjectileStats(
                 1.0,
                 1.0,
-                "DefaultProj", 
+                1.0,
                 1.0, 
                 10.0,
+                "DefaultProj", 
                 (start, moveInfo) -> {
                     return new Vector2d(
                         start.x + moveInfo.atkDirection().x() * moveInfo.atkVelocity() * moveInfo.deltaTime(),
@@ -29,9 +30,35 @@ public class WeaponFactory {
             (lvl, weaponStats) -> {
                 weaponStats.pStats().setMultiplier(ProjStatType.DAMAGE, 1.5 * lvl);
             },
-            (info, projStats) -> Set.of(new ConcreteProjectile(projStats, info)),
+            (info, projStats) -> Set.of(new ConcreteProjectile(projStats, info, 0.0)),
             2,
             "BasicWeapon"
+        );
+    }
+
+    public Weapon getDefaultOrbiting() {
+        return new GenericWeapon(
+            1,
+            new ProjectileStats(
+                1.0, 
+                1.0, 
+                2.0,
+                1.0,
+                10.0, 
+                "DefaultOrbitingProj", 
+                (start, moveInfo) -> {
+                    return new Vector2d(
+                        start.x + 5 * Math.cos(Math.toRadians(moveInfo.currentAngle())),
+                        start.y + 5 * Math.sin(Math.toRadians(moveInfo.currentAngle()))
+                    );
+                }
+            ), 
+            (lvl, weaponStats) -> {
+               weaponStats.pStats().setMultiplier(ProjStatType.VELOCITY, lvl); 
+            },
+            (info, projStats) -> Set.of(new ConcreteProjectile(projStats, info, 0)),
+            1,
+            "OrbitingWeapon"
         );
     }
 }

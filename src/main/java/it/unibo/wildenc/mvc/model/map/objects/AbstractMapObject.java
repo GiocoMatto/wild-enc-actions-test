@@ -8,7 +8,6 @@ import it.unibo.wildenc.mvc.model.MapObject;
 /**
  * Abstraction of any map object.
  * 
- * 
  */
 public abstract class AbstractMapObject implements MapObject {
 

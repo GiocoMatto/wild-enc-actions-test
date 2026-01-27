@@ -20,7 +20,7 @@ public class TestMap {
 
     @BeforeEach
     void setup() {
-        map = new GameMapImpl();
+        map = new GameMapImpl(null); // FIXME Player!!!!!!
         movableObj.setDirection(TEST_DIRECTION_UP);
     }
 

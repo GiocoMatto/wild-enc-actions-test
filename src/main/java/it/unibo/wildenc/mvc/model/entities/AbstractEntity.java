@@ -13,7 +13,6 @@ import it.unibo.wildenc.mvc.model.Weapon;
 /**
  * Abstraction of a general entity.
  * 
- * 
  */
 public abstract class AbstractEntity extends AbstractMovable implements Entity {
 
@@ -85,13 +84,20 @@ public abstract class AbstractEntity extends AbstractMovable implements Entity {
         setDirection(alterDirection());
         super.updatePosition(deltaTime);
     }
-    
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void addWeapons(Weapon p) {
+        weapons.add(p);
+    }
     /**
      * {@inheritDoc}
      */
     @Override
     public abstract boolean canTakeDamage();
-    
+
     /**
      * Alters the entity direction.
      * 

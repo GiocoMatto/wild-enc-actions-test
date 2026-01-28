@@ -1,13 +1,11 @@
 package it.unibo.wildenc.mvc.model.player;
 
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 
 import org.joml.Vector2d;
 import org.joml.Vector2dc;
 
 import it.unibo.wildenc.mvc.model.Player;
-import it.unibo.wildenc.mvc.model.Weapon;
 import it.unibo.wildenc.mvc.model.entities.AbstractEntity;
 
 /**
@@ -59,12 +57,6 @@ public class PlayerImpl extends AbstractEntity implements Player {
     public void levelUp() {
         this.level++;
         // TODO: Implementare logica di aumento statistiche o scelta weapon
-    }
-
-    @Override
-    public void addWeapons(Weapon p) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'addWeapons'");
     }
 
 }

@@ -36,6 +36,9 @@ public interface Entity extends Movable {
 
     /**
      * Add a new weapon.
+     * 
+     * @param p
+     *          The weapon to add.
      */
     void addWeapons(Weapon p);
     

@@ -5,32 +5,39 @@ import org.joml.Vector2d;
 import it.unibo.wildenc.mvc.model.Enemy;
 import it.unibo.wildenc.mvc.model.EnemyFactory;
 import it.unibo.wildenc.mvc.model.MapObject;
+import it.unibo.wildenc.mvc.model.weaponary.weapons.WeaponFactory;
 
 public class EnemyFactoryImpl implements EnemyFactory {
-    private final double hitbox = 1;
-    private final double movementSpeedfinal = 1;
-    private final int health = 100;
+    private static final double HITBOX = 1;
+    private static final double MOVEMET_SPEED_FINAL = 1;
+    private static final int HEALTH = 100;
+    private final MapObject target;
+    private final WeaponFactory wf;
 
-    @Override
-    public Enemy CloseRangeEnemy(Vector2d spawnPosition, String name, MapObject target) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'CloseRangeEnemy'");
+    public EnemyFactoryImpl(final MapObject taget) {
+        this.target = taget;
+        this.wf = new WeaponFactory();
     }
 
     @Override
-    public Enemy CloseRangeFastEnemy(Vector2d spawnPosition, String name, MapObject target) {
+    public Enemy CloseRangeEnemy(Vector2d spawnPosition, String name) {
+        return new CloseRangeEnemy(spawnPosition, HITBOX, MOVEMET_SPEED_FINAL, HEALTH, wf., name, null)
+    }
+
+    @Override
+    public Enemy CloseRangeFastEnemy(Vector2d spawnPosition, String name) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'CloseRangeFastEnemy'");
     }
 
     @Override
-    public Enemy RangedEnemy(Vector2d spawnPosition, String name, MapObject target) {
+    public Enemy RangedEnemy(Vector2d spawnPosition, String name) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'RangedEnemy'");
     }
 
     @Override
-    public Enemy RangedDoubleShotEnemy(Vector2d spawnPosition, String name, MapObject target) {
+    public Enemy RangedDoubleShotEnemy(Vector2d spawnPosition, String name) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'RangedDoubleShotEnemy'");
     }

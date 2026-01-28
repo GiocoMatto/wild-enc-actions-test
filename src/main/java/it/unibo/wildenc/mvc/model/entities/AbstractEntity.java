@@ -105,5 +105,4 @@ public abstract class AbstractEntity extends AbstractMovable implements Entity {
      */
     protected abstract Vector2dc alterDirection();
 
-
 }

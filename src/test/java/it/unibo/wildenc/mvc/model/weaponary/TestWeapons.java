@@ -29,7 +29,8 @@ public class TestWeapons {
 
     @BeforeEach
     public void setup() {
-        this.currentWeapon = weaponMaker.getDefaultWeapon(10.0, 10.0, 2.0, 1.0, 10.0, 1);
+        // TODO: make this a real entity.
+        this.currentWeapon = weaponMaker.getDefaultWeapon(10.0, 10.0, 2.0, 1.0, 10.0, 1, null);
         generatedProjectiles = new ArrayList<>();
     }
 

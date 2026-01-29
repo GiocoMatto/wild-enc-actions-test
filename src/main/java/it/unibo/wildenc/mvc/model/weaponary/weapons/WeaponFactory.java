@@ -5,6 +5,7 @@ import java.util.Set;
 import org.joml.Vector2d;
 import org.joml.Vector2dc;
 
+import it.unibo.wildenc.mvc.model.Entity;
 import it.unibo.wildenc.mvc.model.Weapon;
 import it.unibo.wildenc.mvc.model.weaponary.projectiles.ConcreteProjectile;
 import it.unibo.wildenc.mvc.model.weaponary.projectiles.ProjectileStats;
@@ -17,7 +18,8 @@ public class WeaponFactory {
         final double hbRadius, 
         final double baseVelocity,
         final double baseTTL,
-        final int baseBurst
+        final int baseBurst,
+        final Entity ownedBy
     ) {
         return new GenericWeapon(
             baseCooldown,
@@ -27,6 +29,7 @@ public class WeaponFactory {
                 baseVelocity,
                 baseTTL,
                 "BasicProj",
+                ownedBy,
                 (dt, atkInfo) -> {
                     final Vector2dc start = atkInfo.getLastPosition();
                     return new Vector2d(
@@ -45,7 +48,7 @@ public class WeaponFactory {
         );        
     }
 
-    public Weapon getMeleeWeapon(final double hbRadius, final double baseDmg) {
+    public Weapon getMeleeWeapon(final double hbRadius, final double baseDmg, final Entity ownedBy) {
         return new GenericWeapon(
             1, 
             new ProjectileStats(
@@ -53,7 +56,8 @@ public class WeaponFactory {
                 hbRadius, 
                 0, 
                 0.1,
-                "MeleeProj", 
+                "MeleeProj",
+                ownedBy,
                 (dt, atkInfos) -> atkInfos.getFollowing().get().get()
             ), 
             (lvl, weaponStats) -> {}, 

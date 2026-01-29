@@ -11,7 +11,7 @@ import org.joml.Vector2dc;
  */
 public class AttackContext {
     private Vector2dc lastPosition;
-    private double atkDirection;
+    private Vector2dc atkVersorDirection;
     private Optional<Supplier<Vector2d>> toFollow;
     private double velocity;
 
@@ -22,11 +22,11 @@ public class AttackContext {
      */
     public AttackContext(
         final Vector2dc initialPosition,
-        final double initialDirection,
+        final Vector2dc initialDirection,
         Optional<Supplier<Vector2d>> entityToFollow
     ) {
         this.lastPosition = initialPosition;
-        this.atkDirection = Math.toRadians(initialDirection % 360);
+        this.atkVersorDirection = new Vector2d(initialDirection).normalize();
         this.toFollow = entityToFollow;
     }
 
@@ -43,10 +43,16 @@ public class AttackContext {
      * @return a {@link Vector2d} representing the direction versor the attack has to follow.
      */
     public Vector2dc getDirectionVersor() {
-        return new Vector2d(
-            Math.cos(atkDirection),
-            Math.sin(atkDirection)
-        );
+        System.out.println(atkVersorDirection);
+        return this.atkVersorDirection;
+    }
+
+    /**
+     * Getter method for the angle which the attack has to follow.
+     * @return the angle of the direction of the attack.
+     */
+    public double getActualAngle() {
+        return Math.toRadians(Math.acos(this.atkVersorDirection.x()));
     }
 
     /**
@@ -72,7 +78,10 @@ public class AttackContext {
      * @param newDirection the new direction, in degrees, to be set.
      */
     public void setDirection(final double newDirection) {
-        this.atkDirection = Math.toRadians(newDirection % 360);
+        this.atkVersorDirection = new Vector2d(
+            Math.cos(Math.toRadians(newDirection)),
+            Math.sin(Math.toRadians(newDirection))
+        );
     }
 
     /**
@@ -97,6 +106,6 @@ public class AttackContext {
      * @return a copy of this object.
      */
     public AttackContext protectiveCopy() {
-        return new AttackContext(this.lastPosition, this.atkDirection, this.toFollow);
+        return new AttackContext(this.lastPosition, this.atkVersorDirection, this.toFollow);
     }
 }

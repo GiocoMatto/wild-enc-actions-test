@@ -1,5 +1,6 @@
 package it.unibo.wildenc.mvc.model.weaponary;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -21,6 +22,7 @@ import it.unibo.wildenc.mvc.model.weaponary.weapons.WeaponFactory;
 
 public class TestWeapons {
 
+    private static final Vector2d FORTYFIVE_DEG_VERSOR = new Vector2d(1,1).normalize();
     private WeaponFactory weaponMaker = new WeaponFactory();
     private Weapon currentWeapon;
     private List<Projectile> generatedProjectiles;
@@ -47,13 +49,11 @@ public class TestWeapons {
     @Test
     public void testAttack() {
         generatedProjectiles.addAll(this.currentWeapon.attack(
-            List.of(new AttackContext(new Vector2d(0, 0), 45, Optional.empty()))
+            List.of(new AttackContext(new Vector2d(0, 0), FORTYFIVE_DEG_VERSOR, Optional.empty()))
         ));
         assertTrue(!generatedProjectiles.isEmpty());
         assertTrue(generatedProjectiles.getFirst().getPosition().equals(new Vector2d(0.0, 0.0)));
-        assertTrue(generatedProjectiles.getFirst().getDirection().equals(
-            new Vector2d(Math.cos(Math.toRadians(45)), Math.sin(Math.toRadians(45)))
-        ));
+        assertEquals(FORTYFIVE_DEG_VERSOR.x(), generatedProjectiles.getFirst().getDirection().x(), 1E-6, "");
         assertTrue(generatedProjectiles.getFirst().isAlive());
         assertTrue("BasicProj".equals(generatedProjectiles.getFirst().getID()));
     }
@@ -61,7 +61,7 @@ public class TestWeapons {
     @Test
     public void testMovement() {
         generatedProjectiles.addAll(this.currentWeapon.attack(
-            List.of(new AttackContext(new Vector2d(0.0, 0.0), 45, Optional.empty()))
+            List.of(new AttackContext(new Vector2d(0.0, 0.0), FORTYFIVE_DEG_VERSOR, Optional.empty()))
         ));
         assertTrue(!generatedProjectiles.isEmpty());
         final double expectedValue = Math.cos(Math.toRadians(45));
@@ -80,7 +80,7 @@ public class TestWeapons {
     public void testBarrage() throws InterruptedException {
         // Creating first Projectile
         Set<Projectile> generatedProj = this.currentWeapon.attack(
-            List.of(new AttackContext(new Vector2d(0.0, 0.0), 45, Optional.empty()))
+            List.of(new AttackContext(new Vector2d(0.0, 0.0), FORTYFIVE_DEG_VERSOR, Optional.empty()))
         );
         // Projectile exists!
         assertTrue(!generatedProj.isEmpty());
@@ -88,7 +88,7 @@ public class TestWeapons {
         // Waiting 100ms and trying to shoot again.
         Thread.sleep(100);
         generatedProj = this.currentWeapon.attack(
-            List.of(new AttackContext(new Vector2d(0.0, 0.0), 45, Optional.empty()))
+            List.of(new AttackContext(new Vector2d(0.0, 0.0), FORTYFIVE_DEG_VERSOR, Optional.empty()))
         );
         // Nope, this time is not present.
         assertFalse(!generatedProj.isEmpty());
@@ -96,21 +96,21 @@ public class TestWeapons {
         // After 200ms, the 2nd projectile of the burst appears!
         Thread.sleep(100);
         generatedProj = this.currentWeapon.attack(
-            List.of(new AttackContext(new Vector2d(0.0, 0.0), 45, Optional.empty()))
+            List.of(new AttackContext(new Vector2d(0.0, 0.0), FORTYFIVE_DEG_VERSOR, Optional.empty()))
         );
         assertTrue(!generatedProj.isEmpty());
 
         // Waiting another 300ms for not a projectile to appear.
         Thread.sleep(300);
         generatedProj = this.currentWeapon.attack(
-            List.of(new AttackContext(new Vector2d(0.0, 0.0), 45, Optional.empty()))
+            List.of(new AttackContext(new Vector2d(0.0, 0.0), FORTYFIVE_DEG_VERSOR, Optional.empty()))
         );
         assertFalse(!generatedProj.isEmpty());
 
         // In the end, after 1.2s (1s cd + 200ms of barrage...) a new Projectile appears!
         Thread.sleep(700);
         generatedProj = this.currentWeapon.attack(
-            List.of(new AttackContext(new Vector2d(0.0, 0.0), 45, Optional.empty()))
+            List.of(new AttackContext(new Vector2d(0.0, 0.0), FORTYFIVE_DEG_VERSOR, Optional.empty()))
         );
         assertTrue(!generatedProj.isEmpty());
     }

@@ -2,6 +2,7 @@ package it.unibo.wildenc.mvc.model.weaponary.projectiles;
 
 import org.joml.Vector2dc;
 
+import it.unibo.wildenc.mvc.model.Entity;
 import it.unibo.wildenc.mvc.model.map.objects.AbstractMovable;
 import it.unibo.wildenc.mvc.model.weaponary.AttackContext;
 import it.unibo.wildenc.mvc.model.weaponary.projectiles.ProjectileStats.ProjStatType;
@@ -81,10 +82,19 @@ public class ConcreteProjectile extends AbstractMovable implements Projectile {
     }
 
     /**
-     * {@inhritDoc}
+     * {@inheritDoc}
      */
     @Override
     public Vector2dc getDirection() {
         return this.attackInformation.getDirectionVersor();
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Entity getOwner() {
+        return this.projStats.getOwner();
+    }
 }
+

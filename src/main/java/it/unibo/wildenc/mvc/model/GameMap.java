@@ -26,6 +26,13 @@ public interface GameMap {
     boolean removeObject(MapObject mObj);
 
     /**
+     * Get the player.
+     * 
+     * @return the {@link Player}.
+     */
+    Player getPlayer();
+
+    /**
      * Get all objects on this Map.
      * 
      * @return A {@link List} of all {@link MapObject}s on this Map.

@@ -25,6 +25,12 @@ public class GameMapImpl implements GameMap {
     private final Player player;
     private final List<MapObject> mapObjects = new ArrayList<>();
 
+    /**
+     * Create a new basic map.
+     * 
+     * @param p
+     *          the player.
+     */
     public GameMapImpl(Player p) {
         player = p;
     }
@@ -45,6 +51,11 @@ public class GameMapImpl implements GameMap {
         return mapObjects.remove(mObj);
     }
 
+    @Override
+    public Player getPlayer() {
+        return this.player;
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -63,13 +74,13 @@ public class GameMapImpl implements GameMap {
         /*
          * Update objects positions
          */
-        Stream.concat(mapObjects.stream(), Stream.of(player))
+        Stream.concat(Stream.of(player), mapObjects.stream())
             .filter(e -> e instanceof Movable)
             .map(o -> (Movable)o)
             .peek(o -> {
-                System.out.println(o.getClass() + " x: " + o.getPosition().x() + " y: " + o.getPosition().y());
+                System.out.println(o.getClass() + " x: " + o.getPosition().x() + " y: " + o.getPosition().y()); // FIXME: think about better logging
                 if (o instanceof Entity e) {
-                    System.out.println("health: " + e.getCurrentHealth());
+                    System.out.println("health: " + e.getCurrentHealth());  // FIXME: think about better logging
                 }
             })
             .forEach(o -> o.updatePosition(deltaSeconds));
@@ -107,12 +118,13 @@ public class GameMapImpl implements GameMap {
         if (!e.canTakeDamage()) { 
             return;
         }
-        System.out.println("!!!!!! Projectile hit !!!!!!"); 
+        System.out.println("!!!!!! Projectile hit !!!!!!");  // FIXME: better logging
         e.takeDamage((int) p.getDamage()); // FIXME: avoidable cast
         toRemove.add(p);
         if (e.getCurrentHealth() <= 0) {
-            System.out.println(e.getClass().toString() + " died!!!");
+            System.out.println(e.getClass().toString() + " died!!!");  // FIXME: think about better logging
             toRemove.add(e);
         }
     }
+
 }

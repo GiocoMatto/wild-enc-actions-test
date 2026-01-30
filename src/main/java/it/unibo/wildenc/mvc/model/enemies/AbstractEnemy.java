@@ -1,10 +1,9 @@
 package it.unibo.wildenc.mvc.model.enemies;
 
+import java.util.HashSet;
 import java.util.Optional;
-import java.util.Set;
 import org.joml.Vector2d;
 import org.joml.Vector2dc;
-import it.unibo.wildenc.mvc.model.Weapon;
 import it.unibo.wildenc.mvc.model.*;
 import it.unibo.wildenc.mvc.model.entities.AbstractEntity;
 
@@ -31,11 +30,10 @@ public abstract class AbstractEnemy extends AbstractEntity implements Enemy {
         final double hitbox, 
         final double movementSpeedfinal, 
         final int health, 
-        final Set<Weapon> weapons, 
         final String name,
         final Optional<MapObject> target
     ) {
-        super(spawnPosition, hitbox, movementSpeedfinal, health, weapons);
+        super(spawnPosition, hitbox, movementSpeedfinal, health, new HashSet<>());
         this.name = name;
         this.target = target;
     }
@@ -74,13 +72,5 @@ public abstract class AbstractEnemy extends AbstractEntity implements Enemy {
     public boolean canTakeDamage() {
         return true;
     }
-
-    // /**
-    //  * {@inheritDoc}
-    //  */
-    // @Override
-    // public void addWeapons(final Weapon p) {
-    //     throw new IllegalStateException();
-    // }
 
 }

@@ -7,6 +7,7 @@ import org.joml.Vector2d;
 import org.joml.Vector2dc;
 
 import it.unibo.wildenc.mvc.model.Enemy;
+import it.unibo.wildenc.mvc.model.EnemyFactory;
 import it.unibo.wildenc.mvc.model.MapObject;
 import it.unibo.wildenc.mvc.model.Weapon;
 import it.unibo.wildenc.mvc.model.enemies.CloseRangeEnemy;
@@ -51,7 +52,11 @@ public final class MapTestingCommons {
         }
 
         public Enemy getAsCloseRangeEnemy(Set<Weapon> weapons, String name, Optional<MapObject> target) {
-            return new CloseRangeEnemy(pos, hitbox, speed, health, weapons, name, target);
+            final Enemy e = new CloseRangeEnemy(pos, hitbox, speed, health, name, target);
+            for (final var w : weapons) {
+                e.addWeapons(w);
+            }
+            return e;
         }
     }
 

@@ -21,7 +21,7 @@ public final class MapTestingCommons {
         StaticObject(0, 10, 5, 0, 0),
         MovableObject(0, 10, 5, 1, 0),
         PlayerObject(0, 0, 5, 1, 100),
-        EnemyObject(30, 0, 5, 1, 100);
+        EnemyObject(100, 0, 5, 1, 100);
 
         public final Vector2dc pos;
         public final double hitbox;
@@ -80,7 +80,7 @@ public final class MapTestingCommons {
     /**
      * 20 ticks of 1 second each, 20 seconds
      */
-    public static final int TEST_SIMULATION_TICKS = 20;
+    public static final int TEST_SIMULATION_TICKS = 100;
     
     public static class MapObjectTest extends AbstractMapObject {
 

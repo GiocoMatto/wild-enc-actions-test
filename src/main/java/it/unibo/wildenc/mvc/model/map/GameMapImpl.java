@@ -90,6 +90,7 @@ public class GameMapImpl implements GameMap {
         mapObjects.stream()
             .filter(e -> e instanceof Projectile)
             .map(o -> (Projectile)o)
+            .filter(p -> p.getOwner() instanceof Enemy) // check only Projectiles shot by enemies
             .filter(o -> CollisionLogic.areColliding(player, o))
             .forEach(o -> projectileHit(o, player, objToRemove));
         /*
@@ -98,6 +99,7 @@ public class GameMapImpl implements GameMap {
         List<Projectile> projectiles = getAllObjects().stream()
             .filter(e -> e instanceof Projectile)
             .map(e -> (Projectile) e)
+            .filter(p -> p.getOwner() instanceof Player)
             .toList();
         List<Enemy> enemies = getAllObjects().stream()
             .filter(e -> e instanceof Enemy)

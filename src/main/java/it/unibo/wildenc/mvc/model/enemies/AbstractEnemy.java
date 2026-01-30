@@ -75,12 +75,12 @@ public abstract class AbstractEnemy extends AbstractEntity implements Enemy {
         return true;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void addWeapons(final Weapon p) {
-        throw new IllegalStateException();
-    }
+    // /**
+    //  * {@inheritDoc}
+    //  */
+    // @Override
+    // public void addWeapons(final Weapon p) {
+    //     throw new IllegalStateException();
+    // }
 
 }

@@ -22,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Optional;
 import java.util.Set;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 import org.joml.Vector2d;
@@ -46,6 +47,7 @@ public class TestMap {
         final MapObjectTest obj = objConf.getAsStaticObj();
 
         map.addObject(obj);
+
         assertTrue(map.getAllObjects().contains(obj));
     }
 
@@ -56,6 +58,7 @@ public class TestMap {
 
         map.addObject(obj);
         map.updateEntities(TEST_TIME_NANOSECONDS);
+
         assertEquals(obj.getPosition(), objConf.pos);
     }
 
@@ -66,6 +69,7 @@ public class TestMap {
 
         map.addObject(obj);
         map.updateEntities(TEST_TIME_NANOSECONDS);
+
         assertEquals(obj.getPosition(), objConf.pos);
     }
 
@@ -78,14 +82,17 @@ public class TestMap {
 
         obj.setDirection(direction.vect);
         map.updateEntities(TEST_TIME_NANOSECONDS);
+
         assertNotEquals(objConf.pos, obj.getPosition(), "Object did not move");
         assertEquals(calculateMovement(objConf.pos, direction.vect, objConf.speed, TEST_TIME_SECONDS), obj.getPosition(), "Object moved wrong");
     }
 
     @Test
-    void whenEnemyProjectileHitboxTouchesPlayerHitboxPlayerLifeShouldDecrease() {
+    void whenEnemyProjectileHitboxTouchesPlayerHitboxPlayerHealthShouldDecrease() {
         final TestObject enemyConf = TestObject.EnemyObject;
-        final Enemy enemy = enemyConf.getAsCloseRangeEnemy(Set.of(new WeaponFactory().getDefaultWeapon(5, 10, 2, 2, 100101, 1)), "testEnemy", Optional.of(player));
+        final Enemy enemy = enemyConf.getAsCloseRangeEnemy(new LinkedHashSet<>(), "testEnemy", Optional.of(player));
+        final var weapon = new WeaponFactory().getDefaultWeapon(5, 10, 2, 2, 100101, 1, enemy);
+        enemy.addWeapons(weapon);
         map.addObject(enemy);
 
         // Enemy should arrive in player hitbox at the 20th tick
@@ -98,7 +105,31 @@ public class TestMap {
                     Optional.empty())))
                 .forEach(e2 -> map.addObject(e2)));
         }
+
         assertTrue(player.getCurrentHealth() < player.getMaxHealth(), "Player health didn't change.");
         assertTrue(enemy.getCurrentHealth() == enemy.getMaxHealth(), "Enemy health must not change.");
+    }
+
+    @Test
+    void whenPlayerProjectileHitboxTouchesEnemyHitboxEnemyHealthShouldDecrease() {
+        final TestObject enemyConf = TestObject.EnemyObject;
+        final Enemy enemy = enemyConf.getAsCloseRangeEnemy(new LinkedHashSet<>(), "testEnemy", Optional.of(player));
+        map.addObject(enemy);
+        final var weapon = new WeaponFactory().getDefaultWeapon(0.009, 10, 2, 2, 100101, 1, player);
+        player.addWeapons(weapon);
+        
+        // Enemy should arrive in player hitbox at the 20th tick
+        for (int i = 0; i < TEST_SIMULATION_TICKS; i++) {
+            map.updateEntities(TEST_TIME_NANOSECONDS);
+            player.getWeapons()
+                .forEach(e -> e.attack(List.of(new AttackContext(
+                    player.getPosition(), 
+                    new Vector2d(enemy.getPosition()).sub(player.getPosition()),
+                    Optional.empty())))
+                .forEach(e2 -> map.addObject(e2)));
+        }
+
+        assertTrue(player.getCurrentHealth() == player.getMaxHealth(), "Player health must not change.");
+        assertTrue(enemy.getCurrentHealth() < enemyConf.health, "Enemy health didn't change.");
     }
 }

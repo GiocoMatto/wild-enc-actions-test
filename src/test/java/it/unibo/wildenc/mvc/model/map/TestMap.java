@@ -3,7 +3,7 @@ package it.unibo.wildenc.mvc.model.map;
 import it.unibo.wildenc.mvc.model.GameMap;
 import it.unibo.wildenc.mvc.model.Player;
 import it.unibo.wildenc.mvc.model.Enemy;
-
+import it.unibo.wildenc.mvc.model.map.GameMapImpl.PlayerType;
 import it.unibo.wildenc.mvc.model.map.MapTestingCommons.MapObjectTest;
 import it.unibo.wildenc.mvc.model.map.MapTestingCommons.MovableObjectTest;
 import it.unibo.wildenc.mvc.model.map.MapTestingCommons.TestDirections;
@@ -21,12 +21,10 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Optional;
-import java.util.Set;
 import java.util.LinkedHashSet;
 import java.util.List;
 
 import org.joml.Vector2d;
-import org.joml.Vector2dc;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -37,8 +35,8 @@ public class TestMap {
 
     @BeforeEach
     void setup() {
-        player = TestObject.PlayerObject.getAsPlayer();
-        map = new GameMapImpl(player);
+        map = new GameMapImpl(PlayerType.Charmender);
+        player = map.getPlayer();
     }
 
     @Test
@@ -92,7 +90,7 @@ public class TestMap {
         final TestObject enemyConf = TestObject.EnemyObject;
         final Enemy enemy = enemyConf.getAsCloseRangeEnemy(new LinkedHashSet<>(), "testEnemy", Optional.of(player));
         final var weapon = new WeaponFactory().getDefaultWeapon(5, 10, 2, 2, 100101, 1, enemy);
-        enemy.addWeapons(weapon);
+        enemy.addWeapon(weapon);
         map.addObject(enemy);
 
         // Enemy should arrive in player hitbox at the 20th tick
@@ -115,8 +113,6 @@ public class TestMap {
         final TestObject enemyConf = TestObject.EnemyObject;
         final Enemy enemy = enemyConf.getAsCloseRangeEnemy(new LinkedHashSet<>(), "testEnemy", Optional.of(player));
         map.addObject(enemy);
-        final var weapon = new WeaponFactory().getDefaultWeapon(0.009, 10, 2, 2, 100101, 1, player);
-        player.addWeapons(weapon);
         
         // Enemy should arrive in player hitbox at the 20th tick
         for (int i = 0; i < TEST_SIMULATION_TICKS; i++) {

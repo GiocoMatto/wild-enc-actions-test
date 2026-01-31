@@ -4,15 +4,23 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
+import java.util.function.BiConsumer;
 import java.util.stream.Stream;
 
+import org.joml.Vector2d;
+
+import it.unibo.wildenc.mvc.model.Collectible;
 import it.unibo.wildenc.mvc.model.Enemy;
 import it.unibo.wildenc.mvc.model.Entity;
 import it.unibo.wildenc.mvc.model.GameMap;
 import it.unibo.wildenc.mvc.model.MapObject;
 import it.unibo.wildenc.mvc.model.Movable;
 import it.unibo.wildenc.mvc.model.Player;
+import it.unibo.wildenc.mvc.model.Weapon;
+import it.unibo.wildenc.mvc.model.player.PlayerImpl;
 import it.unibo.wildenc.mvc.model.weaponary.projectiles.Projectile;
+import it.unibo.wildenc.mvc.model.weaponary.weapons.WeaponFactory;
 
 /**
  * Basic {@link Map} implementation
@@ -25,14 +33,44 @@ public class GameMapImpl implements GameMap {
     private final Player player;
     private final List<MapObject> mapObjects = new ArrayList<>();
 
-    /**
+    public enum PlayerType {
+        Charmender(10, 20, 100, (wf, p) -> {
+            p.addWeapon(wf.getDefaultWeapon(0.009, 10, 2, 2, 100, 1, p ));
+        }),
+        Bulbasaur(20, 30, 200, (wf, p) -> {
+            p.addWeapon(wf.getMeleeWeapon(7, 5, p));
+        }),
+        Squirtle(10, 5, 90, (wf, p) -> {
+            p.addWeapon(wf.getMeleeWeapon(8,4, p));
+        });
+
+        private final int speed;
+        private final double hitbox;
+        private final int health;
+        private final BiConsumer<WeaponFactory, Player> default_weapon;
+
+        private PlayerType(int speed, double hitbox, int health, BiConsumer<WeaponFactory, Player> default_weapon) {
+            this.speed = speed;
+            this.hitbox = hitbox;
+            this.health = health;
+            this.default_weapon = default_weapon;
+        }
+
+        Player getPlayer() {
+            Player p = new PlayerImpl(new Vector2d(0, 0), this.hitbox, this.speed, this.health);
+            default_weapon.accept(new WeaponFactory(), p);
+            return p;
+        }
+    }
+
+    /** 
      * Create a new basic map.
      * 
      * @param p
      *          the player.
      */
-    public GameMapImpl(Player p) {
-        player = p;
+    public GameMapImpl(PlayerType p) {
+        player = p.getPlayer();
     }
 
     /**
@@ -112,6 +150,17 @@ public class GameMapImpl implements GameMap {
                     .findFirst()
                     .ifPresent(e -> projectileHit(p, e, objToRemove));
         });
+        /*
+         * Check Collectibles
+         */
+        mapObjects.stream()
+            .filter(e -> e instanceof Collectible)
+            .map(e -> (Collectible) e)
+            .filter(c -> CollisionLogic.areColliding(player, c))
+            .forEach(c -> {
+                c.apply(player);
+                objToRemove.add(c);
+            });
         // remove used objects
         mapObjects.removeAll(objToRemove);
     }

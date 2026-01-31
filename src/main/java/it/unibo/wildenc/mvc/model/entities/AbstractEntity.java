@@ -89,7 +89,7 @@ public abstract class AbstractEntity extends AbstractMovable implements Entity {
      * {@inheritDoc}
      */
     @Override
-    public void addWeapons(Weapon p) {
+    public void addWeapon(Weapon p) {
         weapons.add(p);
     }
     /**

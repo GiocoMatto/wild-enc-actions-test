@@ -1,6 +1,7 @@
 package it.unibo.wildenc.mvc.model.map;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -79,6 +80,14 @@ public class GameMapImpl implements GameMap {
     @Override
     public void addObject(final MapObject mObj) {
         mapObjects.add(mObj);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void addAllObjects(final Collection<MapObject> mObj) {
+        mObj.forEach(this::addObject);
     }
 
     /**

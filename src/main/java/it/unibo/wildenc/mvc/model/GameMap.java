@@ -1,5 +1,6 @@
 package it.unibo.wildenc.mvc.model;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -14,6 +15,13 @@ public interface GameMap {
      *              the {@link MapObject} to add
      */
     void addObject(MapObject mObj);
+
+    /**
+     * Add every {@link MapObject} inside of a {@link Collection} to the GameMap.
+     * 
+     * @param mObjs the objects to add.
+     */    
+    void addAllObjects(Collection<MapObject> mObjs);
 
     /**
      * Remove a {@link MapObject} from this Map.

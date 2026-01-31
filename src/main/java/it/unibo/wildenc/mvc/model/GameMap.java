@@ -16,6 +16,7 @@ public interface GameMap {
      */
     void addObject(MapObject mObj);
 
+    
     /**
      * Add every {@link MapObject} inside of a {@link Collection} to the GameMap.
      * 

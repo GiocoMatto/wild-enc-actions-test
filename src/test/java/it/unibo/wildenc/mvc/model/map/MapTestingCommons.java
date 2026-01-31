@@ -51,7 +51,11 @@ public final class MapTestingCommons {
         }
 
         public Enemy getAsCloseRangeEnemy(Set<Weapon> weapons, String name, Optional<MapObject> target) {
-            return new CloseRangeEnemy(pos, hitbox, speed, health, weapons, name, target);
+            final Enemy e = new CloseRangeEnemy(pos, hitbox, speed, health, name, target);
+            for (final var w : weapons) {
+                e.addWeapon(w);
+            }
+            return e;
         }
     }
 

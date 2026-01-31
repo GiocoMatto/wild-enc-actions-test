@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.stream.Stream;
 
@@ -12,12 +13,15 @@ import org.joml.Vector2d;
 
 import it.unibo.wildenc.mvc.model.Collectible;
 import it.unibo.wildenc.mvc.model.Enemy;
+import it.unibo.wildenc.mvc.model.EnemySpawner;
 import it.unibo.wildenc.mvc.model.Entity;
 import it.unibo.wildenc.mvc.model.GameMap;
 import it.unibo.wildenc.mvc.model.MapObject;
 import it.unibo.wildenc.mvc.model.Movable;
 import it.unibo.wildenc.mvc.model.Player;
+import it.unibo.wildenc.mvc.model.enemies.EnemySpawnerImpl;
 import it.unibo.wildenc.mvc.model.player.PlayerImpl;
+import it.unibo.wildenc.mvc.model.weaponary.AttackContext;
 import it.unibo.wildenc.mvc.model.weaponary.projectiles.Projectile;
 import it.unibo.wildenc.mvc.model.weaponary.weapons.WeaponFactory;
 
@@ -31,6 +35,7 @@ public class GameMapImpl implements GameMap {
 
     private final Player player;
     private final List<MapObject> mapObjects = new ArrayList<>();
+    private final EnemySpawner es;
 
     public enum PlayerType {
         Charmender(10, 20, 100, (wf, p) -> {
@@ -70,6 +75,7 @@ public class GameMapImpl implements GameMap {
      */
     public GameMapImpl(PlayerType p) {
         player = p.getPlayer();
+        es = new EnemySpawnerImpl(player);
     }
 
     /**
@@ -84,7 +90,7 @@ public class GameMapImpl implements GameMap {
      * {@inheritDoc}
      */
     @Override
-    public void addAllObjects(final Collection<MapObject> mObj) {
+    public void addAllObjects(final Collection<? extends MapObject> mObj) {
         mObj.forEach(this::addObject);
     }
 
@@ -119,28 +125,51 @@ public class GameMapImpl implements GameMap {
         /*
          * Update objects positions
          */
-        Stream.concat(Stream.of(player), mapObjects.stream())
-            .filter(e -> e instanceof Movable)
-            .map(o -> (Movable)o)
-            .peek(o -> {
-                System.out.println(o.getClass() + " x: " + o.getPosition().x() + " y: " + o.getPosition().y()); // FIXME: think about better logging
-                if (o instanceof Entity e) {
-                    System.out.println("health: " + e.getCurrentHealth());  // FIXME: think about better logging
-                }
-            })
-            .forEach(o -> o.updatePosition(deltaSeconds));
+        updatePositions(deltaSeconds);
         /*
          * Check collisions of projectiles with player 
          */
-        mapObjects.stream()
-            .filter(e -> e instanceof Projectile)
-            .map(o -> (Projectile)o)
-            .filter(p -> p.getOwner() instanceof Enemy) // check only Projectiles shot by enemies
-            .filter(o -> CollisionLogic.areColliding(player, o))
-            .forEach(o -> projectileHit(o, player, objToRemove));
+        checkPlayerHits(objToRemove);
         /*
          * Check collision of projectiles with enemies
          */ 
+        checkEnemyHits(objToRemove);
+        /*
+         * Check Collectibles
+         */
+        checkCollectibles(objToRemove);
+        //
+        handleAttacks();
+        // Spawn enemies by the logic of the Enemy Spawner
+        spawnEnemies();
+        // remove used objects
+        mapObjects.removeAll(objToRemove);
+    }
+    
+    private void handleAttacks() {
+        mapObjects.stream()
+            .filter(e -> e instanceof Entity)
+            .map(e -> (Entity) e)
+            .forEach(e -> {
+                e.getWeapons().stream()
+                    .forEach(w -> {
+                        w.attack(List.of(new AttackContext(e.getPosition(), null, null))); // FIXME: initialDirection and entityToFollow not known
+                    });
+                });
+    }
+
+    private void checkCollectibles(List<MapObject> objToRemove) {
+        mapObjects.stream()
+            .filter(e -> e instanceof Collectible)
+            .map(e -> (Collectible) e)
+            .filter(c -> CollisionLogic.areColliding(player, c))
+            .forEach(c -> {
+                c.apply(player);
+                objToRemove.add(c);
+            });
+    }
+
+    private void checkEnemyHits(List<MapObject> objToRemove) {
         List<Projectile> projectiles = getAllObjects().stream()
             .filter(e -> e instanceof Projectile)
             .map(e -> (Projectile) e)
@@ -157,19 +186,28 @@ public class GameMapImpl implements GameMap {
                     .findFirst()
                     .ifPresent(e -> projectileHit(p, e, objToRemove));
         });
-        /*
-         * Check Collectibles
-         */
+    }
+
+    private void checkPlayerHits(List<MapObject> objToRemove) {
         mapObjects.stream()
-            .filter(e -> e instanceof Collectible)
-            .map(e -> (Collectible) e)
-            .filter(c -> CollisionLogic.areColliding(player, c))
-            .forEach(c -> {
-                c.apply(player);
-                objToRemove.add(c);
-            });
-        // remove used objects
-        mapObjects.removeAll(objToRemove);
+            .filter(e -> e instanceof Projectile)
+            .map(o -> (Projectile)o)
+            .filter(p -> p.getOwner() instanceof Enemy) // check only Projectiles shot by enemies
+            .filter(o -> CollisionLogic.areColliding(player, o))
+            .forEach(o -> projectileHit(o, player, objToRemove));
+    }
+
+    private void updatePositions(final double deltaSeconds) {
+        Stream.concat(Stream.of(player), mapObjects.stream())
+            .filter(e -> e instanceof Movable)
+            .map(o -> (Movable)o)
+            .peek(o -> {
+                // System.out.println(o.getClass() + " x: " + o.getPosition().x() + " y: " + o.getPosition().y()); // FIXME: think about better logging
+                // if (o instanceof Entity e) {
+                //     System.out.println("health: " + e.getCurrentHealth());  // FIXME: think about better logging
+                // }
+            })
+            .forEach(o -> o.updatePosition(deltaSeconds));
     }
 
     private void projectileHit(Projectile p, Entity e, List<MapObject> toRemove) {
@@ -183,6 +221,13 @@ public class GameMapImpl implements GameMap {
             System.out.println(e.getClass().toString() + " died!!!");  // FIXME: think about better logging
             toRemove.add(e);
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void spawnEnemies() {
+        this.addAllObjects(es.spawn(player, (int) mapObjects.stream().filter(e -> e instanceof Enemy).count())); // FIXME: avoidable cast?
     }
 
 }

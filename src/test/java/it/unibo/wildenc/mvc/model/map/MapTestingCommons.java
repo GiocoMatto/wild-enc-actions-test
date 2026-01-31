@@ -84,7 +84,7 @@ public final class MapTestingCommons {
     /**
      * 20 ticks of 1 second each, 20 seconds
      */
-    public static final int TEST_SIMULATION_TICKS = 100;
+    public static final int TEST_SIMULATION_TICKS = 20;
     
     public static class MapObjectTest extends AbstractMapObject {
 

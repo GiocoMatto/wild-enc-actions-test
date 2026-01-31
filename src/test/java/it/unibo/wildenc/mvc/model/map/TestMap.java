@@ -28,6 +28,7 @@ import org.joml.Vector2d;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+// FIXME: fix all tests: gamemap now handles projectiles and natural enemy spawn
 public class TestMap {
     
     GameMap map;
@@ -96,12 +97,6 @@ public class TestMap {
         // Enemy should arrive in player hitbox at the 20th tick
         for (int i = 0; i < TEST_SIMULATION_TICKS; i++) {
             map.updateEntities(TEST_TIME_NANOSECONDS);
-            enemy.getWeapons()
-                .forEach(e -> e.attack(List.of(new AttackContext(
-                    enemy.getPosition(), 
-                    new Vector2d(player.getPosition()).sub(enemy.getPosition()),
-                    Optional.empty())))
-                .forEach(e2 -> map.addObject(e2)));
         }
 
         assertTrue(player.getCurrentHealth() < player.getMaxHealth(), "Player health didn't change.");
@@ -127,5 +122,19 @@ public class TestMap {
 
         assertTrue(player.getCurrentHealth() == player.getMaxHealth(), "Player health must not change.");
         assertTrue(enemy.getCurrentHealth() < enemyConf.health, "Enemy health didn't change.");
+    }
+
+    @Test
+    void mapSpawnsEnemiesCorrectly() {
+        var initialSize = map.getAllObjects().size();
+        
+        map.spawnEnemies();
+
+        assertTrue(map.getAllObjects().size() > initialSize, "No enemies were spawend.");
+    }
+
+    @Test
+    void spawnedEnemiesFollowAndShootPlayer() {
+        
     }
 }

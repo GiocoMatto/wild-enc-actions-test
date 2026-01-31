@@ -22,7 +22,7 @@ public interface GameMap {
      * 
      * @param mObjs the objects to add.
      */    
-    void addAllObjects(Collection<MapObject> mObjs);
+    void addAllObjects(final Collection<? extends MapObject> mObjs);
 
     /**
      * Remove a {@link MapObject} from this Map.
@@ -55,4 +55,9 @@ public interface GameMap {
      *                  how much to update in time.
      */
     void updateEntities(long deltaTime);
+
+    /**
+     * Spawn enemies on the map.
+     */
+    void spawnEnemies();
 }

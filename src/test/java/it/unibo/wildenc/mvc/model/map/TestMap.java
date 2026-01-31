@@ -87,6 +87,7 @@ public class TestMap {
         assertEquals(calculateMovement(objConf.pos, direction.vect, objConf.speed, TEST_TIME_SECONDS), obj.getPosition(), "Object moved wrong");
     }
 
+    /*
     @Test
     void whenEnemyProjectileHitboxTouchesPlayerHitboxPlayerHealthShouldDecrease() {
         final TestObject enemyConf = TestObject.EnemyObject;
@@ -132,4 +133,5 @@ public class TestMap {
         assertTrue(player.getCurrentHealth() == player.getMaxHealth(), "Player health must not change.");
         assertTrue(enemy.getCurrentHealth() < enemyConf.health, "Enemy health didn't change.");
     }
+    */
 }

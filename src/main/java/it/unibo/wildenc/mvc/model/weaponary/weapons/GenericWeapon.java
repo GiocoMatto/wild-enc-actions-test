@@ -2,6 +2,7 @@ package it.unibo.wildenc.mvc.model.weaponary.weapons;
 
 import it.unibo.wildenc.mvc.model.Weapon;
 import it.unibo.wildenc.mvc.model.weaponary.AttackContext;
+import it.unibo.wildenc.mvc.model.weaponary.projectiles.ConcreteProjectile;
 import it.unibo.wildenc.mvc.model.weaponary.projectiles.Projectile;
 import it.unibo.wildenc.mvc.model.weaponary.projectiles.ProjectileStats;
 
@@ -9,6 +10,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Implementation of a generic {@link Weapon}. This will be used as a 
@@ -23,20 +26,19 @@ public class GenericWeapon implements Weapon {
     private double timeSinceLastAtk = Double.MAX_VALUE;
     private final String weaponName;
     private int currentBullet = 0;
-    BiFunction<List<AttackContext>, ProjectileStats, Set<Projectile>> atkFunc;
+    Function<ProjectileStats, List<AttackContext>> attackInfoGenerator;
 
     public GenericWeapon(
         final double cooldown,
         final ProjectileStats pStats,
         final BiConsumer<Integer, WeaponStats> upgradeLogics,
-        final BiFunction<List<AttackContext>, ProjectileStats, Set<Projectile>> atkFunc,
+        final Function<ProjectileStats, List<AttackContext>> attackInfoGenerator,
         final int initialBurst,
         final String weaponName
     ) {
         this.weaponStats = new WeaponStats(
             cooldown, pStats, initialBurst, upgradeLogics
         );
-        this.atkFunc = atkFunc;
         this.weaponName = weaponName;
     }
 
@@ -44,7 +46,7 @@ public class GenericWeapon implements Weapon {
      * {@inheritDocs}
      */
     @Override
-    public Set<Projectile> attack(final List<AttackContext> atkInfo, final double deltaTime) {
+    public Set<Projectile> attack(final double deltaTime) {
         this.timeSinceLastAtk += deltaTime;
         if(canBurst()) {
             if(!isInCooldown()) {
@@ -52,7 +54,7 @@ public class GenericWeapon implements Weapon {
             }
             currentBullet++;
             timeSinceLastAtk = 0;
-            return this.atkFunc.apply(atkInfo, this.weaponStats.pStats());
+            return generateProjectiles(this.attackInfoGenerator.apply(this.weaponStats.pStats()));
         }
         return Set.of();
     }
@@ -77,6 +79,12 @@ public class GenericWeapon implements Weapon {
     private boolean canBurst() {
         return !isInCooldown() ? true :
             (currentBullet < this.weaponStats.burstSize() && timeSinceLastAtk >= BURST_DELAY);
+    }
+
+    private Set<Projectile> generateProjectiles(List<AttackContext> contexts) {
+        return contexts.stream()
+            .map(e -> new ConcreteProjectile(e, this.weaponStats.pStats()))
+            .collect(Collectors.toSet());
     }
 
     @Override

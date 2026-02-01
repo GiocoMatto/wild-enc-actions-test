@@ -20,7 +20,7 @@ public interface InputHandler {
         GO_LEFT(new Vector2d(-1, 0));
 
         private final Vector2dc vect;
-        
+
         private MovementInput(final Vector2dc v) {
             this.vect = v;
         }

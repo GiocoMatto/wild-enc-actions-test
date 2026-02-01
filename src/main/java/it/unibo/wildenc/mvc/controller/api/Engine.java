@@ -5,9 +5,6 @@ package it.unibo.wildenc.mvc.controller.api;
  */
 public interface Engine {
 
-    /**
-     * Start the game loop.
-     */
-    void startGameLoop();
-
+    // esporre solo per aggiungere il metodo.
+    void processInput(/* input user object */);
 }

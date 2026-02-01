@@ -14,7 +14,6 @@ public class EngineImpl implements Engine{
         
     }
 
-    @Override
     public void startGameLoop() {
         this.loop.start();    
     }
@@ -26,6 +25,9 @@ public class EngineImpl implements Engine{
         public void run() {
             /* update view */
             final long timeUpdateView = System.nanoTime();
+            // this.gm.getAllObjects().stream()
+            // .map(e -> new MapObjViewDataImpl("null", e.getPosition().x(), e.getPosition().y()))
+            // .collect(Collectors.toSet());
             /* get command and sleep */
             try {
                 Thread.sleep(SLEEP_TIME);
@@ -38,6 +40,12 @@ public class EngineImpl implements Engine{
             /* update enemys in model */
         }
 
+    }
+
+    @Override
+    public void processInput() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'processInput'");
     }
 
 }

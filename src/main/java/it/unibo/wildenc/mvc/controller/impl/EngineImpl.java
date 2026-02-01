@@ -1,21 +1,37 @@
 package it.unibo.wildenc.mvc.controller.impl;
 
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.stream.Collectors;
 import it.unibo.wildenc.mvc.controller.api.Engine;
+import it.unibo.wildenc.mvc.controller.api.MapObjViewData;
+import it.unibo.wildenc.mvc.controller.api.InputHandler.MovementInput;
 import it.unibo.wildenc.mvc.model.GameMap;
 import it.unibo.wildenc.mvc.model.map.GameMapImpl;
+import it.unibo.wildenc.mvc.view.api.GameView;
+import it.unibo.wildenc.mvc.view.impl.GameViewImpl;
 
 public class EngineImpl implements Engine{
-    // a field for the view
-    private final GameMap gm;
+    private final LinkedBlockingQueue<MovementInput> movements = new LinkedBlockingQueue<>();
+    private final GameView view = new GameViewImpl();
     private final GameLoop loop = new GameLoop();
+    private final GameMap model;
 
-    public EngineImpl() {
-        gm = new GameMapImpl(null);
-        
+    public EngineImpl(final PlayerType playerType) {
+        model = new GameMapImpl(playerType);
+        view.setEngine(this);
+        view.start();
     }
 
     public void startGameLoop() {
         this.loop.start();    
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void processInput(final MovementInput movement) {
+        this.movements.add(movement);
     }
 
     public final class GameLoop extends Thread {
@@ -23,29 +39,24 @@ public class EngineImpl implements Engine{
 
         @Override
         public void run() {
-            /* update view */
-            final long timeUpdateView = System.nanoTime();
-            // this.gm.getAllObjects().stream()
-            // .map(e -> new MapObjViewDataImpl("null", e.getPosition().x(), e.getPosition().y()))
-            // .collect(Collectors.toSet());
-            /* get command and sleep */
-            try {
-                Thread.sleep(SLEEP_TIME);
-            } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+            while (true) {
+                final long timeUpdateView = System.nanoTime();
+                view.updateSprites(model.getAllObjects().stream()
+                    .map(e -> new MapObjViewData(
+                        "null", 
+                        e.getPosition().x(), 
+                        e.getPosition().y()
+                    ))
+                    .iterator()
+                );
+                try {
+                    Thread.sleep(SLEEP_TIME);
+                } catch (InterruptedException e) {}
+                /* update model and other */
+                model.updateEntities(System.nanoTime() - timeUpdateView);
             }
-            /* update model and other */
-            gm.updateEntities(System.nanoTime() - timeUpdateView);
-            /* update enemys in model */
         }
 
-    }
-
-    @Override
-    public void processInput() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'processInput'");
     }
 
 }

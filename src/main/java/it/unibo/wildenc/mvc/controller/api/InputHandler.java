@@ -1,7 +1,6 @@
 package it.unibo.wildenc.mvc.controller.api;
 
 import java.util.Set;
-
 import org.joml.Vector2d;
 import org.joml.Vector2dc;
 

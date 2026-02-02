@@ -7,6 +7,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.config.Configurator;
+import org.apache.logging.log4j.Level;
 import org.joml.Vector2d;
 import org.joml.Vector2dc;
 import org.junit.jupiter.api.BeforeEach;
@@ -42,6 +46,7 @@ public class TestWeapons {
     private static final Vector2dc TEST_DIRECTION_VERSOR_RIGHT = new Vector2d(1, 0);
     private static final Vector2dc TEST_DIRECTION_VERSOR_UP = new Vector2d(0, 1);
     private static final double TEST_TICK = 0.2;
+    private static final Logger LOGGER = LogManager.getLogger("Ciao!");
 
     private Weapon myWeapon;
     private WeaponFactory weapFactory = new WeaponFactory();
@@ -62,6 +67,7 @@ public class TestWeapons {
             () -> positionToHit
         );
         this.generatedProjectiles = new LinkedHashSet<>();
+        Configurator.setRootLevel(Level.DEBUG);
     }
 
     @Test
@@ -140,9 +146,9 @@ public class TestWeapons {
         this.generatedProjectiles.addAll(this.myWeapon.attack(TEST_TICK));
         assertEquals(this.generatedProjectiles.size(), TEST_PROJ_AT_ONCE);
         for(int i = 0; i < 10; i++) {
-            System.out.println("Iterazione " + i);
+            LOGGER.info("Iterazione " + i);
             this.generatedProjectiles.stream()
-                .peek(proj -> System.out.println("X: " + proj.getPosition().x() + " Y: " + proj.getPosition().y()))
+                .peek(proj -> LOGGER.info("X: " + proj.getPosition().x() + " Y: " + proj.getPosition().y()))
                 .forEach(proj -> proj.updatePosition(TEST_TICK));
         }
     }

@@ -13,12 +13,12 @@ public abstract class AbstractMapObject implements MapObject {
 
     private final Vector2d position;
     private final double hitboxRadius;
-    
+
     /**
      * Creates a {@link MapObject} with a position and an hitbox.
      * 
-     * @param spawnPosition the position of the object in the {@link GameMap}
-     * @param hitbox
+     * @param spawnPosition the position of the object in the {@link GameMap};
+     * @param hitbox hitbox circle radius.
      */
     public AbstractMapObject(final Vector2dc spawnPosition, final double hitbox) {
         position = new Vector2d(spawnPosition);
@@ -40,7 +40,7 @@ public abstract class AbstractMapObject implements MapObject {
     public double getHitbox() {
         return hitboxRadius;
     }
-    
+
     /**
      * A special method for subclasses that exposes the {@link Vector2d} to permit changes on the vector.
      * 

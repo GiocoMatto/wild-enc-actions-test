@@ -27,29 +27,31 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.LinkedHashSet;
 
-
 import org.junit.jupiter.api.Test;
 
+/**
+ * Testing for {@link GameMap}.
+ */
 public class TestMap {
 
-    private GameMap getEmptyMapWithObjects(Player player, Set<MapObject> objs) {
+    private GameMap getEmptyMapWithObjects(final Player player, final Set<MapObject> objs) {
         return new GameMapImpl(player, (p, s) -> Set.of(), objs);
     }
 
-    private GameMap getMapWithEnemySpawner(Player player) {
+    private GameMap getMapWithEnemySpawner(final Player player) {
         return new GameMapImpl(player, new EnemySpawnerImpl(player), Set.of());
     }
 
     private Player getEmptyPlayer() {
         return TestObject.PlayerObject.getAsPlayer();
     }
-    
-    private Player getArmedPlayer(Function<Player, Weapon> w) {
-        Player p = getEmptyPlayer();
+
+    private Player getArmedPlayer(final Function<Player, Weapon> w) {
+        final Player p = getEmptyPlayer();
         p.addWeapon(w.apply(p));
         return p;
     }
-    
+
     @Test
     void objectsShouldBeAddedToMap() {
         final TestObject objConf = TestObject.StaticObject;
@@ -64,10 +66,10 @@ public class TestMap {
         final TestObject objConf = TestObject.StaticObject;
         final MapObjectTest obj = objConf.getAsStaticObj();
         final GameMap map = getEmptyMapWithObjects(getEmptyPlayer(), Set.of(obj));
-        
-        map.updateEntities(TEST_TIME_NANOSECONDS, TestDirections.STILL.vect);
 
-        assertEquals(obj.getPosition(), objConf.pos);
+        map.updateEntities(TEST_TIME_NANOSECONDS, TestDirections.STILL.getVect());
+
+        assertEquals(obj.getPosition(), objConf.getPos());
     }
 
     @Test
@@ -76,9 +78,9 @@ public class TestMap {
         final MovableObjectTest obj = objConf.getAsMovableObj();
         final GameMap map = getEmptyMapWithObjects(getEmptyPlayer(), Set.of(obj));
 
-        map.updateEntities(TEST_TIME_NANOSECONDS, TestDirections.STILL.vect);
+        map.updateEntities(TEST_TIME_NANOSECONDS, TestDirections.STILL.getVect());
 
-        assertEquals(obj.getPosition(), objConf.pos);
+        assertEquals(obj.getPosition(), objConf.getPos());
     }
 
     @Test
@@ -88,14 +90,17 @@ public class TestMap {
         final MovableObjectTest obj = objConf.getAsMovableObj();
         final GameMap map = getEmptyMapWithObjects(getEmptyPlayer(), Set.of(obj));
 
-        obj.setDirection(direction.vect);
-        map.updateEntities(TEST_TIME_NANOSECONDS, TestDirections.STILL.vect);
+        obj.setDirection(direction.getVect());
+        map.updateEntities(TEST_TIME_NANOSECONDS, TestDirections.STILL.getVect());
 
-        assertNotEquals(objConf.pos, obj.getPosition(), "Object did not move");
-        assertEquals(calculateMovement(objConf.pos, direction.vect, objConf.speed, TEST_TIME_SECONDS), obj.getPosition(), "Object moved wrong");
+        assertNotEquals(objConf.getPos(), obj.getPosition(), "Object did not move");
+        assertEquals(
+            calculateMovement(objConf.getPos(), direction.getVect(), objConf.getSpeed(), TEST_TIME_SECONDS), 
+            obj.getPosition(), 
+            "Object moved wrong"
+        );
     }
 
-    
     @Test
     void whenEnemyProjectileHitboxTouchesPlayerHitboxPlayerHealthShouldDecrease() {
         final TestObject enemyConf = TestObject.EnemyObject;
@@ -103,12 +108,12 @@ public class TestMap {
         final Enemy enemy = enemyConf.getAsCloseRangeEnemy(new LinkedHashSet<>(), "testEnemy", Optional.of(p));
         final var weapon = TestWeapon.DEFAULT_WEAPON.getAsWeapon(enemy, p.getPosition());
         final GameMap map = getEmptyMapWithObjects(p, Set.of(enemy));
-        
+
         enemy.addWeapon(weapon);
 
         // Enemy should arrive in player hitbox at the 20th tick
         for (int i = 0; i < TEST_SIMULATION_TICKS; i++) {
-            map.updateEntities(TEST_TIME_NANOSECONDS, TestDirections.STILL.vect);
+            map.updateEntities(TEST_TIME_NANOSECONDS, TestDirections.STILL.getVect());
         }
 
         assertTrue(p.getCurrentHealth() < p.getMaxHealth(), "Player health didn't change.");
@@ -118,24 +123,24 @@ public class TestMap {
     @Test
     void whenPlayerProjectileHitboxTouchesEnemyHitboxEnemyHealthShouldDecrease() {
         final TestObject enemyConf = TestObject.EnemyObject;
-        final Player p = getArmedPlayer(o -> TestWeapon.DEFAULT_WEAPON.getAsWeapon(o, enemyConf.pos));
+        final Player p = getArmedPlayer(o -> TestWeapon.DEFAULT_WEAPON.getAsWeapon(o, enemyConf.getPos()));
         final Enemy enemy = enemyConf.getAsCloseRangeEnemy(new LinkedHashSet<>(), "testEnemy", Optional.of(p));
         final GameMap map = getEmptyMapWithObjects(p, Set.of(enemy));
 
         // Enemy should arrive in player hitbox at the 20th tick
         for (int i = 0; i < TEST_SIMULATION_TICKS; i++) {
-            map.updateEntities(TEST_TIME_NANOSECONDS, TestDirections.STILL.vect);
+            map.updateEntities(TEST_TIME_NANOSECONDS, TestDirections.STILL.getVect());
         }
 
         assertTrue(p.getCurrentHealth() == p.getMaxHealth(), "Player health must not change.");
-        assertTrue(enemy.getCurrentHealth() < enemyConf.health, "Enemy health didn't change.");
+        assertTrue(enemy.getCurrentHealth() < enemyConf.getHealth(), "Enemy health didn't change.");
     }
-    
+
     @Test
     void mapSpawnsEnemiesCorrectly() {
         final GameMap map = getMapWithEnemySpawner(getEmptyPlayer());
-        var initialSize = map.getAllObjects().size();
-        
+        final var initialSize = map.getAllObjects().size();
+
         map.spawnEnemies();
 
         assertTrue(map.getAllObjects().size() > initialSize, "No enemies were spawend.");

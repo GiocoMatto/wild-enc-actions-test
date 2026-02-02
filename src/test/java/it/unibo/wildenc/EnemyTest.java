@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Optional;
-import java.util.Set;
 import org.joml.Vector2d;
 import org.joml.Vector2dc;
 import org.junit.jupiter.api.Test;
@@ -16,7 +15,6 @@ import it.unibo.wildenc.mvc.model.enemies.CloseRangeEnemy;
 import it.unibo.wildenc.mvc.model.enemies.RangedEnemy;
 import it.unibo.wildenc.mvc.model.enemies.RoamingEnemy;
 import it.unibo.wildenc.mvc.model.map.CollisionLogic;
-import it.unibo.wildenc.mvc.model.Weapon;
 
 public class EnemyTest {
     private static final double DELTA_SECONDS = 0.1;
@@ -24,7 +22,6 @@ public class EnemyTest {
     private static final int HITBOX = 2;
     private static final int SPEED = 10;
     private static final int HEALTH = 500;
-    private static final Set<Weapon> START_WEAPONS = Set.of();
     private static final String NAME = "Pikachu";
     private static final MapObject TARGET_1 = new MapObject() {
 
@@ -37,6 +34,11 @@ public class EnemyTest {
         public double getHitbox() {
             return 1;
         }
+
+        @Override
+        public boolean isAlive() {
+            return true;
+        };
 
     };
     private static final MapObject TARGET_2 = new MapObject() {
@@ -51,6 +53,11 @@ public class EnemyTest {
             return 3;
         }
 
+        @Override
+        public boolean isAlive() {
+            return true;
+        };
+
     };
     private static final MapObject TARGET_3 = new MapObject() {
 
@@ -64,12 +71,17 @@ public class EnemyTest {
             return 3;
         }
 
+        @Override
+        public boolean isAlive() {
+            return true;
+        };
+
     };
     private Enemy enemy;
 
     @Test
     public void CloseRangeEnemyTest() {
-        this.enemy = new CloseRangeEnemy(SPAWN_POSITION, HITBOX, SPEED, HEALTH, START_WEAPONS, NAME, Optional.of(TARGET_1));
+        this.enemy = new CloseRangeEnemy(SPAWN_POSITION, HITBOX, SPEED, HEALTH, NAME, Optional.of(TARGET_1));
         int count = 0;
         while (!CollisionLogic.areColliding(enemy, TARGET_1)) {
             enemy.updatePosition(DELTA_SECONDS);
@@ -81,7 +93,7 @@ public class EnemyTest {
     @Test
     public void RangedEnemyTest() {
         /* enemy is fare away the player */
-        this.enemy = new RangedEnemy(SPAWN_POSITION, HITBOX, SPEED, HEALTH, START_WEAPONS, NAME, Optional.of(TARGET_2));
+        this.enemy = new RangedEnemy(SPAWN_POSITION, HITBOX, SPEED, HEALTH, NAME, Optional.of(TARGET_2));
         int count = 0;
         while (!CollisionLogic.areInRange(enemy, TARGET_2, RangedEnemy.MAX_DISTANCE)) {
             enemy.updatePosition(DELTA_SECONDS);
@@ -89,7 +101,7 @@ public class EnemyTest {
         }
         assertEquals(1, count);
         /* enemy is too much near the player */
-        this.enemy = new RangedEnemy(SPAWN_POSITION, HITBOX, SPEED, HEALTH, START_WEAPONS, NAME, Optional.of(TARGET_3));
+        this.enemy = new RangedEnemy(SPAWN_POSITION, HITBOX, SPEED, HEALTH, NAME, Optional.of(TARGET_3));
         count = 0;
         while (CollisionLogic.areInRange(enemy, TARGET_3, RangedEnemy.MIN_DISTANCE)) {
             enemy.updatePosition(DELTA_SECONDS);
@@ -101,7 +113,7 @@ public class EnemyTest {
     @Test
     public void RoamingEnemyTest() {
         /* Try enemy is immortal for 5s */
-        this.enemy = new RoamingEnemy(SPAWN_POSITION, HITBOX, SPEED, HEALTH, START_WEAPONS, NAME);
+        this.enemy = new RoamingEnemy(SPAWN_POSITION, HITBOX, SPEED, HEALTH, NAME);
         try {
             Thread.sleep(RoamingEnemy.TIME_SAFE);
             assertTrue(((Entity)enemy).canTakeDamage());

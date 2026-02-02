@@ -8,7 +8,7 @@ import org.joml.Vector2dc;
  */
 public interface Movable extends MapObject {
     /**
-     * Update position of this movable object 
+     * Update position of this movable object.
      * 
      * @param deltaSeconds 
      *                  movement decided by time (seconds)

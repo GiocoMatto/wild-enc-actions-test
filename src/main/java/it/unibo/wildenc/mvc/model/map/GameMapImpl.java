@@ -1,21 +1,32 @@
 package it.unibo.wildenc.mvc.model.map;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Stream;
 
+import org.jetbrains.annotations.TestOnly;
+import org.joml.Vector2d;
+import org.joml.Vector2dc;
+
+import it.unibo.wildenc.mvc.model.Collectible;
 import it.unibo.wildenc.mvc.model.Enemy;
+import it.unibo.wildenc.mvc.model.EnemySpawner;
 import it.unibo.wildenc.mvc.model.Entity;
 import it.unibo.wildenc.mvc.model.GameMap;
 import it.unibo.wildenc.mvc.model.MapObject;
 import it.unibo.wildenc.mvc.model.Movable;
 import it.unibo.wildenc.mvc.model.Player;
+import it.unibo.wildenc.mvc.model.player.PlayerImpl;
 import it.unibo.wildenc.mvc.model.weaponary.projectiles.Projectile;
+import it.unibo.wildenc.mvc.model.weaponary.weapons.WeaponFactory;
 
 /**
- * Basic {@link Map} implementation
+ * Basic {@link Map} implementation.
  * 
  */
 public class GameMapImpl implements GameMap {
@@ -24,33 +35,76 @@ public class GameMapImpl implements GameMap {
 
     private final Player player;
     private final List<MapObject> mapObjects = new ArrayList<>();
+    private EnemySpawner es;
 
-    /**
-     * Create a new basic map.
+    /** 
+     * Create a new map.
      * 
-     * @param p
-     *          the player.
+     * @param p the player.
      */
-    public GameMapImpl(Player p) {
-        player = p;
+    public GameMapImpl(final PlayerType p) {
+        player = getPlayerByPlayerType(p);
     }
 
     /**
-     * {@inheritDoc}
+     * Test only constructor to provide objects useful to test purposes.
+     * 
+     * @param p the player;
+     * @param es the enemy spawning logic;
+     * @param initialObjs objects that the map should have from the beginning.
      */
-    @Override
-    public void addObject(final MapObject mObj) {
+    @TestOnly
+    GameMapImpl(final Player p, final EnemySpawner es, final Set<MapObject> initialObjs) {
+        player = p;
+        setEnemySpawnLogic(es);
+        addAllObjects(initialObjs);
+    }
+
+    private Player getPlayerByPlayerType(final PlayerType playerType) {
+        final var playerStats = playerType.getPlayerStats();
+        final Player actualPlayer = new PlayerImpl(
+            new Vector2d(0, 0),
+            playerStats.hitbox(),
+            playerStats.speed(),
+            playerStats.health()
+        );
+        playerStats.addDefaultWeapon().accept(new WeaponFactory(), actualPlayer);
+        return actualPlayer;
+    }
+
+    /**
+     * Add a {@link MapObject} on this Map.
+     * 
+     * @param mObj the {@link MapObject} to add.
+     */
+    protected void addObject(final MapObject mObj) {
         mapObjects.add(mObj);
     }
 
     /**
-     * {@inheritDoc}
+     * Add every {@link MapObject} inside of a {@link Collection} to the GameMap.
+     * 
+     * @param mObjs the objects to add.
      */
-    @Override
-    public boolean removeObject(final MapObject mObj) {
+    protected void addAllObjects(final Collection<? extends MapObject> mObjs) {
+        mObjs.forEach(this::addObject);
+    }
+
+    /**
+     * Remove a {@link MapObject} from this Map.
+     * 
+     * @param mObj 
+     *              the {@link MapObject} to remove
+     * @return
+     *              true if the {@link MapObject} was removed successfully
+     */
+    protected boolean removeObject(final MapObject mObj) {
         return mapObjects.remove(mObj);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Player getPlayer() {
         return this.player;
@@ -68,40 +122,71 @@ public class GameMapImpl implements GameMap {
      * {@inheritDoc}
      */
     @Override
-    public void updateEntities(final long deltaTime) {
+    public void updateEntities(final long deltaTime, final Vector2dc playerDirection) {
         final double deltaSeconds = deltaTime / NANO_TO_SECOND_FACTOR;
-        List<MapObject> objToRemove = new LinkedList<>();
+        final List<MapObject> objToRemove = new LinkedList<>();
+        /*
+         * Update player
+         */
+        player.setDirection(playerDirection);
+        log(player);
+        player.updatePosition(deltaSeconds);
         /*
          * Update objects positions
          */
-        Stream.concat(Stream.of(player), mapObjects.stream())
-            .filter(e -> e instanceof Movable)
-            .map(o -> (Movable)o)
-            .peek(o -> {
-                System.out.println(o.getClass() + " x: " + o.getPosition().x() + " y: " + o.getPosition().y()); // FIXME: think about better logging
-                if (o instanceof Entity e) {
-                    System.out.println("health: " + e.getCurrentHealth());  // FIXME: think about better logging
-                }
-            })
-            .forEach(o -> o.updatePosition(deltaSeconds));
+        updateObjectPositions(deltaSeconds);
         /*
          * Check collisions of projectiles with player 
          */
-        mapObjects.stream()
-            .filter(e -> e instanceof Projectile)
-            .map(o -> (Projectile)o)
-            .filter(p -> p.getOwner() instanceof Enemy) // check only Projectiles shot by enemies
-            .filter(o -> CollisionLogic.areColliding(player, o))
-            .forEach(o -> projectileHit(o, player, objToRemove));
+        checkPlayerHits(objToRemove);
         /*
          * Check collision of projectiles with enemies
          */ 
-        List<Projectile> projectiles = getAllObjects().stream()
+        checkEnemyHits(objToRemove);
+        /*
+         * Check Collectibles
+         */
+        checkCollectibles(objToRemove);
+        // attacks
+        handleAttacks(deltaSeconds);
+        // Spawn enemies by the logic of the Enemy Spawner
+        spawnEnemies();
+        // remove used objects
+        mapObjects.removeAll(objToRemove);
+    }
+
+    private void handleAttacks(final double deltaSeconds) {
+        final List<MapObject> toAdd = new LinkedList<>();
+        Stream.concat(Stream.of(player), mapObjects.stream())
+            .filter(e -> e instanceof Entity)
+            .map(e -> (Entity) e)
+            .forEach(e -> {
+                e.getWeapons().stream()
+                    .forEach(w -> {
+                        toAdd.addAll(w.attack(deltaSeconds));
+                    });
+                });
+        this.addAllObjects(toAdd);
+    }
+
+    private void checkCollectibles(final List<MapObject> objToRemove) {
+        mapObjects.stream()
+            .filter(e -> e instanceof Collectible)
+            .map(e -> (Collectible) e)
+            .filter(c -> CollisionLogic.areColliding(player, c))
+            .forEach(c -> {
+                c.apply(player);
+                objToRemove.add(c);
+            });
+    }
+
+    private void checkEnemyHits(final List<MapObject> objToRemove) {
+        final List<Projectile> projectiles = getAllObjects().stream()
             .filter(e -> e instanceof Projectile)
             .map(e -> (Projectile) e)
             .filter(p -> p.getOwner() instanceof Player)
             .toList();
-        List<Enemy> enemies = getAllObjects().stream()
+        final List<Enemy> enemies = getAllObjects().stream()
             .filter(e -> e instanceof Enemy)
             .map(e -> (Enemy) e)
             .toList();
@@ -112,11 +197,39 @@ public class GameMapImpl implements GameMap {
                     .findFirst()
                     .ifPresent(e -> projectileHit(p, e, objToRemove));
         });
-        // remove used objects
-        mapObjects.removeAll(objToRemove);
     }
 
-    private void projectileHit(Projectile p, Entity e, List<MapObject> toRemove) {
+    private void checkPlayerHits(final List<MapObject> objToRemove) {
+        mapObjects.stream()
+            .filter(e -> e instanceof Projectile)
+            .map(o -> (Projectile) o)
+            .filter(p -> p.getOwner() instanceof Enemy) // check only Projectiles shot by enemies
+            .filter(o -> CollisionLogic.areColliding(player, o))
+            .forEach(o -> projectileHit(o, player, objToRemove));
+    }
+
+    private void updateObjectPositions(final double deltaSeconds) {
+        mapObjects.stream()
+            .filter(e -> e instanceof Movable)
+            .map(o -> (Movable) o)
+            .peek(o -> {
+                log(o);
+            })
+            .forEach(o -> o.updatePosition(deltaSeconds));
+    }
+
+    // FIXME: think about better logging
+    private void log(final Movable o) {
+        System.out.println(o.getClass() + " x: " + o.getPosition().x() + " y: " + o.getPosition().y());
+        if (o instanceof Entity e) {
+            System.out.println("health: " + e.getCurrentHealth());
+        }
+        if (o instanceof Projectile) {
+            System.out.println("direzione proiettile: " + o.getDirection());
+        }
+    }
+
+    private void projectileHit(final Projectile p, final Entity e, final List<MapObject> toRemove) {
         if (!e.canTakeDamage()) { 
             return;
         }
@@ -127,6 +240,31 @@ public class GameMapImpl implements GameMap {
             System.out.println(e.getClass().toString() + " died!!!");  // FIXME: think about better logging
             toRemove.add(e);
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void spawnEnemies() {
+        // FIXME: avoidable cast?
+        this.addAllObjects(es.spawn(player, (int) mapObjects.stream().filter(e -> e instanceof Enemy).count()));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setEnemySpawnLogic(final EnemySpawner spawnLogic) {
+        this.es = spawnLogic;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean gameEnded() {
+        return !player.isAlive();
     }
 
 }

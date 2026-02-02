@@ -11,14 +11,23 @@ import org.joml.Vector2dc;
 public interface MapObject {
     /**
      * Getter method for returning the position of an entity on the map.
+     * 
      * @return a {@link Vector2dc} (read-only) representing the (x,y) position of the entity.
      */
     Vector2dc getPosition();
 
     /**
      * Getter method for returning the radius of the entity's hitbox.
-     * This will be used to calculate collisions between map objects
-     * @return the radius of the hitbox
+     * Will be used to calculate collisions between map objects.
+     * 
+     * @return the radius of the hitbox.
      */
     double getHitbox();
+
+    /**
+     * Whether the object is alive (so it should be in the map).
+     * 
+     * @return true if the object should be on map, false if the object should be removed from the map.
+     */
+    boolean isAlive();
 }

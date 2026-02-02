@@ -3,10 +3,10 @@ package it.unibo.wildenc.mvc.model.map.objects;
 import org.joml.Vector2dc;
 
 import it.unibo.wildenc.mvc.model.Collectible;
+import it.unibo.wildenc.mvc.model.Player;
 
 /**
  * Implementation for collectible items
- * 
  */
 public abstract class AbstractCollectible extends AbstractMapObject implements Collectible {
 
@@ -14,7 +14,7 @@ public abstract class AbstractCollectible extends AbstractMapObject implements C
 
     /**
      * Creates a new Collectible.
-     * * @param position the initial position on the map
+     * @param position the initial position on the map
      * @param hitbox   the radius of the hitbox
      * @param value    the value of this collectible (amount of experience or health)
      */
@@ -23,8 +23,11 @@ public abstract class AbstractCollectible extends AbstractMapObject implements C
         this.value = value;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public int getValue() {
-        return this.value;
+    public int apply(Player p) {
+        throw new UnsupportedOperationException("Not yet implemented."); // TODO
     }
 }

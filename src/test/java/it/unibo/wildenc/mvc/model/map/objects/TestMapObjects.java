@@ -43,6 +43,6 @@ public class TestMapObjects {
         // Test movement with a direction.
         obj.setDirection(td.getVect());
         obj.updatePosition(TEST_TIME_SECONDS);
-        assertEquals(calculateMovement(to.getPos(), td.getVect(), to.getHitbox(), TEST_TIME_SECONDS), obj.getPosition());
+        assertEquals(calculateMovement(to.getPos(), td.getVect(), to.getSpeed(), TEST_TIME_SECONDS), obj.getPosition());
     }
 }

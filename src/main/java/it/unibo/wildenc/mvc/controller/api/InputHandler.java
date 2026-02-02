@@ -46,6 +46,13 @@ public interface InputHandler {
     boolean isPaused();
 
     /**
+     * Whether the game is ready to be closed
+     * 
+     * @return true if the game is ready to be closed, false otherwise.
+     */
+    boolean isClosable();
+
+    /**
      * Translates {@link MovementInput} commands into a {@link Vector2dc} that the Model can understand.
      * 
      * @param movementCommands A {@link Set} containing all the commands;

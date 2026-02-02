@@ -3,23 +3,19 @@ package it.unibo.wildenc.mvc.controller.api;
 import java.util.Map;
 
 /**
- * Responsible of handling all the data that needs to be stored between every game.
+ * Responsible of storing all data between every game.
  */
-public interface DataHandler {
+public interface SavedData {
     
     /**
      * Update player coins.
-     * 
-     * FIXME: Method signature will be changed.
      */
-    void updateCoins();
+    void updateCoins(int earnedCoins);
 
     /**
      * Update infos about killed enemies. 
-     * 
-     * FIXME: Method signature will be changed.
      */
-    void updatePokedex();
+    void updatePokedex(String name, int newKills);
 
     /**
      * Get coins the player has earned between every game.

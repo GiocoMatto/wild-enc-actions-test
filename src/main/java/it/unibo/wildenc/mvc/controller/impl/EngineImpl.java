@@ -3,8 +3,8 @@ package it.unibo.wildenc.mvc.controller.impl;
 import it.unibo.wildenc.mvc.controller.api.Engine;
 import it.unibo.wildenc.mvc.model.GameMap;
 import it.unibo.wildenc.mvc.model.map.GameMapImpl;
-import it.unibo.wildenc.mvc.view.GameViewImpl;
 import it.unibo.wildenc.mvc.view.api.GameView;
+import it.unibo.wildenc.mvc.view.impl.GameViewImpl;
 
 public class EngineImpl implements Engine{
     private final GameMap gm = new GameMapImpl(null);;

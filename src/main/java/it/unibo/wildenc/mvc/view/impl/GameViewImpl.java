@@ -1,4 +1,4 @@
-package it.unibo.wildenc.mvc.view;
+package it.unibo.wildenc.mvc.view.impl;
 
 import java.util.Collection;
 import javax.swing.JOptionPane;
@@ -31,7 +31,7 @@ public class GameViewImpl implements GameView{
 
     @Override
     public void lost() {
-        JOptionPane.showMessageDialog(frame, "You lost!");
+        // JOptionPane.showMessageDialog(frame, "You lost!");
         System.exit(0);
     }
 
@@ -49,11 +49,11 @@ public class GameViewImpl implements GameView{
 
     private class DrawingPanel extends Pane {
         
-        @Override
-        protected void paintComponent(final Graphics g) {
-            super.paintComponent(g);
-            // personalizzazioni
-        }
+        // @Override
+        // protected void paintComponent(final Graphics g) {
+        //     super.paintComponent(g);
+        //     // personalizzazioni
+        // }
     }
 
 }

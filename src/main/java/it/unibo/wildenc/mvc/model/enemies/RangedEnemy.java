@@ -14,7 +14,14 @@ public class RangedEnemy extends AbstractEnemy {
     public static final int MIN_DISTANCE = 80;
 
     /**
-     * {@inheritDoc}
+     * Create a new ranged Enemey.
+     * 
+     * @param spawnPosition The position of spawn.
+     * @param hitbox The area of map where the player can hit the nemey.
+     * @param movementSpeedfinal the speed of movement of the enemy.
+     * @param health The health of the enemy.
+     * @param name The name of the enemy.
+     * @param target The Optional Position of the player to hit.
      */
     public RangedEnemy(
         final Vector2dc spawnPosition, 
@@ -44,7 +51,7 @@ public class RangedEnemy extends AbstractEnemy {
         } else if (CollisionLogic.areInRange(this, getTarget().get(), MIN_DISTANCE)) {
             return direction(this.getPosition(), getTarget().get().getPosition()).normalize();
         }
-        return new Vector2d(0 ,0);
+        return new Vector2d(0, 0);
     }
 
 }

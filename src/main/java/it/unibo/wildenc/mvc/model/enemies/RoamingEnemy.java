@@ -17,15 +17,14 @@ public class RoamingEnemy extends AbstractEnemy {
     private final Random rand;
     private Vector2d actualTarget;
 
-    private void updateDirection() {
-        this.actualTarget = new Vector2d(
-            rand.nextInt() * STEP_FOR_CHANGE_DIRECTION + this.getPosition().x(), 
-            rand.nextInt() * STEP_FOR_CHANGE_DIRECTION + this.getPosition().y()
-        );
-    }
-
     /**
-     * {@inheritDoc}
+     * Create a new roaming Enemey.
+     * 
+     * @param spawnPosition The position of spawn.
+     * @param hitbox The area of map where the player can hit the nemey.
+     * @param movementSpeedfinal the speed of movement of the enemy.
+     * @param health The health of the enemy.
+     * @param name The name of the enemy.
      */
     public RoamingEnemy(
         final Vector2dc spawnPosition, 
@@ -46,6 +45,13 @@ public class RoamingEnemy extends AbstractEnemy {
         updateDirection();
         this.steps = 0;
         this.startTime = System.currentTimeMillis();
+    }
+
+    private void updateDirection() {
+        this.actualTarget = new Vector2d(
+            rand.nextInt() * STEP_FOR_CHANGE_DIRECTION + this.getPosition().x(), 
+            rand.nextInt() * STEP_FOR_CHANGE_DIRECTION + this.getPosition().y()
+        );
     }
 
     /**

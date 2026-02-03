@@ -4,7 +4,8 @@ import java.util.HashSet;
 import java.util.Optional;
 import org.joml.Vector2d;
 import org.joml.Vector2dc;
-import it.unibo.wildenc.mvc.model.*;
+import it.unibo.wildenc.mvc.model.Enemy;
+import it.unibo.wildenc.mvc.model.MapObject;
 import it.unibo.wildenc.mvc.model.entities.AbstractEntity;
 
 /**
@@ -17,11 +18,11 @@ public abstract class AbstractEnemy extends AbstractEntity implements Enemy {
 
     /**
      * Create a new general Enemey.
+     * 
      * @param spawnPosition The position of spawn.
      * @param hitbox The area of map where the player can hit the nemey.
      * @param movementSpeedfinal the speed of movement of the enemy.
      * @param health The health of the enemy.
-     * @param weapons The weapon that can hit the player.
      * @param name The name of the enemy.
      * @param target The Optional Position of the player to hit.
      */
@@ -56,6 +57,7 @@ public abstract class AbstractEnemy extends AbstractEntity implements Enemy {
 
     /**
      * Calculate the direction betwen two vectors.
+     * 
      * @param v1 Destinatino vector.
      * @param v2 Origin vector.
      * @return The vector.

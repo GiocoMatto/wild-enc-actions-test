@@ -9,24 +9,31 @@ import it.unibo.wildenc.mvc.model.EnemyFactory;
 import it.unibo.wildenc.mvc.model.MapObject;
 import it.unibo.wildenc.mvc.model.weaponary.weapons.WeaponFactory;
 
+/**
+ * {@inheritDoc}.
+ */
 public class EnemyFactoryImpl implements EnemyFactory {
     /* Enemy */
     private static final double BASE_HITBOX_ENEMY = 5;
     private static final double BASE_VELOCITY_ENEMY = 1;
-    private static final int BASE_HEALTH_ENEMY = 100;
     /* Projectile */
     private static final double BASE_COOLDOWN_PROJECTILE = 3;
     private static final double BASE_DAMAGE_PROJECTILE = 25;
     private static final double BASE_HITBOX_PROJECTILE = 2;
     private static final double BASE_VELOCITY_PROJECTILE = 3;
     private static final double BASE_TIME_TO_LIVE_PROJECTILE = 15;
-    private static final int BASE_BURST_PROJECTILE =5;
+    private static final int BASE_BURST_PROJECTILE = 5;
 
     private final WeaponFactory wf;
     private final MapObject target;
 
-    public EnemyFactoryImpl(final MapObject taget) {
-        this.target = taget;
+    /**
+     * Create a Factory that associate the same target to all enemys.
+     * 
+     * @param target MapObject to attack.
+     */
+    public EnemyFactoryImpl(final MapObject target) {
+        this.target = target;
         this.wf = new WeaponFactory();
     }
 
@@ -54,12 +61,12 @@ public class EnemyFactoryImpl implements EnemyFactory {
      * {@inheritDoc}
      */
     @Override
-    public Enemy CloseRangeEnemy(Vector2d spawnPosition, String name) {
+    public Enemy closeRangeEnemy(final Vector2d spawnPosition, final int healt, final String name) {
         final Enemy e = new CloseRangeEnemy(
             spawnPosition, 
             BASE_HITBOX_ENEMY, 
             BASE_VELOCITY_ENEMY, 
-            BASE_HEALTH_ENEMY, 
+            healt, 
             name, 
             Optional.of(target)
         );
@@ -67,13 +74,16 @@ public class EnemyFactoryImpl implements EnemyFactory {
         return e;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public Enemy CloseRangeFastEnemy(Vector2d spawnPosition, String name) {
+    public Enemy closeRangeFastEnemy(final Vector2d spawnPosition, final int healt, final String name) {
         final Enemy e = new CloseRangeEnemy(
             spawnPosition, 
             BASE_HITBOX_ENEMY, 
             2 * BASE_VELOCITY_ENEMY, 
-            BASE_HEALTH_ENEMY, 
+            healt, 
             name, 
             Optional.of(target)
         );
@@ -81,13 +91,16 @@ public class EnemyFactoryImpl implements EnemyFactory {
         return e;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public Enemy RangedEnemy(Vector2d spawnPosition, String name) {
+    public Enemy rangedEnemy(final Vector2d spawnPosition, final int healt, final String name) {
         final Enemy e = new RangedEnemy(
             spawnPosition, 
             BASE_HITBOX_ENEMY, 
             BASE_VELOCITY_ENEMY, 
-            BASE_HEALTH_ENEMY, 
+            healt, 
             name, 
             Optional.of(target)
         );
@@ -95,13 +108,16 @@ public class EnemyFactoryImpl implements EnemyFactory {
         return e;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public Enemy RangedDoubleShotEnemy(Vector2d spawnPosition, String name) {
+    public Enemy rangedDoubleShotEnemy(final Vector2d spawnPosition, final int healt, final String name) {
         final Enemy e = new RangedEnemy(
             spawnPosition, 
             BASE_HITBOX_ENEMY, 
             BASE_VELOCITY_ENEMY, 
-            BASE_HEALTH_ENEMY, 
+            healt, 
             name, 
             Optional.of(target)
         );
@@ -110,26 +126,32 @@ public class EnemyFactoryImpl implements EnemyFactory {
         return e;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public Enemy RoamingEnemy(Vector2d spawnPosition, String name) {
+    public Enemy roamingEnemy(final Vector2d spawnPosition, final int healt, final String name) {
         final Enemy e = new RoamingEnemy(
             spawnPosition, 
             BASE_HITBOX_ENEMY, 
             BASE_VELOCITY_ENEMY, 
-            BASE_HEALTH_ENEMY, 
+            healt, 
             name
         );
         addMeleeWeaponTo(e);
         return e;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public Enemy RoamingLongLifeEnemy(Vector2d spawnPosition, String name) {
+    public Enemy roamingLongLifeEnemy(final Vector2d spawnPosition, final int healt, final String name) {
         final Enemy e = new RoamingEnemy(
             spawnPosition, 
             BASE_HITBOX_ENEMY, 
             BASE_VELOCITY_ENEMY, 
-            BASE_HEALTH_ENEMY + BASE_HEALTH_ENEMY / 2, 
+            healt + healt / 2, 
             name
         );
         addMeleeWeaponTo(e);

@@ -20,8 +20,7 @@ public class SimpleCircleRender implements SpriteRender {
     @Override
     public void render(MapObjViewData objectData) {
         final var draw = canvas.getGraphicsContext2D();
-        draw.setFill(getColor(objectData));
-        draw.fillOval((objectData.x()) + canvas.widthProperty().get() / 2, (objectData.y()) + canvas.heightProperty().get() / 2, 10, 10);
+cc
     }
 
     @Override

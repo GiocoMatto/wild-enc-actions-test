@@ -3,20 +3,18 @@ package it.unibo.wildenc.mvc.controller.impl;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import org.joml.Vector2d;
 
 import it.unibo.wildenc.mvc.controller.api.Engine;
 import it.unibo.wildenc.mvc.controller.api.MapObjViewData;
-import it.unibo.wildenc.mvc.model.Enemy;
+import it.unibo.wildenc.mvc.model.Entity;
 import it.unibo.wildenc.mvc.model.GameMap;
 import it.unibo.wildenc.mvc.model.MapObject;
-import it.unibo.wildenc.mvc.model.Player;
 import it.unibo.wildenc.mvc.model.GameMap.PlayerType;
 import it.unibo.wildenc.mvc.model.map.GameMapImpl;
-import it.unibo.wildenc.mvc.model.weaponary.projectiles.Projectile;
-import it.unibo.wildenc.mvc.model.weaponary.projectiles.ProjectileStats.ProjStatType;
 import it.unibo.wildenc.mvc.view.api.GameView;
 
 public class EngineImpl implements Engine{
@@ -42,12 +40,28 @@ public class EngineImpl implements Engine{
 
     private Collection<MapObjViewData> getObjectViewData(Collection<MapObject> c) {
         return c.stream()
-            .map(e -> new MapObjViewData(e.getName(), e.getPosition().x(), e.getPosition().y()))
+            .map(mapObj -> {
+                Optional<Double> dirX = Optional.empty();
+                Optional<Double> dirY = Optional.empty();
+
+                if(mapObj instanceof Entity entity) {
+                    dirX = Optional.of(entity.getDirection().x());
+                    dirY = Optional.of(entity.getDirection().y());
+                }
+
+                return new MapObjViewData(
+                    mapObj.getName(), 
+                    mapObj.getPosition().x(), 
+                    mapObj.getPosition().y(), 
+                    dirX, 
+                    dirY
+                );
+            }) 
             .toList();
     }
 
     public final class GameLoop extends Thread {
-        private static final long SLEEP_TIME = 10;
+        private static final long SLEEP_TIME = 20;
 
         @Override
         public void run() {
@@ -64,11 +78,10 @@ public class EngineImpl implements Engine{
                     e.printStackTrace();
                 }
                 /* update model and other */
-                gm.updateEntities(System.nanoTime() - timeUpdateView, new Vector2d(0, 0));
+                gm.updateEntities(System.nanoTime() - timeUpdateView, new Vector2d(0, 1));
                 /* update enemys in model */
             }
         }
-
     }
 
 }

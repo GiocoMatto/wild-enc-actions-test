@@ -9,7 +9,6 @@ import it.unibo.wildenc.mvc.view.api.GameView;
 import it.unibo.wildenc.mvc.view.api.SpriteRender;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -74,7 +73,7 @@ public class GameViewImpl implements GameView {
     @Override
     public void lost() {
         // JOptionPane.showMessageDialog(frame, "You lost!");
-        System.exit(0);
+        // System.exit(0);
     }
 
     /**

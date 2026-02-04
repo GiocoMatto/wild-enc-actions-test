@@ -64,7 +64,7 @@ public interface GameMap {
                 10, 
                 10, 
                 2,
-                2,
+                20,
                 100,
                 1,
                 p,

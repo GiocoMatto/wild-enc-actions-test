@@ -77,15 +77,6 @@ public class EngineImpl implements Engine{
                     final long now = System.nanoTime();
                     final long dt = now - lastTime;
                     lastTime = now;
-                    view.updateSprites(model.getAllObjects().stream()
-                        .map(e -> new MapObjViewData(
-                            "null", 
-                            e.getPosition().x(), 
-                            e.getPosition().y()
-                        ))
-                        .iterator()
-                    );
-                    Thread.sleep(SLEEP_TIME);
                     final var move = movements.poll();
                     model.updateEntities(dt, (move != null) ? move.getVector() : new Vector2d(0, 0));
                     /**
@@ -99,8 +90,19 @@ public class EngineImpl implements Engine{
                     *  running = false;
                     * }
                     */
+                    view.updateSprites(model.getAllObjects().stream()
+                        .map(e -> new MapObjViewData(
+                            "null", 
+                            e.getPosition().x(), 
+                            e.getPosition().y()
+                        ))
+                        .iterator()
+                    );
+                    Thread.sleep(SLEEP_TIME);
                 }
-            } catch (InterruptedException e1) { }
+            } catch (InterruptedException e1) {
+                Thread.currentThread().interrupt();
+            }
         }
 
     }

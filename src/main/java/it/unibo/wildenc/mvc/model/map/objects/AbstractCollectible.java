@@ -27,7 +27,7 @@ public abstract class AbstractCollectible extends AbstractMapObject implements C
      * {@inheritDoc}
      */
     @Override
-    public int apply(Player p) {
-        throw new UnsupportedOperationException("Not yet implemented."); // TODO
+    public int getValue() {
+        return this.value;
     }
 }

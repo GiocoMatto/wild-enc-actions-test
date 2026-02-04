@@ -26,6 +26,11 @@ public interface Player extends Entity {
      */
     void addExp(int amount);
 
+    void addMoney(int amount);
+    int getMoney();
+
+    void heal(int amount);
+
     /**
      * Sets the movement direction of the player.
      * This is typically called by an Input Controller.

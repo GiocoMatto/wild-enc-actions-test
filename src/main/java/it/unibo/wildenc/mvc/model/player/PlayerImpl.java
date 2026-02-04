@@ -16,6 +16,7 @@ public class PlayerImpl extends AbstractEntity implements Player {
     private final Vector2d inputDirection = new Vector2d(0, 0); //ultima direzione richiesta dall'utente
     private int experience;
     private int level;
+    private int money;
 
     /**
      * Creates a new Player.
@@ -29,6 +30,7 @@ public class PlayerImpl extends AbstractEntity implements Player {
         super(startPos, hitbox, speed, maxHealth, new LinkedHashSet<>());
         this.experience = 0;
         this.level = 1;
+        this.money = 0;
     }
 
     @Override
@@ -68,6 +70,22 @@ public class PlayerImpl extends AbstractEntity implements Player {
     @Override
     public void addExp(final int amount) {
         this.experience = this.experience + amount;
+    }
+
+    @Override
+    public void addMoney(int amount) {
+        this.money = this.money + amount;
+    }
+
+    @Override
+    public int getMoney() {
+        return this.money;
+    }
+
+    @Override
+    public void heal(int amount) {
+        int newHealth = Math.min(this.getMaxHealth(), this.getCurrentHealth() + amount);
+        this.setHealth(newHealth);
     }
 
 }

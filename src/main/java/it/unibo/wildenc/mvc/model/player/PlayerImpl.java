@@ -49,8 +49,8 @@ public class PlayerImpl extends AbstractEntity implements Player {
     }
 
     @Override
-    public void getExp(final int exp) {
-        this.experience += exp;
+    public int getExp() {
+        return this.experience;
     }
 
     @Override

@@ -78,11 +78,10 @@ public class EnemySpawnerImpl implements EnemySpawner {
      */
     @Override
     public Set<Enemy> spawn(final Player p, final int enemyCount, final double tick) {
-        // final int target = BASE_ENEMY + Math.pow(p.getExp(), LOAD_FACTOR);
-        // final int n = Math.max(0, target - enemycount);
-        final int n = 10;
+        final int target = BASE_ENEMY + (int) Math.pow(p.getExp(), ENEMY_LOAD_FACTOR);
+        final int n = Math.max(0, target - enemyCount);
         this.totalTime = (int) (this.totalTime + tick);
-        final int life = START_LIFE + (int) (totalTime * ENEMY_LOAD_FACTOR);
+        final int life = START_LIFE + (int) (totalTime * LIFE_LOAD_FACTOR);
         return IntStream.range(0, n)
             .mapToObj(num -> {
                 final Vector2d origin = new Vector2d(p.getPosition()).add(switch (rand.nextInt(2)) {

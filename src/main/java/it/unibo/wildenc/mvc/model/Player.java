@@ -19,7 +19,7 @@ public interface Player extends Entity {
      * * @param exp 
      * the amount of experience to gain
      */
-    void getExp(int exp);
+    int getExp();
 
     /**
      * Sets the movement direction of the player.

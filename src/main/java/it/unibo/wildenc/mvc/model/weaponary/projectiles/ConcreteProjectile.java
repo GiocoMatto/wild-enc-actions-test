@@ -2,6 +2,7 @@ package it.unibo.wildenc.mvc.model.weaponary.projectiles;
 
 import org.joml.Vector2dc;
 
+import it.unibo.wildenc.mvc.model.Entity;
 import it.unibo.wildenc.mvc.model.map.objects.AbstractMovable;
 import it.unibo.wildenc.mvc.model.weaponary.AttackContext;
 import it.unibo.wildenc.mvc.model.weaponary.projectiles.ProjectileStats.ProjStatType;
@@ -25,13 +26,12 @@ public class ConcreteProjectile extends AbstractMovable implements Projectile {
      *  a {@link AttackInfo}
      */
     public ConcreteProjectile(
-        final ProjectileStats pStats,
-        final AttackContext baseMovementInfo
+        final AttackContext atkInfo,
+        final ProjectileStats pStats
     ) {
-        super(baseMovementInfo.getLastPosition(), pStats.getStatValue(ProjStatType.HITBOX), pStats.getStatValue(ProjStatType.VELOCITY));
+        super(pStats.getOwner().getPosition(), pStats.getStatValue(ProjStatType.HITBOX), pStats.getStatValue(ProjStatType.VELOCITY));
         this.projStats = pStats;
-        this.attackInformation = baseMovementInfo;
-        this.attackInformation.setVelocity(pStats.getStatValue(ProjStatType.VELOCITY));
+        this.attackInformation = atkInfo;
     }
 
     /**
@@ -81,10 +81,25 @@ public class ConcreteProjectile extends AbstractMovable implements Projectile {
     }
 
     /**
-     * {@inhritDoc}
+     * {@inheritDoc}
      */
     @Override
     public Vector2dc getDirection() {
         return this.attackInformation.getDirectionVersor();
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Entity getOwner() {
+        return this.projStats.getOwner();
+    }
+
+    @Override
+    public String getName() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getName'");
+    }
 }
+

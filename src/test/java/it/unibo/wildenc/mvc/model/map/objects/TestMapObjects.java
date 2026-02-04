@@ -2,41 +2,47 @@ package it.unibo.wildenc.mvc.model.map.objects;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.joml.Vector2d;
+import it.unibo.wildenc.mvc.model.MapObject;
+
 import org.junit.jupiter.api.Test;
 
-import static it.unibo.wildenc.mvc.model.map.TestingVariables.MapObjectTest;
-import static it.unibo.wildenc.mvc.model.map.TestingVariables.MovableObjectTest;
-import static it.unibo.wildenc.mvc.model.map.TestingVariables.TEST_X;
-import static it.unibo.wildenc.mvc.model.map.TestingVariables.TEST_Y;
-import static it.unibo.wildenc.mvc.model.map.TestingVariables.TEST_HITBOX;
-import static it.unibo.wildenc.mvc.model.map.TestingVariables.TEST_SPEED;
-import static it.unibo.wildenc.mvc.model.map.TestingVariables.TEST_TIME_SECONDS;
-import static it.unibo.wildenc.mvc.model.map.TestingVariables.TEST_DIRECTION_RIGHT;
+import static it.unibo.wildenc.mvc.model.map.MapTestingCommons.TEST_TIME_SECONDS;
+import static it.unibo.wildenc.mvc.model.map.MapTestingCommons.calculateMovement;
 
+import it.unibo.wildenc.mvc.model.map.MapTestingCommons.TestDirections;
+import it.unibo.wildenc.mvc.model.map.MapTestingCommons.TestObject;
+
+/**
+ * Testing for the {@link MapObject}s.
+ */
 public class TestMapObjects {
 
     @Test
-    void TestMapObject() {
-        var obj = new MapObjectTest(new Vector2d(0, 10), 1);
-        assertEquals(0, obj.getPosition().x());
-        assertEquals(10, obj.getPosition().y());
+    void mapObjectShouldBeCreatedWithCorrectCoordinates() {
+        final TestObject to = TestObject.StaticObject;
+        final var obj = to.getAsStaticObj();
+        assertEquals(to.getPos().x(), obj.getPosition().x());
+        assertEquals(to.getPos().y(), obj.getPosition().y());
+        assertEquals(to.getHitbox(), obj.getHitbox());
     }
 
     @Test
-    void TestMovableObject() {
-        // Test object creation.
-        var obj = new MovableObjectTest(new Vector2d(TEST_X, TEST_Y), TEST_HITBOX, TEST_SPEED);
-        assertEquals(TEST_X, obj.getPosition().x());
-        assertEquals(TEST_Y, obj.getPosition().y());
-        // Test object movement with no direction, no change expected because direction was not changed.
+    void movableObjectWithNoDirectionShouldNotMove() {
+        final TestObject to = TestObject.MovableObject;
+        final var obj = to.getAsMovableObj();
         obj.updatePosition(TEST_TIME_SECONDS);
-        assertEquals(TEST_X, obj.getPosition().x());
-        assertEquals(TEST_Y, obj.getPosition().y());
+        assertEquals(to.getPos().x(), obj.getPosition().x());
+        assertEquals(to.getPos().y(), obj.getPosition().y());
+    }
+
+    @Test
+    void movableObjectWithDirectionShouldMoveCorrectly() {
+        final TestObject to = TestObject.MovableObject;
+        final TestDirections td = TestDirections.RIGHT;
+        final var obj = to.getAsMovableObj();
         // Test movement with a direction.
-        obj.setDirection(TEST_DIRECTION_RIGHT);
+        obj.setDirection(td.getVect());
         obj.updatePosition(TEST_TIME_SECONDS);
-        assertEquals(TEST_X + TEST_DIRECTION_RIGHT.x() * TEST_SPEED * TEST_TIME_SECONDS, obj.getPosition().x());
-        assertEquals(TEST_Y + TEST_DIRECTION_RIGHT.y() * TEST_SPEED * TEST_TIME_SECONDS, obj.getPosition().y());
+        assertEquals(calculateMovement(to.getPos(), td.getVect(), to.getSpeed(), TEST_TIME_SECONDS), obj.getPosition());
     }
 }

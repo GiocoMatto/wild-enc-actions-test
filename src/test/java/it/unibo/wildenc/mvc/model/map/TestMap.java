@@ -1,73 +1,149 @@
 package it.unibo.wildenc.mvc.model.map;
 
-import static it.unibo.wildenc.mvc.model.map.TestingVariables.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import java.util.LinkedHashSet;
-
-import org.joml.Vector2d;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
 import it.unibo.wildenc.mvc.model.GameMap;
 import it.unibo.wildenc.mvc.model.MapObject;
 import it.unibo.wildenc.mvc.model.Player;
+import it.unibo.wildenc.mvc.model.Weapon;
+import it.unibo.wildenc.mvc.model.enemies.EnemySpawnerImpl;
+import it.unibo.wildenc.mvc.model.Enemy;
 
+import it.unibo.wildenc.mvc.model.map.MapTestingCommons.MapObjectTest;
+import it.unibo.wildenc.mvc.model.map.MapTestingCommons.MovableObjectTest;
+import it.unibo.wildenc.mvc.model.map.MapTestingCommons.TestDirections;
+import it.unibo.wildenc.mvc.model.map.MapTestingCommons.TestObject;
+import it.unibo.wildenc.mvc.model.map.MapTestingCommons.TestWeapon;
+
+import static it.unibo.wildenc.mvc.model.map.MapTestingCommons.TEST_SIMULATION_TICKS;
+import static it.unibo.wildenc.mvc.model.map.MapTestingCommons.TEST_TIME_NANOSECONDS;
+import static it.unibo.wildenc.mvc.model.map.MapTestingCommons.TEST_TIME_SECONDS;
+import static it.unibo.wildenc.mvc.model.map.MapTestingCommons.calculateMovement;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.Optional;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.LinkedHashSet;
+
+import org.junit.jupiter.api.Test;
+
+/**
+ * Testing for {@link GameMap}.
+ */
 public class TestMap {
-    
-    private GameMap map;
-    private MapObject mapObj = new MapObjectTest(new Vector2d(TEST_X, TEST_Y), TEST_HITBOX);
-    private MovableObjectTest movableObj = new MovableObjectTest(new Vector2d(TEST_X, TEST_Y), TEST_HITBOX, TEST_SPEED);
-    private Player player = new PlayerTest(TEST_DIRECTION_DOWN, TEST_HITBOX, TEST_SPEED, TEST_HITBOX, new LinkedHashSet<>());
 
-    @BeforeEach
-    void setup() {
-        map = new GameMapImpl(player);
-        movableObj.setDirection(TEST_DIRECTION_UP);
+    private GameMap getEmptyMapWithObjects(final Player player, final Set<MapObject> objs) {
+        return new GameMapImpl(player, (p, s) -> Set.of(), objs);
+    }
+
+    private GameMap getMapWithEnemySpawner(final Player player) {
+        return new GameMapImpl(player, new EnemySpawnerImpl(player), Set.of());
+    }
+
+    private Player getEmptyPlayer() {
+        return TestObject.PlayerObject.getAsPlayer();
+    }
+
+    private Player getArmedPlayer(final Function<Player, Weapon> w) {
+        final Player p = getEmptyPlayer();
+        p.addWeapon(w.apply(p));
+        return p;
     }
 
     @Test
-    void testMapCreation() {
-        assertTrue(map.getAllObjects().isEmpty());
+    void objectsShouldBeAddedToMap() {
+        final TestObject objConf = TestObject.StaticObject;
+        final MapObject obj = objConf.getAsStaticObj();
+        final GameMap map = getEmptyMapWithObjects(getEmptyPlayer(), Set.of(obj));
+
+        assertTrue(map.getAllObjects().contains(obj));
     }
 
     @Test
-    void testAddingObjects() {
-        // Static object
-        map.addObject(mapObj);
-        assertEquals(1, map.getAllObjects().size());
-        assertTrue(map.getAllObjects().contains(mapObj));
-        // Movable object
-        map.addObject(movableObj);
-        assertEquals(2, map.getAllObjects().size());
-        assertTrue(map.getAllObjects().contains(movableObj));
+    void staticObjectsShouldNotMove() {
+        final TestObject objConf = TestObject.StaticObject;
+        final MapObjectTest obj = objConf.getAsStaticObj();
+        final GameMap map = getEmptyMapWithObjects(getEmptyPlayer(), Set.of(obj));
+
+        map.updateEntities(TEST_TIME_NANOSECONDS, TestDirections.STILL.getVect());
+
+        assertEquals(obj.getPosition(), objConf.getPos());
     }
 
     @Test
-    void testMovementOnMap() {
-        testAddingObjects();
-        var oldPos = new Vector2d(movableObj.getPosition());
-        map.updateEntities(TEST_TIME_NANOSECONDS);
-        assertEquals(oldPos.x() + TEST_SPEED * TEST_TIME_SECONDS * TEST_DIRECTION_UP.x(), movableObj.getPosition().x());
-        assertEquals(oldPos.y() + TEST_SPEED * TEST_TIME_SECONDS * TEST_DIRECTION_UP.y(), movableObj.getPosition().y());
+    void movableObjWithNoDirectionShouldNotMove() {
+        final TestObject objConf = TestObject.MovableObject;
+        final MovableObjectTest obj = objConf.getAsMovableObj();
+        final GameMap map = getEmptyMapWithObjects(getEmptyPlayer(), Set.of(obj));
+
+        map.updateEntities(TEST_TIME_NANOSECONDS, TestDirections.STILL.getVect());
+
+        assertEquals(obj.getPosition(), objConf.getPos());
     }
 
     @Test
-    void testCollisions() {
-        testAddingObjects();
-        // Check that two objects spawned at the same coordinate are colliding
-        assertTrue(CollisionLogic.areColliding(movableObj, mapObj));
-        // Now move the Movable object and check if they are not colliding anymore
-        movableObj.setDirection(TEST_DIRECTION_DOWN);
-        map.updateEntities(TEST_TIME_NANOSECONDS);
-        assertFalse(CollisionLogic.areColliding(movableObj, mapObj));
+    void movableObjWithDirectionShouldMoveCorrectly() {
+        final TestObject objConf = TestObject.MovableObject;
+        final TestDirections direction = TestDirections.RIGHT;
+        final MovableObjectTest obj = objConf.getAsMovableObj();
+        final GameMap map = getEmptyMapWithObjects(getEmptyPlayer(), Set.of(obj));
+
+        obj.setDirection(direction.getVect());
+        map.updateEntities(TEST_TIME_NANOSECONDS, TestDirections.STILL.getVect());
+
+        assertNotEquals(objConf.getPos(), obj.getPosition(), "Object did not move");
+        assertEquals(
+            calculateMovement(objConf.getPos(), direction.getVect(), objConf.getSpeed(), TEST_TIME_SECONDS), 
+            obj.getPosition(), 
+            "Object moved wrong"
+        );
     }
 
     @Test
-    void testProjectilesCollisions() {
-        testAddingObjects();
-        // TODO: whole test lol
+    void whenEnemyProjectileHitboxTouchesPlayerHitboxPlayerHealthShouldDecrease() {
+        final TestObject enemyConf = TestObject.EnemyObject;
+        final Player p = getEmptyPlayer();
+        final Enemy enemy = enemyConf.getAsCloseRangeEnemy(new LinkedHashSet<>(), "testEnemy", Optional.of(p));
+        final var weapon = TestWeapon.DEFAULT_WEAPON.getAsWeapon(enemy, p.getPosition());
+        final GameMap map = getEmptyMapWithObjects(p, Set.of(enemy));
+
+        enemy.addWeapon(weapon);
+
+        // Enemy should arrive in player hitbox at the 20th tick
+        for (int i = 0; i < TEST_SIMULATION_TICKS; i++) {
+            map.updateEntities(TEST_TIME_NANOSECONDS, TestDirections.STILL.getVect());
+        }
+
+        assertTrue(p.getCurrentHealth() < p.getMaxHealth(), "Player health didn't change.");
+        assertTrue(enemy.getCurrentHealth() == enemy.getMaxHealth(), "Enemy health must not change.");
     }
+
+    @Test
+    void whenPlayerProjectileHitboxTouchesEnemyHitboxEnemyHealthShouldDecrease() {
+        final TestObject enemyConf = TestObject.EnemyObject;
+        final Player p = getArmedPlayer(o -> TestWeapon.DEFAULT_WEAPON.getAsWeapon(o, enemyConf.getPos()));
+        final Enemy enemy = enemyConf.getAsCloseRangeEnemy(new LinkedHashSet<>(), "testEnemy", Optional.of(p));
+        final GameMap map = getEmptyMapWithObjects(p, Set.of(enemy));
+
+        // Enemy should arrive in player hitbox at the 20th tick
+        for (int i = 0; i < TEST_SIMULATION_TICKS; i++) {
+            map.updateEntities(TEST_TIME_NANOSECONDS, TestDirections.STILL.getVect());
+        }
+
+        assertTrue(p.getCurrentHealth() == p.getMaxHealth(), "Player health must not change.");
+        assertTrue(enemy.getCurrentHealth() < enemyConf.getHealth(), "Enemy health didn't change.");
+    }
+
+    @Test
+    void mapSpawnsEnemiesCorrectly() {
+        final GameMap map = getMapWithEnemySpawner(getEmptyPlayer());
+        final var initialSize = map.getAllObjects().size();
+
+        map.spawnEnemies();
+
+        assertTrue(map.getAllObjects().size() > initialSize, "No enemies were spawend.");
+    }
+
 }

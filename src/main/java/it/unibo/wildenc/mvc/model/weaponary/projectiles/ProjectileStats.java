@@ -4,9 +4,11 @@ import java.util.LinkedHashSet;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.function.BiFunction;
+import java.util.function.Supplier;
 
 import org.joml.Vector2d;
 
+import it.unibo.wildenc.mvc.model.Entity;
 import it.unibo.wildenc.mvc.model.weaponary.AttackContext;
 
 /**
@@ -87,7 +89,9 @@ public class ProjectileStats {
     private final Set<ProjStat> projStats = new LinkedHashSet<>();
     private final double timeToLive;
     private final String projID;
+    private final Entity projOwner;
     private final BiFunction<Double, AttackContext, Vector2d> projMovementFunction;
+    private Supplier<Vector2d> positionToFollow;
 
     /**
      * Constructor for the class. This will be passed to a Projectile when it will be generated,
@@ -97,6 +101,7 @@ public class ProjectileStats {
      * @param id an identifier for the Projectile
      * @param baseVelocity the base movement velocity of the Projectile (could be angular in case of orbitals)
      * @param ttl the time of life of the Projectile, after which it's considered gone
+     * @param ownedBy the {@link Entity} who generated this Projectile
      * @param moveFunc the function that defines the Projectile's movement
      */
     public ProjectileStats(
@@ -105,13 +110,18 @@ public class ProjectileStats {
         final double baseVelocity,
         final double ttl,
         final String id,
+        final Entity ownedBy,
+        final Supplier<Vector2d> toFollow,
         final BiFunction<Double, AttackContext, Vector2d> moveFunc
+
     ) {
         projStats.add(new ProjStat(ProjStatType.DAMAGE, baseDamage));
         projStats.add(new ProjStat(ProjStatType.HITBOX, baseRadius));
         projStats.add(new ProjStat(ProjStatType.VELOCITY, baseVelocity));
         this.timeToLive = ttl;
         this.projID = id;
+        this.projOwner = ownedBy;
+        this.positionToFollow = toFollow;
         this.projMovementFunction = moveFunc;
     }
 
@@ -143,6 +153,10 @@ public class ProjectileStats {
         return this.projMovementFunction;
     }
 
+    public Supplier<Vector2d> getPositionToHit() {
+        return this.positionToFollow;
+    }
+
     /**
      * Getter method for the ID of the Projectile.
      * Every Projectile has an ID because it will be useful to differentiate
@@ -162,6 +176,14 @@ public class ProjectileStats {
      */
     public double getTTL() {
         return this.timeToLive;
+    }
+
+    /**
+     * Getter method for the owner of the projectile.
+     * @return the {@link Entity} that generated this Projectile.
+     */
+    public Entity getOwner() {
+        return this.projOwner;
     }
 
     /**

@@ -1,5 +1,6 @@
 package it.unibo.wildenc.mvc.model.weaponary.projectiles;
 
+import it.unibo.wildenc.mvc.model.Entity;
 import it.unibo.wildenc.mvc.model.Movable;
 
 /**
@@ -24,4 +25,10 @@ public interface Projectile extends Movable {
      * @return true if the projectile is still alive, false otherwise.
      */
     boolean isAlive();
+
+    /**
+     * Method to get the owner of a specific Projectile
+     * @return the {@link Entity} who generated the Projectile.
+     */
+    public Entity getOwner();
 }

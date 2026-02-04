@@ -10,9 +10,9 @@ import org.joml.Vector2dc;
  * Class for representing important information used in an attack.
  */
 public class AttackContext {
-    private Vector2d lastPosition;
-    private double atkDirection;
-    private Optional<Supplier<Vector2d>> toFollow;
+    private Vector2dc lastPosition;
+    private Vector2dc atkVersorDirection;
+    private Supplier<Vector2d> toFollow;
     private double velocity;
 
     /**
@@ -21,20 +21,21 @@ public class AttackContext {
      * @param entityToFollow an {@link Optional} of a {@link Supplier} for a position to follow.
      */
     public AttackContext(
-        final Vector2d initialPosition,
-        final double initialDirection,
-        Optional<Supplier<Vector2d>> entityToFollow
+        final Vector2dc initialPosition,
+        final double velocity,
+        Supplier<Vector2d> postionToFollow
     ) {
         this.lastPosition = initialPosition;
-        this.atkDirection = Math.toRadians(initialDirection % 360);
-        this.toFollow = entityToFollow;
+        this.toFollow = postionToFollow;
+        this.velocity = velocity;
+        this.atkVersorDirection = new Vector2d(this.toFollow.get()).sub(initialPosition).normalize();
     }
 
     /**
      * Getter method for the position the attack has to follow.
      * @return the {@link Optional} of a {@link Supplier} for a position to follow. Could be empty.
      */
-    public Optional<Supplier<Vector2d>> getFollowing() {
+    public Supplier<Vector2d> getFollowing() {
         return this.toFollow;
     }
 
@@ -43,10 +44,15 @@ public class AttackContext {
      * @return a {@link Vector2d} representing the direction versor the attack has to follow.
      */
     public Vector2dc getDirectionVersor() {
-        return new Vector2d(
-            Math.cos(atkDirection),
-            Math.sin(atkDirection)
-        );
+        return this.atkVersorDirection;
+    }
+
+    /**
+     * Getter method for the angle which the attack has to follow.
+     * @return the angle of the direction of the attack.
+     */
+    public double getActualAngle() {
+        return Math.toRadians(Math.acos(this.atkVersorDirection.x()));
     }
 
     /**
@@ -54,17 +60,15 @@ public class AttackContext {
      * @return the point contained in toFollow if present, if not the last position occupied by the Projectile.
      */
     public Vector2dc getLastPosition() {
-        return toFollow.isPresent() ? toFollow.get().get() : lastPosition;
+        return lastPosition;
     }
 
     /**
-     * Method for updating the last occupied position by the Projectile, if toFollow isn't specified.
+     * Method for updating the last occupied position by the Projectile.
      * @param newPos the new position occupied by the Projectile.
      */
     public void updateLastPosition(final Vector2dc newPos) {
-        if(!toFollow.isPresent()) {
-            this.lastPosition = new Vector2d(newPos);
-        }
+        this.lastPosition = new Vector2d(newPos);
     }
 
     /**
@@ -72,7 +76,10 @@ public class AttackContext {
      * @param newDirection the new direction, in degrees, to be set.
      */
     public void setDirection(final double newDirection) {
-        this.atkDirection = Math.toRadians(newDirection % 360);
+        this.atkVersorDirection = new Vector2d(
+            Math.cos(Math.toRadians(newDirection)),
+            Math.sin(Math.toRadians(newDirection))
+        );
     }
 
     /**
@@ -90,5 +97,13 @@ public class AttackContext {
      */
     public double getVelocity() {
         return this.velocity;
+    }
+
+    /**
+     * Method to create a protective copy of this class.
+     * @return a copy of this object.
+     */
+    public AttackContext protectiveCopy() {
+        return new AttackContext(this.lastPosition, this.velocity, this.toFollow);
     }
 }

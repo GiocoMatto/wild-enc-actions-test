@@ -187,7 +187,7 @@ public class GameMapImpl implements GameMap {
             .map(e -> (Collectible) e)
             .filter(c -> CollisionLogic.areColliding(player, c))
             .forEach(c -> {
-                c.apply(player);
+                player.addExp(c.getValue());
                 objToRemove.add(c);
             });
     }

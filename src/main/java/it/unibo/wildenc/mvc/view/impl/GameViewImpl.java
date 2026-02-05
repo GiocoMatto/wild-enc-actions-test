@@ -2,16 +2,23 @@ package it.unibo.wildenc.mvc.view.impl;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import it.unibo.wildenc.mvc.controller.api.Engine;
 import it.unibo.wildenc.mvc.controller.api.MapObjViewData;
 
 import it.unibo.wildenc.mvc.view.api.GameView;
-import it.unibo.wildenc.mvc.view.api.ViewRenderer;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -121,6 +128,35 @@ public class GameViewImpl implements GameView {
             System.out.println("Hai scelto: " + selected);
             stage.close();
         }
+    }
+
+    @Override
+    public void pokedexView(Map<String, Integer> pokedexView) {
+        ListView<Map.Entry<String, Integer>> listView = new ListView<>();
+        listView.getItems().addAll(pokedexView.entrySet());
+        listView.setCellFactory(lv -> new ListCell<>() {
+            @Override
+            protected void updateItem(Map.Entry<String, Integer> entry, boolean empty) {
+                super.updateItem(entry, empty);
+                if (empty || entry == null) {
+                    setGraphic(null);
+                    return;
+                }
+                ImageView img = new ImageView(
+                    new Image(getClass().getResourceAsStream(
+                        IMAGE_MAP.get(entry.monsterId())
+                    ))
+                );
+                img.setFitWidth(64);
+                img.setFitHeight(64);
+                Label kills = new Label("Uccisioni: " + entry.kills());
+                HBox row = new HBox(15, img, kills);
+                row.setAlignment(Pos.CENTER_LEFT);
+                setGraphic(row);
+            }
+        });
+        Scene scene = new Scene(listView, 500, 500);
+        this.gameStage.setScene(scene);
     }
 
 }

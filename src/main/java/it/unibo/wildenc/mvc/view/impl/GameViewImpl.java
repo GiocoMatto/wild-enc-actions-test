@@ -9,6 +9,7 @@ import it.unibo.wildenc.mvc.controller.api.MapObjViewData;
 
 import it.unibo.wildenc.mvc.view.api.GameView;
 import javafx.geometry.Pos;
+import it.unibo.wildenc.mvc.view.api.ViewRenderer;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Label;
@@ -142,14 +143,8 @@ public class GameViewImpl implements GameView {
                     setGraphic(null);
                     return;
                 }
-                ImageView img = new ImageView(
-                    new Image(getClass().getResourceAsStream(
-                        IMAGE_MAP.get(entry.monsterId())
-                    ))
-                );
-                img.setFitWidth(64);
-                img.setFitHeight(64);
-                Label kills = new Label("Uccisioni: " + entry.kills());
+                Label img = new Label("Immagine: " + entry.getKey());
+                Label kills = new Label("Uccisioni: " + entry.getValue());
                 HBox row = new HBox(15, img, kills);
                 row.setAlignment(Pos.CENTER_LEFT);
                 setGraphic(row);

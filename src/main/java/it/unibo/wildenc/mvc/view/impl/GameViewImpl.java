@@ -6,7 +6,7 @@ import it.unibo.wildenc.mvc.controller.api.Engine;
 import it.unibo.wildenc.mvc.controller.api.MapObjViewData;
 
 import it.unibo.wildenc.mvc.view.api.GameView;
-import it.unibo.wildenc.mvc.view.api.SpriteRender;
+import it.unibo.wildenc.mvc.view.api.ViewRenderer;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.layout.VBox;
@@ -15,12 +15,12 @@ import javafx.stage.StageStyle;
 
 public class GameViewImpl implements GameView {
     private Engine eg; // TODO: should be final?
-    private final SpriteRender renderer;
+    private final ViewRenderer renderer;
     private Stage gameStage = new Stage(StageStyle.DECORATED);
     final Canvas canvas = new Canvas(1600, 900);
 
     public GameViewImpl() {
-        renderer = new AnotherSimpleCircleRender();        
+        renderer = new ViewRendererImpl();        
         renderer.setCanvas(canvas);
     }
 

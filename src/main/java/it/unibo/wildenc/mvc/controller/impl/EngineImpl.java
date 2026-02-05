@@ -14,7 +14,10 @@ import it.unibo.wildenc.mvc.model.map.GameMapImpl;
 import it.unibo.wildenc.mvc.view.api.GameView;
 import it.unibo.wildenc.mvc.view.impl.GameViewImpl;
 
-public class EngineImpl implements Engine{
+/**
+ * {@inheritDoc}.
+ */
+public class EngineImpl implements Engine {
     private final LinkedBlockingQueue<MovementInput> movements = new LinkedBlockingQueue<>();
     private final SavedDataHandler dataHandler = new SavedDataHandlerImpl();
     private final GameView view = new GameViewImpl();
@@ -24,9 +27,15 @@ public class EngineImpl implements Engine{
     private volatile GameMap model;
     private PlayerType playerType;
     private SavedData data;
-    
-    public enum STATUS {RUNNING, PAUSE;}
-    
+
+    /**
+     * The status of the game loop.
+     */
+    public enum STATUS { RUNNING, PAUSE }
+
+    /**
+     * Create a Engine.
+     */
     public EngineImpl() {
         try {
             this.data = dataHandler.loadData();
@@ -37,6 +46,9 @@ public class EngineImpl implements Engine{
         view.start();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void startGameLoop() {
         model = new GameMapImpl(playerType);
@@ -45,45 +57,79 @@ public class EngineImpl implements Engine{
 
     /**
      * {@inheritDoc}
-    */
+     */
     @Override
     public void processInput(final MovementInput movement) {
         this.movements.add(movement);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public void onLeveUpChoise(String choise) {
+    public void onLeveUpChoise(final String choise) {
         //model.aggiornastastisticheplayer;
         setPause(false);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public void setPause(boolean status) {
+    public void setPause(final boolean status) {
         synchronized (pauseLock) {
             this.gameStatus = status ? STATUS.PAUSE : STATUS.RUNNING;
             pauseLock.notifyAll();
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public void chosePlayerType(PlayerType playerType) {
-        this.playerType = playerType;
+    public void chosePlayerType(final PlayerType pt) {
+        this.playerType = pt;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public void Pokedex() {
+    public void pokedex() {
         view.pokedexView(data.getPokedex());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void close() {
         try {
             this.dataHandler.saveData(data);
         } catch (final IOException e) {
-            
+            System.out.println(e.getMessage());
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void menu() {
+        //view.menu();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void shop() {
+        //view.shop();
+    }
+
+    /**
+     * The game loop.
+     */
     public final class GameLoop extends Thread {
         private static final long SLEEP_TIME = 10;
         private boolean running = true;
@@ -103,7 +149,7 @@ public class EngineImpl implements Engine{
                     lastTime = now;
                     final var move = movements.poll();
                     model.updateEntities(dt, (move != null) ? move.getVector() : new Vector2d(0, 0));
-                    /**
+                    /*
                      * if (model.levelUp() {
                      *  setPause(true);
                      *  view.levelUp(model.getLevelUp());
@@ -125,21 +171,11 @@ public class EngineImpl implements Engine{
                     );
                     Thread.sleep(SLEEP_TIME);
                 }
-            } catch (InterruptedException e1) {
+            } catch (final InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
         }
 
-    }
-
-    @Override
-    public void menu() {
-        //view.menu();
-    }
-
-    @Override
-    public void shop() {
-        //view.shop();
     }
 
 }

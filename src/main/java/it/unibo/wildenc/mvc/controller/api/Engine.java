@@ -8,23 +8,57 @@ import it.unibo.wildenc.mvc.model.GameMap;
  */
 public interface Engine {
 
-    // esporre solo per aggiungere il metodo.
+    /**
+     * Accept che movement of the player.
+     * 
+     * @param movement the movemente of type {@link MovementInput}.
+     */
     void processInput(MovementInput movement);
 
+    /**
+     * Update the status of the gameLoop.
+     * 
+     * @param status True: running game Loop. False: stop game loop.
+     */
     void setPause(boolean status);
 
+    /**
+     * Select the weapon to unlock or levelup.
+     * 
+     * @param choise the choise of the player.
+     */
     void onLeveUpChoise(String choise);
 
+    /**
+     * Select the player type.
+     * 
+     * @param playerType the player type to game.
+     */
     void chosePlayerType(GameMap.PlayerType playerType);
 
+    /**
+     * Start the game loopl.
+     */
     void startGameLoop();
 
+    /**
+     * Show the menu.
+     */
     void menu();
 
+    /**
+     * Show the shop.
+     */
     void shop();
 
-    void Pokedex();
+    /**
+     * Show the Pokedex.
+     */
+    void pokedex();
 
+    /**
+     * Close the game and save the data.
+     */
     void close();
 
 }

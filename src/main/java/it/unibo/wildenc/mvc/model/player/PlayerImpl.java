@@ -49,14 +49,26 @@ public class PlayerImpl extends AbstractEntity implements Player {
     }
 
     @Override
-    public void getExp(final int exp) {
-        this.experience += exp;
+    public int getExp() {
+        return this.experience;
     }
 
     @Override
     public void levelUp() {
         this.level++;
         // TODO: Implementare logica di aumento statistiche o scelta weapon
+    }
+
+    @Override
+    public String getName() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getName'");
+    }
+
+    @Override
+    public boolean canLevelUp() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'canLevelUp'");
     }
 
 }

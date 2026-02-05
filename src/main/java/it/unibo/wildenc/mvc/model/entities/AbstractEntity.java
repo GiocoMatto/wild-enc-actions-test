@@ -20,14 +20,15 @@ public abstract class AbstractEntity extends AbstractMovable implements Entity {
     private final Set<Weapon> weapons;
 
     private int currentHealth;
-    
+
     /**
      * Creates a {@link Movable} object that lives.
      * 
-     * @param spawnPosition the initial positin of the movable object;
-     * @param hitbox the radius of the hitbox;
-     * @param movementSpeed how fast it moves in pixel per seconds;
+     * @param spawnPosition {@link AbstractMovable#getPosition()}
+     * @param hitbox {@link AbstractMovable#getHitbox()}
+     * @param movementSpeed {@link AbstractMovable#getSpeed()}
      * @param health max health of the entity.
+     * @param weapons default weapons.
      */
     protected AbstractEntity(
         final Vector2dc spawnPosition, 
@@ -70,7 +71,7 @@ public abstract class AbstractEntity extends AbstractMovable implements Entity {
      * {@inheritDoc}
      */
     @Override
-    public void takeDamage(int dmg) {
+    public void takeDamage(final int dmg) {
         if (canTakeDamage()) {
             currentHealth = Math.max(currentHealth - dmg, 0);
         }
@@ -80,7 +81,7 @@ public abstract class AbstractEntity extends AbstractMovable implements Entity {
      * Update the entity's position, which can be altered by its behavior.
      */
     @Override
-    public void updatePosition(double deltaTime) {
+    public void updatePosition(final double deltaTime) {
         setDirection(alterDirection());
         super.updatePosition(deltaTime);
     }
@@ -89,9 +90,18 @@ public abstract class AbstractEntity extends AbstractMovable implements Entity {
      * {@inheritDoc}
      */
     @Override
-    public void addWeapons(Weapon p) {
+    public void addWeapon(final Weapon p) {
         weapons.add(p);
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isAlive() {
+        return currentHealth >= 0;
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -105,5 +115,9 @@ public abstract class AbstractEntity extends AbstractMovable implements Entity {
      */
     protected abstract Vector2dc alterDirection();
 
+    public void getExp(int exp) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getExp'");
+    }
 
 }

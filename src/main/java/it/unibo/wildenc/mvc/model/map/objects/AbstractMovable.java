@@ -58,5 +58,5 @@ public abstract class AbstractMovable extends AbstractMapObject implements Movab
     protected void setDirection(final Vector2dc direction) {
         this.direction.set(direction);
     }
-    
+
 }

@@ -99,12 +99,8 @@ public class ConcreteProjectile extends AbstractMovable implements Projectile {
 
     @Override
     public String getName() {
-<<<<<<< HEAD
-        return "projectile:1"; // FIXME
-=======
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'getName'");
->>>>>>> master
     }
 }
 

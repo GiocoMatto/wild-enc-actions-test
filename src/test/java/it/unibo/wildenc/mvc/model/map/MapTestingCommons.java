@@ -80,12 +80,7 @@ public final class MapTestingCommons {
 
         @Override
         public String getName() {
-<<<<<<< HEAD
-            // TODO Auto-generated method stub
-            throw new UnsupportedOperationException("Unimplemented method 'getName'");
-=======
             throw new UnsupportedOperationException("Not needed for testing.");
->>>>>>> master
         }
 
     }
@@ -124,15 +119,8 @@ public final class MapTestingCommons {
 
         @Override
         public String getName() {
-<<<<<<< HEAD
-            // TODO Auto-generated method stub
-            throw new UnsupportedOperationException("Unimplemented method 'getName'");
-        }
-
-=======
             throw new UnsupportedOperationException("Not needed for testing.");
         }
->>>>>>> master
     }
 
     /**

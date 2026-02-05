@@ -68,8 +68,9 @@ public class EngineImpl implements Engine{
         public void run() {
             while (true) {
                 /* update view */
-                views.forEach(v -> v.updateSprites(
-                    getObjectViewData(Stream.concat(Stream.of(gm.getPlayer()), gm.getAllObjects().stream()).toList())));
+                // FIXME
+                // views.forEach(v -> v.updateSprites(
+                //     getObjectViewData(Stream.concat(Stream.of(gm.getPlayer()), gm.getAllObjects().stream()).toList())));
                 final long timeUpdateView = System.nanoTime();
                 /* get command and sleep */
                 try {

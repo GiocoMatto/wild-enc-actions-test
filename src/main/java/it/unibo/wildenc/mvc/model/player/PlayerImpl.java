@@ -61,9 +61,6 @@ public class PlayerImpl extends AbstractEntity implements Player {
 
     @Override
     public String getName() {
-<<<<<<< HEAD
-        return "player:1"; // FIXME
-=======
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'getName'");
     }
@@ -72,7 +69,6 @@ public class PlayerImpl extends AbstractEntity implements Player {
     public boolean canLevelUp() {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'canLevelUp'");
->>>>>>> master
     }
 
 }

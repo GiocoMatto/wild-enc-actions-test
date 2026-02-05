@@ -31,13 +31,10 @@ public interface MapObject {
      */
     boolean isAlive();
 
-<<<<<<< HEAD
-=======
     /**
      * Get the object's name, which will be it's identifier.
      * 
      * @return A String in this format "objectType:objectName"; i.e. "enemy:pikachu".
      */
->>>>>>> master
     String getName();
 }

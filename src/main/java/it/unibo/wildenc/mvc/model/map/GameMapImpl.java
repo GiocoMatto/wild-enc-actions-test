@@ -20,19 +20,12 @@ import it.unibo.wildenc.mvc.model.GameMap;
 import it.unibo.wildenc.mvc.model.MapObject;
 import it.unibo.wildenc.mvc.model.Movable;
 import it.unibo.wildenc.mvc.model.Player;
-<<<<<<< HEAD
-import it.unibo.wildenc.mvc.model.enemies.EnemySpawnerImpl;
-import it.unibo.wildenc.mvc.model.player.PlayerImpl;
-import it.unibo.wildenc.mvc.model.weaponary.projectiles.Projectile;
-import it.unibo.wildenc.mvc.model.weaponary.weapons.WeaponFactory;
-=======
 import it.unibo.wildenc.mvc.model.Projectile;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.config.Configurator;
 import org.apache.logging.log4j.Level;
->>>>>>> master
 
 /**
  * Basic {@link Map} implementation.
@@ -51,15 +44,9 @@ public class GameMapImpl implements GameMap {
      * 
      * @param p the player.
      */
-<<<<<<< HEAD
-    public GameMapImpl(final PlayerType p) {
-        player = getPlayerByPlayerType(p);
-        es = new EnemySpawnerImpl(player);
-=======
     public GameMapImpl(final Player p) {
         player = p;
         setupLogger();
->>>>>>> master
     }
 
     /**

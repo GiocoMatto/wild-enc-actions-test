@@ -13,7 +13,7 @@ public class AttackContext {
 
     private Vector2dc lastPosition;
     private Vector2dc atkVersorDirection;
-    private final Supplier<Vector2dc> toFollow;
+    private Supplier<Vector2dc> toFollow;
     private double velocity;
 
     /**
@@ -37,10 +37,19 @@ public class AttackContext {
     /**
      * Getter method for the position the attack has to follow.
      * 
-     * @return the {@link Optional} of a {@link Supplier} for a position to follow. Could be empty.
+     * @return a {@link Supplier} for a position to follow. Could be empty.
      */
     public Supplier<Vector2dc> getFollowing() {
         return this.toFollow;
+    }
+
+    /**
+     * Setter method for the position the attack has to follow.
+     * 
+     * @param newFollow the new {@link Supplier} which gives the direction.
+     */
+    public void setFollowing(final Supplier<Vector2dc> newFollow) {
+        this.toFollow = newFollow;
     }
 
     /**

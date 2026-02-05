@@ -90,7 +90,7 @@ public class WeaponFactory {
 
                     for (int i = 0; i < pelletNumber; i++) {
                         final double currentAngle = (pelletNumber > 1) 
-                            ? -(totalArc / 2.0) + (i * (totalArc / (pelletNumber - 1))) 
+                            ? - (totalArc / 2.0) + (i * (totalArc / (pelletNumber - 1))) 
                             : 0;
 
                         final double cos = Math.cos(currentAngle);

@@ -10,7 +10,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
+
+import org.joml.Vector2dc;
 
 /**
  * Implementation of a generic {@link Weapon}. This will be used as a 
@@ -90,6 +93,13 @@ public class GenericWeapon implements Weapon {
         return this.weaponStats;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public void setPosToHit(final Supplier<Vector2dc> newPosToHit) {
+        this.weaponStats.setPosToHit(newPosToHit);
+    }
+
     private boolean isInCooldown() {
         return timeSinceLastAtk < this.weaponStats.getCooldown();
     }
@@ -100,6 +110,8 @@ public class GenericWeapon implements Weapon {
     }
 
     private Set<Projectile> generateProjectiles(final List<AttackContext> contexts) {
+        contexts.stream()
+            .forEach(e -> e.setFollowing(this.weaponStats.getPosToHit()));
         return contexts.stream()
             .map(e -> new ConcreteProjectile(e, this.weaponStats.getProjStats()))
             .collect(Collectors.toSet());

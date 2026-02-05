@@ -1,5 +1,7 @@
 package it.unibo.wildenc.mvc.model.weaponary.projectiles;
 
+import java.util.function.Supplier;
+
 import org.joml.Vector2dc;
 
 import it.unibo.wildenc.mvc.model.Entity;

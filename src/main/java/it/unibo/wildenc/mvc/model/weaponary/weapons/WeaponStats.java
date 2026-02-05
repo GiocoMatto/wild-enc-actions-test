@@ -1,6 +1,10 @@
 package it.unibo.wildenc.mvc.model.weaponary.weapons;
 
 import java.util.function.BiConsumer;
+import java.util.function.Supplier;
+
+import org.joml.Vector2d;
+import org.joml.Vector2dc;
 
 import it.unibo.wildenc.mvc.model.weaponary.projectiles.ProjectileStats;
 
@@ -14,6 +18,7 @@ public class WeaponStats {
     private int currentLevel = 1;
     private int projectilesAtOnce;
     private final ProjectileStats pStats;
+    private Supplier<Vector2dc> posToHit;
     private final BiConsumer<Integer, WeaponStats> upgradeLogics;
 
     /**
@@ -37,6 +42,7 @@ public class WeaponStats {
         this.burstSize = initialBurst;
         this.projectilesAtOnce = initialProjQuantity;
         this.upgradeLogics = upLogics;
+        this.posToHit = () -> new Vector2d(0, 0);
     }
 
     /**
@@ -119,5 +125,23 @@ public class WeaponStats {
     public void levelUp() {
         this.currentLevel++;
         this.upgradeLogics.accept(this.currentLevel, this);
+    }
+
+    /**
+     * Getter method for getting the position the projectiles will hit.
+     * 
+     * @return the supplier for the position to hit.
+     */
+    public Supplier<Vector2dc> getPosToHit() {
+        return this.posToHit;
+    }
+
+    /**
+     * Method for setting a new position the projectiles will hit.
+     * 
+     * @param newPosToHit the new supplier for the position to hit.
+     */
+    protected void setPosToHit(final Supplier<Vector2dc> newPosToHit) {
+        this.posToHit = newPosToHit;
     }
 }

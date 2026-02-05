@@ -1,9 +1,12 @@
 package it.unibo.wildenc.mvc.controller.impl;
 
+import java.io.IOException;
 import java.util.concurrent.LinkedBlockingQueue;
 import org.joml.Vector2d;
 import it.unibo.wildenc.mvc.controller.api.Engine;
 import it.unibo.wildenc.mvc.controller.api.MapObjViewData;
+import it.unibo.wildenc.mvc.controller.api.SavedData;
+import it.unibo.wildenc.mvc.controller.api.SavedDataHandler;
 import it.unibo.wildenc.mvc.controller.api.InputHandler.MovementInput;
 import it.unibo.wildenc.mvc.model.GameMap;
 import it.unibo.wildenc.mvc.model.GameMap.PlayerType;
@@ -13,26 +16,33 @@ import it.unibo.wildenc.mvc.view.impl.GameViewImpl;
 
 public class EngineImpl implements Engine{
     private final LinkedBlockingQueue<MovementInput> movements = new LinkedBlockingQueue<>();
+    private final SavedDataHandler dataHandler = new SavedDataHandlerImpl();
     private final GameView view = new GameViewImpl();
     private final GameLoop loop = new GameLoop();
     private final Object pauseLock = new Object();
     private volatile STATUS gameStatus = STATUS.RUNNING;
     private volatile GameMap model;
     private PlayerType playerType;
+    private SavedData data;
     
     public enum STATUS {RUNNING, PAUSE;}
     
     public EngineImpl() {
+        try {
+            this.data = dataHandler.loadData();
+        } catch (final ClassNotFoundException | IOException e) {
+            this.data = new SavedDataImpl();
+        }
         view.setEngine(this);
         view.start();
     }
-    
+
     @Override
     public void startGameLoop() {
         model = new GameMapImpl(playerType);
         this.loop.start();
     }
-    
+
     /**
      * {@inheritDoc}
     */
@@ -40,13 +50,13 @@ public class EngineImpl implements Engine{
     public void processInput(final MovementInput movement) {
         this.movements.add(movement);
     }
-    
+
     @Override
     public void onLeveUpChoise(String choise) {
-        //model.aggiornastastisticheplayer.
+        //model.aggiornastastisticheplayer;
         setPause(false);
     }
-    
+
     @Override
     public void setPause(boolean status) {
         synchronized (pauseLock) {
@@ -54,12 +64,26 @@ public class EngineImpl implements Engine{
             pauseLock.notifyAll();
         }
     }
-    
+
     @Override
     public void chosePlayerType(PlayerType playerType) {
         this.playerType = playerType;
     }
-    
+
+    @Override
+    public void Pokedex() {
+        view.pokedexView(data.getPokedex());
+    }
+
+    @Override
+    public void close() {
+        try {
+            this.dataHandler.saveData(data);
+        } catch (final IOException e) {
+            
+        }
+    }
+
     public final class GameLoop extends Thread {
         private static final long SLEEP_TIME = 10;
         private boolean running = true;
@@ -86,13 +110,13 @@ public class EngineImpl implements Engine{
                      * }*/
                     /*
                     * if (model.end()) {
-                    *  view.end();
+                    *  view.end(model.getStatistic());
                     *  running = false;
                     * }
                     */
                     view.updateSprites(model.getAllObjects().stream()
                         .map(e -> new MapObjViewData(
-                            "null", 
+                            "name", 
                             e.getPosition().x(), 
                             e.getPosition().y()
                         ))

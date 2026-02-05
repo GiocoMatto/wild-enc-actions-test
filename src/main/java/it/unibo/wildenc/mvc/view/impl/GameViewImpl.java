@@ -1,6 +1,7 @@
 package it.unibo.wildenc.mvc.view.impl;
 
 import java.util.Iterator;
+import java.util.Map;
 
 import it.unibo.wildenc.mvc.controller.api.Engine;
 import it.unibo.wildenc.mvc.controller.api.MapObjViewData;
@@ -42,6 +43,12 @@ public class GameViewImpl implements GameView{
     public void pause() {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'pause'");
+    }
+
+    @Override
+    public void pokedexView(Map<String, Integer> pokedex) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'pokedexView'");
     }
 
 }

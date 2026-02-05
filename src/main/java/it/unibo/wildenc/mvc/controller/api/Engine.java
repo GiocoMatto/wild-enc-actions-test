@@ -19,4 +19,8 @@ public interface Engine {
 
     void startGameLoop();
 
+    void Pokedex();
+
+    void close();
+
 }

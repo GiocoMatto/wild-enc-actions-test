@@ -36,6 +36,17 @@ public class EnemyTest {
             return 1;
         }
 
+        @Override
+        public boolean isAlive() {
+            return true;
+        }
+
+        @Override
+        public String getName() {
+            // TODO Auto-generated method stub
+            throw new UnsupportedOperationException("Unimplemented method 'getName'");
+        };
+
     };
     private static final MapObject TARGET_2 = new MapObject() {
 
@@ -49,6 +60,17 @@ public class EnemyTest {
             return 3;
         }
 
+        @Override
+        public boolean isAlive() {
+            return true;
+        }
+
+        @Override
+        public String getName() {
+            // TODO Auto-generated method stub
+            throw new UnsupportedOperationException("Unimplemented method 'getName'");
+        };
+
     };
     private static final MapObject TARGET_3 = new MapObject() {
 
@@ -61,6 +83,17 @@ public class EnemyTest {
         public double getHitbox() {
             return 3;
         }
+
+        @Override
+        public boolean isAlive() {
+            return true;
+        }
+
+        @Override
+        public String getName() {
+            // TODO Auto-generated method stub
+            throw new UnsupportedOperationException("Unimplemented method 'getName'");
+        };
 
     };
     private Enemy enemy;

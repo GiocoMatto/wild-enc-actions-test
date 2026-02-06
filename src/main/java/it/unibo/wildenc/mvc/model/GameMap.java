@@ -1,30 +1,14 @@
 package it.unibo.wildenc.mvc.model;
 
+import java.util.Collection;
 import java.util.List;
+
+import org.joml.Vector2dc;
 
 /**
  * Map of the game, it includes all core logic to update all the entities on it.
  */
 public interface GameMap {
-
-    /**
-     * Add a {@link MapObject} on this Map.
-     * 
-     * @param mObj 
-     *              the {@link MapObject} to add
-     */
-    void addObject(MapObject mObj);
-
-    
-    /**
-     * Remove a {@link MapObject} from this Map.
-     * 
-     * @param mObj 
-     *              the {@link MapObject} to remove
-     * @return
-     *              true if the {@link MapObject} was removed successfully
-     */
-    boolean removeObject(MapObject mObj);
 
     /**
      * Get the player.
@@ -41,10 +25,30 @@ public interface GameMap {
     List<MapObject> getAllObjects();
 
     /**
-     * Update every living object on this Map.
-     * 
-     * @param deltaTime 
-     *                  how much to update in time.
+     * Adds all objects to this Map.
      */
-    void updateEntities(long deltaTime);
+    void addAllObjects(final Collection<? extends MapObject> mObjs);
+
+    /**
+     * Update every living object on this Map including collisions.
+     * 
+     * @param deltaTime how much to update in time;
+     * @param playerDirection the player-chosen direction as a {@link Vector2dc}.
+     */
+    void updateEntities(long deltaTime, Vector2dc playerDirection);
+
+    /**
+     * Spawn enemies on the map.
+     * 
+     * @param deltaSeconds tik time.
+     */
+    void spawnEnemies(double deltaSeconds);
+
+    /**
+     * Set the enemy spawn logic.
+     * 
+     * @param spawnLogic a {@link EnemySpawner} logic.
+     */
+    void setEnemySpawnLogic(EnemySpawner spawnLogic);
+
 }

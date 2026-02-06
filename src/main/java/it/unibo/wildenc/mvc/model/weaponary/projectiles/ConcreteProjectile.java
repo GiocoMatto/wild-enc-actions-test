@@ -99,8 +99,7 @@ public class ConcreteProjectile extends AbstractMovable implements Projectile {
 
     @Override
     public String getName() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getName'");
+        return this.projStats.getID();
     }
 }
 

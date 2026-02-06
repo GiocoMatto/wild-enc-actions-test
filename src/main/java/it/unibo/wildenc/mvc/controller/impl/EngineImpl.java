@@ -1,13 +1,20 @@
 package it.unibo.wildenc.mvc.controller.impl;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.LinkedBlockingQueue;
 import org.joml.Vector2d;
 import it.unibo.wildenc.mvc.controller.api.Engine;
+import it.unibo.wildenc.mvc.controller.api.MapObjViewData;
 import it.unibo.wildenc.mvc.controller.api.SavedData;
 import it.unibo.wildenc.mvc.controller.api.SavedDataHandler;
 import it.unibo.wildenc.mvc.controller.api.InputHandler.MovementInput;
+import it.unibo.wildenc.mvc.model.Entity;
 import it.unibo.wildenc.mvc.model.Game;
+import it.unibo.wildenc.mvc.model.Game.PlayerType;
 import it.unibo.wildenc.mvc.model.game.GameImpl;
 import it.unibo.wildenc.mvc.view.api.GameView;
 import it.unibo.wildenc.mvc.view.impl.GameViewImpl;
@@ -18,7 +25,7 @@ import it.unibo.wildenc.mvc.view.impl.GameViewImpl;
 public class EngineImpl implements Engine {
     private final LinkedBlockingQueue<MovementInput> movements = new LinkedBlockingQueue<>();
     private final SavedDataHandler dataHandler = new SavedDataHandlerImpl();
-    private final GameView view = new GameViewImpl();
+    private final List<GameView> views = new ArrayList<>();
     private final GameLoop loop = new GameLoop();
     private final Object pauseLock = new Object();
     private volatile STATUS gameStatus = STATUS.RUNNING;
@@ -40,8 +47,6 @@ public class EngineImpl implements Engine {
         } catch (final ClassNotFoundException | IOException e) {
             this.data = new SavedDataImpl();
         }
-        view.setEngine(this);
-        view.start();
     }
 
     /**
@@ -49,6 +54,7 @@ public class EngineImpl implements Engine {
      */
     @Override
     public void startGameLoop() {
+        chosePlayerType(PlayerType.Charmender);
         model = new GameImpl(playerType);
         this.loop.start();
     }
@@ -94,7 +100,8 @@ public class EngineImpl implements Engine {
      */
     @Override
     public void pokedex() {
-        view.pokedexView(data.getPokedex());
+        views.stream()
+            .forEach(view -> view.pokedexView(data.getPokedex()));
     }
 
     /**
@@ -129,7 +136,7 @@ public class EngineImpl implements Engine {
      * The game loop.
      */
     public final class GameLoop extends Thread {
-        private static final long SLEEP_TIME = 10;
+        private static final long SLEEP_TIME = 20;
         private boolean running = true;
 
         @Override
@@ -146,7 +153,7 @@ public class EngineImpl implements Engine {
                     final long dt = now - lastTime;
                     lastTime = now;
                     final var move = movements.poll();
-                    model.updateEntities(dt, (move != null) ? move.getVector() : new Vector2d(0, 0));
+                    model.updateEntities(dt, (move != null) ? move.getVector() : new Vector2d(-1, 0));
                     /*
                      * if (model.levelUp() {
                      *  setPause(true);
@@ -159,14 +166,29 @@ public class EngineImpl implements Engine {
                     *  running = false;
                     * }
                     */
-                    // view.updateSprites(model.getAllObjects().stream() //FIXME: and add getAllObjects().
-                    //     .map(e -> new MapObjViewData(
-                    //         "name", 
-                    //         e.getPosition().x(), 
-                    //         e.getPosition().y()
-                    //     ))
-                    //     .iterator()
-                    // );
+
+                    Collection<MapObjViewData> mapDataColl = model.getAllMapObjects().stream()
+                        .map(mapObj -> {
+                            if (mapObj instanceof Entity e) {
+                                return new MapObjViewData(
+                                    mapObj.getName(), 
+                                    mapObj.getPosition().x(), 
+                                    mapObj.getPosition().y(), 
+                                    Optional.of(e.getDirection().x()), 
+                                    Optional.of(e.getDirection().y())
+                                );
+                            } else {
+                                return new MapObjViewData(
+                                    mapObj.getName(),
+                                    mapObj.getPosition().x(),
+                                    mapObj.getPosition().y(),
+                                    Optional.empty(), Optional.empty()
+                                );
+                            }
+                        })
+                        .toList();
+                    views.stream()
+                        .forEach(view -> view.updateSprites(mapDataColl));
                     Thread.sleep(SLEEP_TIME);
                 }
             } catch (final InterruptedException e) {
@@ -177,8 +199,8 @@ public class EngineImpl implements Engine {
 
     @Override
     public void registerView(GameView gv) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'registerView'");
+        this.views.add(gv);
+        gv.start();
+        gv.setEngine(this);
     }
-
 }

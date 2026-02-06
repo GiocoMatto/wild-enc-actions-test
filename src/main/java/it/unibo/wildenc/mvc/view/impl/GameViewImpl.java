@@ -15,11 +15,8 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -53,10 +50,10 @@ public class GameViewImpl implements GameView {
         gameStage.setTitle("Wild Encounter");
         gameStage.setX(1600);
         gameStage.setY(600);
+        final VBox root = new VBox();
 
-        final VBox vbox = new VBox();
-        vbox.getChildren().add(canvas);
-        gameStage.setScene(new Scene(vbox, 1600, 900));
+        root.getChildren().add(canvas);
+        gameStage.setScene(new Scene(root, 1600, 900));
         gameStage.centerOnScreen();
         gameStage.show();
     }

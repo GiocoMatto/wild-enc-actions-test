@@ -21,6 +21,7 @@ import it.unibo.wildenc.mvc.model.MapObject;
 import it.unibo.wildenc.mvc.model.Movable;
 import it.unibo.wildenc.mvc.model.Player;
 import it.unibo.wildenc.mvc.model.Projectile;
+import it.unibo.wildenc.mvc.model.enemies.EnemySpawnerImpl;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -46,6 +47,7 @@ public class GameMapImpl implements GameMap {
      */
     public GameMapImpl(final Player p) {
         player = p;
+        this.es = new EnemySpawnerImpl(p);
         setupLogger();
     }
 

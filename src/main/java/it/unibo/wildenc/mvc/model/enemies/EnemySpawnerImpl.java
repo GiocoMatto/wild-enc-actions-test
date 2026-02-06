@@ -16,8 +16,8 @@ import it.unibo.wildenc.mvc.model.Player;
  * Spawn enemy.
  */
 public class EnemySpawnerImpl implements EnemySpawner {
-    private static final int DS_X = 30;
-    private static final int DS_Y = 13;
+    private static final int DS_X = 300;
+    private static final int DS_Y = 130;
     private static final int BASE_ENEMY = 10;
     private static final double ENEMY_LOAD_FACTOR = 1.3;
     private static final int PROBABILITY_DISTRIBUTION = 16;

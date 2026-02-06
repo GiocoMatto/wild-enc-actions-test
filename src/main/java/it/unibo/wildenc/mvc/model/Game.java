@@ -1,5 +1,6 @@
 package it.unibo.wildenc.mvc.model;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.BiConsumer;
@@ -58,13 +59,21 @@ public interface Game {
     Map<String, Integer> getGameStatistics();
 
     /**
+     * Getter method for getting a {@link Collection} of all
+     * the map objects.
+     * 
+     * @return a {@link Collection} of all MapObjects
+     */
+    Collection<MapObject> getAllMapObjects();
+
+    /**
      * Constant default player types.
      */
     enum PlayerType {
-        Charmender(10, 5, 100, (wf, p) -> {
+        Charmender(10, 15, 100, (wf, p) -> {
             // FIXME: understand how to pass the Vector2d Supplier. It should be the mouse position.
             p.addWeapon(wf.getDefaultWeapon(
-                10.0, 
+                3.0, 
                 10.0, 
                 2.0,
                 2.0,

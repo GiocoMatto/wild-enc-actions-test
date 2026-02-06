@@ -26,7 +26,9 @@ public class GameViewImpl implements GameView {
     private Engine eg; // TODO: should be final?
     private final ViewRenderer renderer;
     private Stage gameStage = new Stage(StageStyle.DECORATED);
-    final Canvas canvas = new Canvas(1600, 900);
+    private final Canvas canvas = new Canvas(1600, 900);
+    private Collection<MapObjViewData> backupColl = List.of();
+    private boolean gameStarted = false;
 
     public GameViewImpl() {
         renderer = new ViewRendererImpl();        
@@ -50,7 +52,10 @@ public class GameViewImpl implements GameView {
         gameStage.setTitle("Wild Encounter");
         gameStage.setX(1600);
         gameStage.setY(600);
+
         final VBox root = new VBox();
+        canvas.widthProperty().bind(root.widthProperty());
+        canvas.heightProperty().bind(root.heightProperty());
 
         root.getChildren().add(canvas);
         gameStage.setScene(new Scene(root, 1600, 900));
@@ -63,6 +68,12 @@ public class GameViewImpl implements GameView {
      */
     @Override
     public void updateSprites(Collection<MapObjViewData> mObj) {
+        if (!gameStarted) {
+            canvas.widthProperty().addListener((obs, oldVal, newVal) -> updateSprites(backupColl));
+            canvas.heightProperty().addListener((obs, oldVal, newVal) -> updateSprites(backupColl));
+            this.gameStarted = true;
+        }
+        this.backupColl = mObj;
         renderer.clean();
         renderer.renderAll(mObj);
     }

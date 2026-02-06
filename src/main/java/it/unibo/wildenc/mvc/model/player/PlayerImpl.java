@@ -13,7 +13,7 @@ import it.unibo.wildenc.mvc.model.entities.AbstractEntity;
  */
 public class PlayerImpl extends AbstractEntity implements Player {
 
-    private final Vector2d inputDirection = new Vector2d(0, 0); //ultima direzione richiesta dall'utente
+    // private final Vector2d inputDirection = new Vector2d(0, 0); //ultima direzione richiesta dall'utente
     private int experience;
     private int level;
 
@@ -34,7 +34,7 @@ public class PlayerImpl extends AbstractEntity implements Player {
     @Override
     protected Vector2dc alterDirection() { 
         //il plauyer risponde all'input salvato in inputDirection.
-        return this.inputDirection;
+        return getDirection();
     }
 
     @Override
@@ -45,18 +45,30 @@ public class PlayerImpl extends AbstractEntity implements Player {
 
     public void setDirection(final Vector2dc direction) {
         //aggioro vetotre che alterDirection() legge al prossimo update
-        this.inputDirection.set(direction);
+        super.setDirection(direction);
     }
 
     @Override
-    public void getExp(final int exp) {
-        this.experience += exp;
+    public int getExp() {
+        return this.experience;
     }
 
     @Override
     public void levelUp() {
         this.level++;
         // TODO: Implementare logica di aumento statistiche o scelta weapon
+    }
+
+    @Override
+    public String getName() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getName'");
+    }
+
+    @Override
+    public boolean canLevelUp() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'canLevelUp'");
     }
 
 }

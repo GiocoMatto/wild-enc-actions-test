@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import it.unibo.wildenc.mvc.model.Entity;
 import it.unibo.wildenc.mvc.model.Enemy;
 import it.unibo.wildenc.mvc.model.MapObject;
+import it.unibo.wildenc.mvc.model.enemies.AbstractEnemy.AbstractEnemyField;
 import it.unibo.wildenc.mvc.model.enemies.CloseRangeEnemy;
 import it.unibo.wildenc.mvc.model.enemies.RangedEnemy;
 import it.unibo.wildenc.mvc.model.enemies.RoamingEnemy;
@@ -35,6 +36,17 @@ public class EnemyTest {
             return 1;
         }
 
+        @Override
+        public boolean isAlive() {
+            return true;
+        }
+
+        @Override
+        public String getName() {
+            // TODO Auto-generated method stub
+            throw new UnsupportedOperationException("Unimplemented method 'getName'");
+        };
+
     };
     private static final MapObject TARGET_2 = new MapObject() {
 
@@ -47,6 +59,17 @@ public class EnemyTest {
         public double getHitbox() {
             return 3;
         }
+
+        @Override
+        public boolean isAlive() {
+            return true;
+        }
+
+        @Override
+        public String getName() {
+            // TODO Auto-generated method stub
+            throw new UnsupportedOperationException("Unimplemented method 'getName'");
+        };
 
     };
     private static final MapObject TARGET_3 = new MapObject() {
@@ -61,12 +84,23 @@ public class EnemyTest {
             return 3;
         }
 
+        @Override
+        public boolean isAlive() {
+            return true;
+        }
+
+        @Override
+        public String getName() {
+            // TODO Auto-generated method stub
+            throw new UnsupportedOperationException("Unimplemented method 'getName'");
+        };
+
     };
     private Enemy enemy;
 
     @Test
     public void CloseRangeEnemyTest() {
-        this.enemy = new CloseRangeEnemy(SPAWN_POSITION, HITBOX, SPEED, HEALTH, NAME, Optional.of(TARGET_1));
+        this.enemy = new CloseRangeEnemy(new AbstractEnemyField(SPAWN_POSITION, HITBOX, SPEED, HEALTH, NAME, Optional.of(TARGET_1), 1));
         int count = 0;
         while (!CollisionLogic.areColliding(enemy, TARGET_1)) {
             enemy.updatePosition(DELTA_SECONDS);
@@ -78,7 +112,7 @@ public class EnemyTest {
     @Test
     public void RangedEnemyTest() {
         /* enemy is fare away the player */
-        this.enemy = new RangedEnemy(SPAWN_POSITION, HITBOX, SPEED, HEALTH, NAME, Optional.of(TARGET_2));
+        this.enemy = new RangedEnemy(new AbstractEnemyField(SPAWN_POSITION, HITBOX, SPEED, HEALTH, NAME, Optional.of(TARGET_2), 1));
         int count = 0;
         while (!CollisionLogic.areInRange(enemy, TARGET_2, RangedEnemy.MAX_DISTANCE)) {
             enemy.updatePosition(DELTA_SECONDS);
@@ -86,7 +120,7 @@ public class EnemyTest {
         }
         assertEquals(1, count);
         /* enemy is too much near the player */
-        this.enemy = new RangedEnemy(SPAWN_POSITION, HITBOX, SPEED, HEALTH, NAME, Optional.of(TARGET_3));
+        this.enemy = new RangedEnemy(new AbstractEnemyField(SPAWN_POSITION, HITBOX, SPEED, HEALTH, NAME, Optional.of(TARGET_3), 1));
         count = 0;
         while (CollisionLogic.areInRange(enemy, TARGET_3, RangedEnemy.MIN_DISTANCE)) {
             enemy.updatePosition(DELTA_SECONDS);
@@ -98,7 +132,7 @@ public class EnemyTest {
     @Test
     public void RoamingEnemyTest() {
         /* Try enemy is immortal for 5s */
-        this.enemy = new RoamingEnemy(SPAWN_POSITION, HITBOX, SPEED, HEALTH, NAME);
+        this.enemy = new RoamingEnemy(new AbstractEnemyField(SPAWN_POSITION, HITBOX, SPEED, HEALTH, NAME, Optional.empty(), 1));
         try {
             Thread.sleep(RoamingEnemy.TIME_SAFE);
             assertTrue(((Entity)enemy).canTakeDamage());

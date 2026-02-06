@@ -4,13 +4,11 @@ import java.io.IOException;
 import java.util.concurrent.LinkedBlockingQueue;
 import org.joml.Vector2d;
 import it.unibo.wildenc.mvc.controller.api.Engine;
-import it.unibo.wildenc.mvc.controller.api.MapObjViewData;
 import it.unibo.wildenc.mvc.controller.api.SavedData;
 import it.unibo.wildenc.mvc.controller.api.SavedDataHandler;
 import it.unibo.wildenc.mvc.controller.api.InputHandler.MovementInput;
-import it.unibo.wildenc.mvc.model.GameMap;
-import it.unibo.wildenc.mvc.model.GameMap.PlayerType;
-import it.unibo.wildenc.mvc.model.map.GameMapImpl;
+import it.unibo.wildenc.mvc.model.Game;
+import it.unibo.wildenc.mvc.model.game.GameImpl;
 import it.unibo.wildenc.mvc.view.api.GameView;
 import it.unibo.wildenc.mvc.view.impl.GameViewImpl;
 
@@ -24,8 +22,8 @@ public class EngineImpl implements Engine {
     private final GameLoop loop = new GameLoop();
     private final Object pauseLock = new Object();
     private volatile STATUS gameStatus = STATUS.RUNNING;
-    private volatile GameMap model;
-    private PlayerType playerType;
+    private volatile Game model;
+    private Game.PlayerType playerType;
     private SavedData data;
 
     /**
@@ -51,7 +49,7 @@ public class EngineImpl implements Engine {
      */
     @Override
     public void startGameLoop() {
-        model = new GameMapImpl(playerType);
+        model = new GameImpl(playerType);
         this.loop.start();
     }
 
@@ -87,7 +85,7 @@ public class EngineImpl implements Engine {
      * {@inheritDoc}
      */
     @Override
-    public void chosePlayerType(final PlayerType pt) {
+    public void chosePlayerType(final Game.PlayerType pt) {
         this.playerType = pt;
     }
 
@@ -161,21 +159,26 @@ public class EngineImpl implements Engine {
                     *  running = false;
                     * }
                     */
-                    view.updateSprites(model.getAllObjects().stream()
-                        .map(e -> new MapObjViewData(
-                            "name", 
-                            e.getPosition().x(), 
-                            e.getPosition().y()
-                        ))
-                        .iterator()
-                    );
+                    // view.updateSprites(model.getAllObjects().stream() //FIXME: and add getAllObjects().
+                    //     .map(e -> new MapObjViewData(
+                    //         "name", 
+                    //         e.getPosition().x(), 
+                    //         e.getPosition().y()
+                    //     ))
+                    //     .iterator()
+                    // );
                     Thread.sleep(SLEEP_TIME);
                 }
             } catch (final InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
         }
+    }
 
+    @Override
+    public void registerView(GameView gv) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'registerView'");
     }
 
 }

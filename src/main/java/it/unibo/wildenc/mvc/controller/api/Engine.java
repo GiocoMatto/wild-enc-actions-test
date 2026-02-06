@@ -1,7 +1,8 @@
 package it.unibo.wildenc.mvc.controller.api;
 
 import it.unibo.wildenc.mvc.controller.api.InputHandler.MovementInput;
-import it.unibo.wildenc.mvc.model.GameMap;
+import it.unibo.wildenc.mvc.model.Game;
+import it.unibo.wildenc.mvc.view.api.GameView;
 
 /**
  * Responsible of handling the main GameLoop and communicate with Views and the Model.
@@ -34,7 +35,7 @@ public interface Engine {
      * 
      * @param playerType the player type to game.
      */
-    void chosePlayerType(GameMap.PlayerType playerType);
+    void chosePlayerType(Game.PlayerType playerType);
 
     /**
      * Start the game loopl.
@@ -60,5 +61,7 @@ public interface Engine {
      * Close the game and save the data.
      */
     void close();
+    
+    void registerView(GameView gv);
 
 }

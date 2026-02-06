@@ -9,39 +9,41 @@ import java.util.Set;
 public interface Entity extends Movable {
 
     /**
-     * Get current entity's health
-     * @return current entity's health
+     * Get current entity's health.
+     * 
+     * @return current entity's health.
      */
     int getCurrentHealth();
 
     /**
-     * Get entity's max health
-     * @return entity's max health
+     * Get entity's max health.
+     * 
+     * @return entity's max health.
      */
     int getMaxHealth();
 
     /**
-     * Decrease health by dmg amount
-     * @param dmg amount of damage
+     * Decrease health by dmg amount.
+     * 
+     * @param dmg amount of damage.
      */
     void takeDamage(int dmg);
 
     /**
-     * Weapons helded by this Entity
-     * @return 
-     *          A {@link Set} collecting all the weapons helded by the Entity;
-     *          an empty {@link Set} is returned if the entity has no weapon.
+     * Weapons helded by this Entity.
+     * 
+     * @return A {@link Set} collecting all the weapons helded by the Entity;
+     *         an empty {@link Set} is returned if the entity has no weapon.
      */
     Set<Weapon> getWeapons();
 
     /**
      * Add a new weapon.
      * 
-     * @param p
-     *          The weapon to add.
+     * @param p The weapon to add.
      */
     void addWeapon(Weapon p);
-    
+
     /**
      * If the entity can take damage.
      * 

@@ -119,7 +119,7 @@ public abstract class AbstractEntity extends AbstractMovable implements Entity {
      * Protected to allow subclasses (like Player) to modify health directly.
      * @param health the new health value
      */
-    protected void setHealth(final int health) {
+    protected void setHealth(final double health) {
         this.currentHealth = health;
     }
 

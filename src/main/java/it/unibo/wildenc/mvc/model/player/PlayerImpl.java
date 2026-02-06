@@ -87,7 +87,7 @@ public class PlayerImpl extends AbstractEntity implements Player {
 
     @Override
     public void heal(int amount) {
-        int newHealth = Math.min(this.getMaxHealth(), this.getCurrentHealth() + amount);
+        double newHealth = Math.min(this.getMaxHealth(), this.getCurrentHealth() + amount);
         this.setHealth(newHealth);
     }
 

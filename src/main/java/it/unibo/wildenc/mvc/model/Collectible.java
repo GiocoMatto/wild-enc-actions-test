@@ -1,15 +1,20 @@
 package it.unibo.wildenc.mvc.model;
 
 /**
- * A collectible item on the Map, such as Experience, Health drops and others...
+ * A collectible item on the Map, such as Experience, Health drops and others
  */
 public interface Collectible extends MapObject {
 
     /**
-     * Gets the value of the collectible
-     * 
-     * @param p the player to apply the collectible
+     * Applies the effect of the collectible to the player
+     * @param target the player collecting the item.
      */
-    int apply(Player p);
+    void apply(Player target);
+
+    /**
+     * Gets the value of the collectible
+     ** @return the value of the item
+     */
+    int getValue();
 
 }

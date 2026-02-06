@@ -18,6 +18,7 @@ import it.unibo.wildenc.mvc.model.enemies.CloseRangeEnemy;
 import it.unibo.wildenc.mvc.model.map.objects.AbstractCollectible;
 import it.unibo.wildenc.mvc.model.map.objects.AbstractMapObject;
 import it.unibo.wildenc.mvc.model.map.objects.AbstractMovable;
+import it.unibo.wildenc.mvc.model.map.objects.ExperienceGem;
 import it.unibo.wildenc.mvc.model.player.PlayerImpl;
 import it.unibo.wildenc.mvc.model.weaponary.weapons.WeaponFactory;
 
@@ -230,21 +231,8 @@ public final class MapTestingCommons {
                 health, 
                 name, 
                 target, 
-                Set.of(new AbstractCollectible(pos, HITBOX_COLLECTIBLE, VALUE_COLLECTIBLE) {
-
-            @Override
-            public boolean isAlive() {
-                // TODO Auto-generated method stub
-                throw new UnsupportedOperationException("Unimplemented method 'isAlive'");
-            }
-
-            @Override
-            public String getName() {
-                // TODO Auto-generated method stub
-                throw new UnsupportedOperationException("Unimplemented method 'getName'");
-            }
-
-        })));
+                Set.of(new ExperienceGem(pos, VALUE_COLLECTIBLE))));
+                
             for (final var w : weapons) {
                 e.addWeapon(w);
             }

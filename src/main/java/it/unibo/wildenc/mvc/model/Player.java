@@ -15,16 +15,33 @@ public interface Player extends Entity {
     void levelUp();
 
     /**
-     * Get player's current exp (resets on level up).
+     * Gets the current experience points.
+     * @return the current experience
      */
     int getExp();
 
     /**
-     * Whether the player can level up.
-     * 
-     * @return true if the player can level up, false otherwise.
+     * Adds experience points to the player.
+     * @param amount the experience to add.
      */
-    boolean canLevelUp();
+    void addExp(int amount);
+
+    /**
+     * Adds money coins
+     * @param amount money to add
+     */
+    void addMoney(int amount);
+
+    /**
+     * @return current money
+     */
+    int getMoney();
+
+    /**
+     * 
+     * @param amount of heal to add
+     */
+    void heal(int amount);
 
     /**
      * Sets the movement direction of the player.
@@ -33,5 +50,11 @@ public interface Player extends Entity {
      * the new direction vector (as a {@link Vector2dc})
      */
     void setDirection(Vector2dc direction);
+
+    /**
+     * 
+     * @return 
+     */
+    boolean canLevelUp();
 
 }

@@ -115,9 +115,12 @@ public abstract class AbstractEntity extends AbstractMovable implements Entity {
      */
     protected abstract Vector2dc alterDirection();
 
-    public void getExp(int exp) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getExp'");
+    /**
+     * Protected to allow subclasses (like Player) to modify health directly.
+     * @param health the new health value
+     */
+    protected void setHealth(final int health) {
+        this.currentHealth = health;
     }
 
 }

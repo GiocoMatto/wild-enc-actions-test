@@ -10,6 +10,7 @@ import it.unibo.wildenc.mvc.model.EnemyFactory;
 import it.unibo.wildenc.mvc.model.MapObject;
 import it.unibo.wildenc.mvc.model.enemies.AbstractEnemy.AbstractEnemyField;
 import it.unibo.wildenc.mvc.model.map.objects.AbstractCollectible;
+import it.unibo.wildenc.mvc.model.map.objects.ExperienceGem;
 import it.unibo.wildenc.mvc.model.weaponary.weapons.WeaponFactory;
 
 /**
@@ -67,22 +68,8 @@ public class EnemyFactoryImpl implements EnemyFactory {
     }
 
     private Collectible experienceLoot(final Vector2dc pos) {
-        return new AbstractCollectible(pos, HITBOX_COLLECTIBLE, VALUE_COLLECTIBLE) {
-
-            @Override
-            public boolean isAlive() {
-                // TODO Auto-generated method stub
-                throw new UnsupportedOperationException("Unimplemented method 'isAlive'");
-            }
-
-            @Override
-            public String getName() {
-                // TODO Auto-generated method stub
-                throw new UnsupportedOperationException("Unimplemented method 'getName'");
-            }
-
+        return new ExperienceGem(pos, VALUE_COLLECTIBLE);
         };
-    }
 
     /**
      * {@inheritDoc}

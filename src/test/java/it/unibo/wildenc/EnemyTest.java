@@ -20,6 +20,7 @@ import it.unibo.wildenc.mvc.model.enemies.RangedEnemy;
 import it.unibo.wildenc.mvc.model.enemies.RoamingEnemy;
 import it.unibo.wildenc.mvc.model.map.CollisionLogic;
 import it.unibo.wildenc.mvc.model.map.objects.AbstractCollectible;
+import it.unibo.wildenc.mvc.model.map.objects.ExperienceGem;
 
 public class EnemyTest {
     private static final double DELTA_SECONDS = 0.1;
@@ -106,21 +107,7 @@ public class EnemyTest {
     private Enemy enemy;
 
     private Collectible experienceLoot(final Vector2dc pos) {
-        return new AbstractCollectible(pos, HITBOX_COLLECTIBLE, VALUE_COLLECTIBLE) {
-
-            @Override
-            public boolean isAlive() {
-                // TODO Auto-generated method stub
-                throw new UnsupportedOperationException("Unimplemented method 'isAlive'");
-            }
-
-            @Override
-            public String getName() {
-                // TODO Auto-generated method stub
-                throw new UnsupportedOperationException("Unimplemented method 'getName'");
-            }
-
-        };
+        return new ExperienceGem(pos, VALUE_COLLECTIBLE);
     }
 
     @Test

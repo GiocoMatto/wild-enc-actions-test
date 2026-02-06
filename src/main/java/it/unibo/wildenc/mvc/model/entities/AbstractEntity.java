@@ -16,10 +16,10 @@ import it.unibo.wildenc.mvc.model.Weapon;
  */
 public abstract class AbstractEntity extends AbstractMovable implements Entity {
 
-    private final int maxHealth;
+    private final double maxHealth;
     private final Set<Weapon> weapons;
 
-    private int currentHealth;
+    private double currentHealth;
 
     /**
      * Creates a {@link Movable} object that lives.
@@ -47,7 +47,7 @@ public abstract class AbstractEntity extends AbstractMovable implements Entity {
      * {@inheritDoc}
      */
     @Override
-    public int getCurrentHealth() {
+    public double getCurrentHealth() {
         return currentHealth;
     }
 
@@ -55,7 +55,7 @@ public abstract class AbstractEntity extends AbstractMovable implements Entity {
      * {@inheritDoc}
      */
     @Override
-    public int getMaxHealth() {
+    public double getMaxHealth() {
         return maxHealth;
     }
     
@@ -71,7 +71,7 @@ public abstract class AbstractEntity extends AbstractMovable implements Entity {
      * {@inheritDoc}
      */
     @Override
-    public void takeDamage(final int dmg) {
+    public void takeDamage(final double dmg) {
         if (canTakeDamage()) {
             currentHealth = Math.max(currentHealth - dmg, 0);
         }
@@ -99,7 +99,7 @@ public abstract class AbstractEntity extends AbstractMovable implements Entity {
      */
     @Override
     public boolean isAlive() {
-        return currentHealth >= 0;
+        return currentHealth > 0;
     }
 
     /**

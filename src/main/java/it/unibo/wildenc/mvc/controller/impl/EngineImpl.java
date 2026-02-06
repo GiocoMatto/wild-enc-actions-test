@@ -55,7 +55,7 @@ public class EngineImpl implements Engine {
      */
     @Override
     public void startGameLoop() {
-        chosePlayerType(Game.PlayerType.Charmender);
+        chosePlayerType(Game.PlayerType.CHARMANDER);
         model = new GameImpl(playerType);
         this.loop.start();
     }

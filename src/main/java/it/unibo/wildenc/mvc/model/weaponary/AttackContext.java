@@ -1,6 +1,5 @@
 package it.unibo.wildenc.mvc.model.weaponary;
 
-import java.util.Optional;
 import java.util.function.Supplier;
 
 import org.joml.Vector2d;

@@ -49,8 +49,6 @@ public class GameImpl implements Game {
             player.levelUp();
             this.playerLevelledUp = true;
         }
-        // Spawn enemies into the map by its logic
-        map.spawnEnemies(deltaTime); //FIXME: nano to seconds.
     }
 
     @Override
@@ -63,7 +61,7 @@ public class GameImpl implements Game {
      */
     @Override
     public boolean isGameEnded() {
-        return map.getPlayer().isAlive();
+        return !map.getPlayer().isAlive();
     }
 
     /**

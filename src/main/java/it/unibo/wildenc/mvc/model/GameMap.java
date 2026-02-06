@@ -2,6 +2,7 @@ package it.unibo.wildenc.mvc.model;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import org.joml.Vector2dc;
 
@@ -53,4 +54,10 @@ public interface GameMap {
      */
     void setEnemySpawnLogic(EnemySpawner spawnLogic);
 
+    /**
+     * Get this map's statistics of killed enemies.
+     * 
+     * @return A map with names of the killed enemies and an integer representing how much times the enemy was killed.
+     */
+    Map<String, Integer> getMapBestiary();
 }

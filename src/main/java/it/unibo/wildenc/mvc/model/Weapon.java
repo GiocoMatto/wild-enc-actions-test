@@ -1,13 +1,9 @@
 package it.unibo.wildenc.mvc.model;
 
 import java.util.Set;
-import java.util.function.Supplier;
-
-import org.joml.Vector2dc;
 
 import it.unibo.wildenc.mvc.model.weaponary.weapons.WeaponStats;
 
-import it.unibo.wildenc.mvc.model.weaponary.projectiles.ProjectileStats;
 /**
  * Interface for modelling a Weapon. For instance, a Weapon is a factory of {@link Projectile}s which have specific
  * characteristics which are determined by the Weapon they're generated.

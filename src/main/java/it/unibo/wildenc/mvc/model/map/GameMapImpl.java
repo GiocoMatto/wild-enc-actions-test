@@ -3,6 +3,8 @@ package it.unibo.wildenc.mvc.model.map;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +39,7 @@ public class GameMapImpl implements GameMap {
     private static final double NANO_TO_SECOND_FACTOR = 1_000_000_000.0;
 
     private final Player player;
+    private final Map<String, Integer> currentMapBestiary = new LinkedHashMap<>();
     private final List<MapObject> mapObjects = new ArrayList<>();
     private EnemySpawner es;
 
@@ -121,38 +124,45 @@ public class GameMapImpl implements GameMap {
     @Override
     public void updateEntities(final long deltaTime, final Vector2dc playerDirection) {
         final double deltaSeconds = deltaTime / NANO_TO_SECOND_FACTOR;
-        final List<MapObject> objToRemove = new LinkedList<>();
-        /*
-         * Update player
-         */
+        final Set<MapObject> objToRemove = new LinkedHashSet<>(); // FIXME: creating a set every tick may cause lag
         player.setDirection(playerDirection);
-        log(player);
+        // log(player);
         player.updatePosition(deltaSeconds);
-        /*
-         * Update objects positions
-         */
-        updateObjectPositions(deltaSeconds);
-        /*
-         * Check collisions of projectiles with player 
-         */
+        updateObjectPositions(deltaSeconds, objToRemove);
         checkPlayerHits(objToRemove);
-        /*
-         * Check collision of projectiles with enemies
-         */ 
         handleEnemyHits(objToRemove);
-        /*
-         * Check Collectibles
-         */
         handleCollectibles(objToRemove);
-        /*
-         * Handle attacks
-         */
         handleAttacks(deltaSeconds);
-        // remove used objects
+        spawnEnemies(deltaSeconds);
         mapObjects.removeAll(objToRemove);
     }
 
-    private void handleCollectibles(final List<MapObject> objToRemove) {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void spawnEnemies(final double deltaSeconds) {
+        int enemyCount = (int) mapObjects.stream().filter(e -> e instanceof Enemy).count();
+        this.addAllObjects(es.spawn(player, enemyCount, deltaSeconds));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setEnemySpawnLogic(final EnemySpawner spawnLogic) {
+        this.es = spawnLogic;
+    }
+
+    /**
+     * Get this map's bestiary.
+     */
+    @Override
+    public Map<String, Integer> getMapBestiary() {
+        return Collections.unmodifiableMap(this.currentMapBestiary);
+    }
+
+    private void handleCollectibles(final Set<MapObject> objToRemove) {
         mapObjects.stream()
             .filter(e -> e instanceof Collectible)
             .map(e -> (Collectible) e)
@@ -163,7 +173,7 @@ public class GameMapImpl implements GameMap {
             });
     }
 
-    private void handleEnemyHits(final List<MapObject> objToRemove) {
+    private void handleEnemyHits(final Set<MapObject> objToRemove) {
         final List<Projectile> projectiles = getAllObjects().stream()
             .filter(e -> e instanceof Projectile)
             .map(e -> (Projectile) e)
@@ -182,7 +192,7 @@ public class GameMapImpl implements GameMap {
         });
     }
 
-    private void checkPlayerHits(final List<MapObject> objToRemove) {
+    private void checkPlayerHits(final Set<MapObject> objToRemove) {
         mapObjects.stream()
             .filter(e -> e instanceof Projectile)
             .map(o -> (Projectile) o)
@@ -191,14 +201,18 @@ public class GameMapImpl implements GameMap {
             .forEach(o -> projectileHit(o, player, objToRemove));
     }
 
-    private void updateObjectPositions(final double deltaSeconds) {
+    private void updateObjectPositions(final double deltaSeconds, final Set<MapObject> toRemove) {
         mapObjects.stream()
             .filter(e -> e instanceof Movable)
             .map(o -> (Movable) o)
-            .peek(o -> {
-                log(o);
-            })
-            .forEach(o -> o.updatePosition(deltaSeconds));
+            // .peek(this::log) // FIXME: temp just for debug phase
+            .forEach(o -> {
+                o.updatePosition(deltaSeconds);
+                // cleanup dead objects like projectiles after TTL expiry
+                if (!o.isAlive()) {
+                    toRemove.add(o);
+                }
+            });
     }
 
     private void log(final Movable o) {
@@ -211,16 +225,20 @@ public class GameMapImpl implements GameMap {
         }
     }
 
-    private void projectileHit(final Projectile p, final Entity e, final List<MapObject> toRemove) {
+    private void projectileHit(final Projectile p, final Entity e, final Set<MapObject> toRemove) {
         if (!e.canTakeDamage()) { 
             return;
         }
-        LOGGER.debug("!!!!!! Projectile hit !!!!!!");
-        e.takeDamage((int) p.getDamage()); // FIXME: avoidable cast
+        e.takeDamage(p.getDamage());
         toRemove.add(p);
-        if (e.getCurrentHealth() <= 0) {
-            LOGGER.debug(e.getClass().toString() + " died!!!"); 
+        if (!e.isAlive()) {
             toRemove.add(e);
+            if (e instanceof Enemy en) {
+                // FIXME: if an enemy drops multiple collectibles they should not be in the same exact place
+                addAllObjects(en.getLoot());
+                this.currentMapBestiary.merge(e.getName(), 1, Integer::sum);
+            }
+            LOGGER.debug("{} died!!!", e.getClass().getSimpleName());
         }
     }
 
@@ -237,22 +255,4 @@ public class GameMapImpl implements GameMap {
                 });
         this.addAllObjects(toAdd); // add projectiles to the map objects.
     }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void spawnEnemies(final double deltaSeconds) {
-        // FIXME: avoidable cast?
-        this.addAllObjects(es.spawn(player, (int) mapObjects.stream().filter(e -> e instanceof Enemy).count(), deltaSeconds));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setEnemySpawnLogic(final EnemySpawner spawnLogic) {
-        this.es = spawnLogic;
-    }
-
 }

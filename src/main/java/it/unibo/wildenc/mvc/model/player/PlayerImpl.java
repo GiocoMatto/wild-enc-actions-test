@@ -2,7 +2,6 @@ package it.unibo.wildenc.mvc.model.player;
 
 import java.util.LinkedHashSet;
 
-import org.joml.Vector2d;
 import org.joml.Vector2dc;
 
 import it.unibo.wildenc.mvc.model.Player;
@@ -40,7 +39,7 @@ public class PlayerImpl extends AbstractEntity implements Player {
     @Override
     public boolean canTakeDamage() {
         //il giocatore non è mai invulnerabile
-        return true; 
+        return false; 
     }
 
     public void setDirection(final Vector2dc direction) {

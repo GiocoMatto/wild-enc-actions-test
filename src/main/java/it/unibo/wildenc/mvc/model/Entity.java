@@ -13,21 +13,21 @@ public interface Entity extends Movable {
      * 
      * @return current entity's health.
      */
-    int getCurrentHealth();
+    double getCurrentHealth();
 
     /**
      * Get entity's max health.
      * 
      * @return entity's max health.
      */
-    int getMaxHealth();
+    double getMaxHealth();
 
     /**
      * Decrease health by dmg amount.
      * 
      * @param dmg amount of damage.
      */
-    void takeDamage(int dmg);
+    void takeDamage(double dmg);
 
     /**
      * Weapons helded by this Entity.

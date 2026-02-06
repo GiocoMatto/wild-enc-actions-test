@@ -1,16 +1,19 @@
 package it.unibo.wildenc.mvc.controller.impl;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.LinkedBlockingQueue;
 import org.joml.Vector2d;
 import it.unibo.wildenc.mvc.controller.api.Engine;
+import it.unibo.wildenc.mvc.controller.api.MapObjViewData;
 import it.unibo.wildenc.mvc.controller.api.SavedData;
 import it.unibo.wildenc.mvc.controller.api.SavedDataHandler;
 import it.unibo.wildenc.mvc.controller.api.InputHandler.MovementInput;
-import it.unibo.wildenc.mvc.controller.api.MapObjViewData;
 import it.unibo.wildenc.mvc.controller.api.InputHandler;
+import it.unibo.wildenc.mvc.model.Entity;
 import it.unibo.wildenc.mvc.model.Game;
 import it.unibo.wildenc.mvc.model.Game.WeaponChoice;
 import it.unibo.wildenc.mvc.model.game.GameImpl;
@@ -52,6 +55,7 @@ public class EngineImpl implements Engine {
      */
     @Override
     public void startGameLoop() {
+        chosePlayerType(Game.PlayerType.Charmender);
         model = new GameImpl(playerType);
         this.loop.start();
     }
@@ -142,7 +146,7 @@ public class EngineImpl implements Engine {
      * The game loop.
      */
     public final class GameLoop extends Thread {
-        private static final long SLEEP_TIME = 10;
+        private static final long SLEEP_TIME = 20;
         private boolean running = true;
 
         @Override
@@ -169,14 +173,28 @@ public class EngineImpl implements Engine {
                         views.forEach(e -> e.lost(model.getGameStatistics()));
                         running = false;
                     }
-                    // final var mapObjs = model.getAllMapObjects().stream()
-                    //     .map(e -> new MapObjViewData(
-                    //         e.getName(), 
-                    //         e.getPosition().x(), 
-                    //         e.getPosition().y(),
-
-                    //     )).iterator();
-                    //views.forEach(e -> e.updateSprites(mapObjs));
+                    Collection<MapObjViewData> mapDataColl = model.getAllMapObjects().stream()
+                        .map(mapObj -> {
+                            if (mapObj instanceof Entity e) {
+                                return new MapObjViewData(
+                                    mapObj.getName(), 
+                                    mapObj.getPosition().x(), 
+                                    mapObj.getPosition().y(), 
+                                    Optional.of(e.getDirection().x()), 
+                                    Optional.of(e.getDirection().y())
+                                );
+                            } else {
+                                return new MapObjViewData(
+                                    mapObj.getName(),
+                                    mapObj.getPosition().x(),
+                                    mapObj.getPosition().y(),
+                                    Optional.empty(), Optional.empty()
+                                );
+                            }
+                        })
+                        .toList();
+                    views.stream()
+                        .forEach(view -> view.updateSprites(mapDataColl));
                     Thread.sleep(SLEEP_TIME);
                 }
             } catch (final InterruptedException e) {

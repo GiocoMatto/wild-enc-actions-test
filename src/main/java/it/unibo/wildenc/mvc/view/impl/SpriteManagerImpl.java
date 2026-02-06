@@ -35,14 +35,14 @@ public class SpriteManagerImpl implements SpriteManager {
 
     @Override
     public Sprite getSprite(int frameCount, MapObjViewData objData) {
-        if (objData.name().contains("projectile")) {
+        if (objData.name().contains("Proj")) {
             return new Sprite(
-                this.loadedSpriteMap.get("projectile"),
+                this.loadedSpriteMap.get(objData.name().toLowerCase()),
                 0, 0
             );
         }
         return new Sprite(
-            loadedSpriteMap.get(objData.name().split(":")[0]),
+            loadedSpriteMap.get(objData.name().toLowerCase().split(":")[0]),
             convertVersorToDominant(objData),
             ((frameCount / 24) % TOTAL_FRAMES) * SPRITE_SIZE
         );

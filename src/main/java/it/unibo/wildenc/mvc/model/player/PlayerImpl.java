@@ -61,14 +61,12 @@ public class PlayerImpl extends AbstractEntity implements Player {
 
     @Override
     public String getName() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getName'");
+        return "player"; // FIXME: Change Player Name to something having sense.
     }
 
     @Override
     public boolean canLevelUp() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'canLevelUp'");
+        return false;
     }
 
 }

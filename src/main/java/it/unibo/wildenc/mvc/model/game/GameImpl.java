@@ -116,5 +116,4 @@ public class GameImpl implements Game {
         playerStats.addDefaultWeapon().accept(new WeaponFactory(), actualPlayer);
         return actualPlayer;
     }
-
 }

@@ -236,6 +236,7 @@ public class EngineImpl implements Engine {
                     Thread.sleep(SLEEP_TIME);
                 }
             } catch (final InterruptedException e) {
+                System.out.println(e.toString());
                 Thread.currentThread().interrupt();
             }
         }

@@ -5,10 +5,13 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Optional;
+import java.util.Set;
+
 import org.joml.Vector2d;
 import org.joml.Vector2dc;
 import org.junit.jupiter.api.Test;
 import it.unibo.wildenc.mvc.model.Entity;
+import it.unibo.wildenc.mvc.model.Collectible;
 import it.unibo.wildenc.mvc.model.Enemy;
 import it.unibo.wildenc.mvc.model.MapObject;
 import it.unibo.wildenc.mvc.model.enemies.AbstractEnemy.AbstractEnemyField;
@@ -16,6 +19,7 @@ import it.unibo.wildenc.mvc.model.enemies.CloseRangeEnemy;
 import it.unibo.wildenc.mvc.model.enemies.RangedEnemy;
 import it.unibo.wildenc.mvc.model.enemies.RoamingEnemy;
 import it.unibo.wildenc.mvc.model.map.CollisionLogic;
+import it.unibo.wildenc.mvc.model.map.objects.AbstractCollectible;
 
 public class EnemyTest {
     private static final double DELTA_SECONDS = 0.1;
@@ -24,6 +28,9 @@ public class EnemyTest {
     private static final int SPEED = 10;
     private static final int HEALTH = 500;
     private static final String NAME = "Pikachu";
+    /* Collectible */
+    private static final double HITBOX_COLLECTIBLE = 5;
+    private static final int VALUE_COLLECTIBLE = 34;
     private static final MapObject TARGET_1 = new MapObject() {
 
         @Override
@@ -98,9 +105,27 @@ public class EnemyTest {
     };
     private Enemy enemy;
 
+    private Collectible experienceLoot(final Vector2dc pos) {
+        return new AbstractCollectible(pos, HITBOX_COLLECTIBLE, VALUE_COLLECTIBLE) {
+
+            @Override
+            public boolean isAlive() {
+                // TODO Auto-generated method stub
+                throw new UnsupportedOperationException("Unimplemented method 'isAlive'");
+            }
+
+            @Override
+            public String getName() {
+                // TODO Auto-generated method stub
+                throw new UnsupportedOperationException("Unimplemented method 'getName'");
+            }
+
+        };
+    }
+
     @Test
     public void CloseRangeEnemyTest() {
-        this.enemy = new CloseRangeEnemy(new AbstractEnemyField(SPAWN_POSITION, HITBOX, SPEED, HEALTH, NAME, Optional.of(TARGET_1), 1));
+        this.enemy = new CloseRangeEnemy(new AbstractEnemyField(SPAWN_POSITION, HITBOX, SPEED, HEALTH, NAME, Optional.of(TARGET_1), Set.of(experienceLoot(SPAWN_POSITION))));
         int count = 0;
         while (!CollisionLogic.areColliding(enemy, TARGET_1)) {
             enemy.updatePosition(DELTA_SECONDS);
@@ -112,7 +137,7 @@ public class EnemyTest {
     @Test
     public void RangedEnemyTest() {
         /* enemy is fare away the player */
-        this.enemy = new RangedEnemy(new AbstractEnemyField(SPAWN_POSITION, HITBOX, SPEED, HEALTH, NAME, Optional.of(TARGET_2), 1));
+        this.enemy = new RangedEnemy(new AbstractEnemyField(SPAWN_POSITION, HITBOX, SPEED, HEALTH, NAME, Optional.of(TARGET_2), Set.of(experienceLoot(SPAWN_POSITION))));
         int count = 0;
         while (!CollisionLogic.areInRange(enemy, TARGET_2, RangedEnemy.MAX_DISTANCE)) {
             enemy.updatePosition(DELTA_SECONDS);
@@ -120,7 +145,7 @@ public class EnemyTest {
         }
         assertEquals(1, count);
         /* enemy is too much near the player */
-        this.enemy = new RangedEnemy(new AbstractEnemyField(SPAWN_POSITION, HITBOX, SPEED, HEALTH, NAME, Optional.of(TARGET_3), 1));
+        this.enemy = new RangedEnemy(new AbstractEnemyField(SPAWN_POSITION, HITBOX, SPEED, HEALTH, NAME, Optional.of(TARGET_3), Set.of(experienceLoot(SPAWN_POSITION))));
         count = 0;
         while (CollisionLogic.areInRange(enemy, TARGET_3, RangedEnemy.MIN_DISTANCE)) {
             enemy.updatePosition(DELTA_SECONDS);
@@ -132,7 +157,7 @@ public class EnemyTest {
     @Test
     public void RoamingEnemyTest() {
         /* Try enemy is immortal for 5s */
-        this.enemy = new RoamingEnemy(new AbstractEnemyField(SPAWN_POSITION, HITBOX, SPEED, HEALTH, NAME, Optional.empty(), 1));
+        this.enemy = new RoamingEnemy(new AbstractEnemyField(SPAWN_POSITION, HITBOX, SPEED, HEALTH, NAME, Optional.empty(), Set.of(experienceLoot(SPAWN_POSITION))));
         try {
             Thread.sleep(RoamingEnemy.TIME_SAFE);
             assertTrue(((Entity)enemy).canTakeDamage());

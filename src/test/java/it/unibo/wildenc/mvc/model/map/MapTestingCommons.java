@@ -15,6 +15,7 @@ import it.unibo.wildenc.mvc.model.Player;
 import it.unibo.wildenc.mvc.model.Weapon;
 import it.unibo.wildenc.mvc.model.enemies.AbstractEnemy.AbstractEnemyField;
 import it.unibo.wildenc.mvc.model.enemies.CloseRangeEnemy;
+import it.unibo.wildenc.mvc.model.map.objects.AbstractCollectible;
 import it.unibo.wildenc.mvc.model.map.objects.AbstractMapObject;
 import it.unibo.wildenc.mvc.model.map.objects.AbstractMovable;
 import it.unibo.wildenc.mvc.model.player.PlayerImpl;
@@ -24,6 +25,9 @@ import it.unibo.wildenc.mvc.model.weaponary.weapons.WeaponFactory;
  * Testing constants for the map.
  */
 public final class MapTestingCommons {
+    /* Collectible */
+    private static final double HITBOX_COLLECTIBLE = 5;
+    private static final int VALUE_COLLECTIBLE = 34;
 
     /**
      * 1 second in nanoseconds.
@@ -37,7 +41,6 @@ public final class MapTestingCommons {
      * 20 ticks of 1 second each, 20 seconds.
      */
     public static final int TEST_SIMULATION_TICKS = 20;
-    public static final int LOOT = 1;
 
     private MapTestingCommons() { }
 
@@ -220,7 +223,28 @@ public final class MapTestingCommons {
          */
         public CloseRangeEnemy getAsCloseRangeEnemy(final Set<Weapon> weapons, final String name, 
             final Optional<MapObject> target) {
-            final CloseRangeEnemy e = new CloseRangeEnemy(new AbstractEnemyField(pos, hitbox, speed, health, name, target, LOOT));
+            final CloseRangeEnemy e = new CloseRangeEnemy(new AbstractEnemyField(
+                pos, 
+                hitbox, 
+                speed, 
+                health, 
+                name, 
+                target, 
+                Set.of(new AbstractCollectible(pos, HITBOX_COLLECTIBLE, VALUE_COLLECTIBLE) {
+
+            @Override
+            public boolean isAlive() {
+                // TODO Auto-generated method stub
+                throw new UnsupportedOperationException("Unimplemented method 'isAlive'");
+            }
+
+            @Override
+            public String getName() {
+                // TODO Auto-generated method stub
+                throw new UnsupportedOperationException("Unimplemented method 'getName'");
+            }
+
+        })));
             for (final var w : weapons) {
                 e.addWeapon(w);
             }

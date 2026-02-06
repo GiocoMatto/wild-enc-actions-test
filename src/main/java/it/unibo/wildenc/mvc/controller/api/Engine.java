@@ -70,4 +70,11 @@ public interface Engine {
      */
     void registerView(GameView gv);
 
+    /**
+     * Remove the view from the views handled by this engine.
+     * 
+     * @param gv the view to remove.
+     */
+    void unregisterView(GameView gv);
+
 }

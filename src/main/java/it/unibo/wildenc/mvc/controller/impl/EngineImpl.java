@@ -8,7 +8,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.LinkedBlockingQueue;
 import org.joml.Vector2d;
 import org.joml.Vector2dc;
 
@@ -44,7 +43,7 @@ public class EngineImpl implements Engine {
     /**
      * The status of the game loop.
      */
-    public enum STATUS {RUNNING, PAUSE}
+    public enum STATUS {RUNNING, PAUSE, END}
 
     /**
      * Create a Engine.
@@ -122,6 +121,7 @@ public class EngineImpl implements Engine {
     public void close() {
         try {
             this.dataHandler.saveData(data);
+            gameStatus = STATUS.END;
         } catch (final IOException e) {
             System.out.println(e.getMessage());
         }
@@ -154,17 +154,27 @@ public class EngineImpl implements Engine {
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void unregisterView(GameView gv) {
+        this.views.remove(gv);
+        if (this.views.isEmpty()) {
+            this.close();
+        }        
+    }
+
+    /**
      * The game loop.
      */
     public final class GameLoop extends Thread {
         private static final long SLEEP_TIME = 20;
-        private boolean running = true;
 
         @Override
         public void run() {
             try {
                 long lastTime = System.nanoTime();
-                while (running) {
+                while (STATUS.RUNNING.equals(gameStatus)) {
                     synchronized (pauseLock) {
                         while (gameStatus == STATUS.PAUSE) {
                             pauseLock.wait();
@@ -192,13 +202,13 @@ public class EngineImpl implements Engine {
                     }
                     if (model.isGameEnded()) {
                         views.forEach(e -> e.lost(model.getGameStatistics()));
-                        running = false;
+                        gameStatus = STATUS.END;
                     }
                     final Vector2dc currentMousePos = (views.stream()
                         .filter(view -> view instanceof GamePointerView)
                         .map(view -> (GamePointerView) view)
                         .findFirst()
-                        .get()
+                        .orElse(() -> new Vector2d(0,0))
                         .getMousePointerInfo()
                     );
 

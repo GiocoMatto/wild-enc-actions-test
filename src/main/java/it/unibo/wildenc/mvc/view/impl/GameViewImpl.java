@@ -95,6 +95,10 @@ public class GameViewImpl implements GameView, GamePointerView {
             }
         });
 
+        gameStage.setOnCloseRequest((e) -> {
+            eg.unregisterView(this);
+        });
+
         gameStage.setScene(scene);
         gameStage.centerOnScreen();
         gameStage.show();

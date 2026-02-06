@@ -128,6 +128,15 @@ public class EngineImpl implements Engine {
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void registerView(final GameView gv) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'registerView'");
+    }
+
+    /**
      * The game loop.
      */
     public final class GameLoop extends Thread {
@@ -176,15 +185,4 @@ public class EngineImpl implements Engine {
             }
         }
     }
-
-    public InputHandler getInputHandler() {
-        return this.ih;
-    }
-
-    @Override
-    public void registerView(GameView gv) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'registerView'");
-    }
-
 }

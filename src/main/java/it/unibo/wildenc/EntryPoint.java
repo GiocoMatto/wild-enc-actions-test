@@ -1,6 +1,7 @@
-package it.unibo.wildenc.mvc.view.impl;
+package it.unibo.wildenc;
 
 import it.unibo.wildenc.mvc.controller.impl.EngineImpl;
+import it.unibo.wildenc.mvc.view.impl.GameViewImpl;
 import it.unibo.wildenc.mvc.controller.api.Engine;
 
 import javafx.application.Application;

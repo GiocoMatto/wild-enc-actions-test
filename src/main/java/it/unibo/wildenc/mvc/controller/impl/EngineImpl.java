@@ -63,6 +63,7 @@ public class EngineImpl implements Engine {
     public void startGameLoop() {
         chosePlayerType(Game.PlayerType.CHARMANDER);
         model = new GameImpl(playerType);
+        this.loop.setDaemon(true);
         this.loop.start();
     }
 
@@ -174,7 +175,7 @@ public class EngineImpl implements Engine {
         public void run() {
             try {
                 long lastTime = System.nanoTime();
-                while (STATUS.RUNNING.equals(gameStatus)) {
+                while (STATUS.RUNNING == gameStatus) {
                     synchronized (pauseLock) {
                         while (gameStatus == STATUS.PAUSE) {
                             pauseLock.wait();

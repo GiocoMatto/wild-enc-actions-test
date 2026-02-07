@@ -16,6 +16,7 @@ import java.util.Map;
 import it.unibo.wildenc.mvc.model.Game;
 import it.unibo.wildenc.mvc.view.api.GamePointerView;
 import it.unibo.wildenc.mvc.view.api.GameView;
+import javafx.application.Platform;
 import javafx.geometry.Pos;
 import it.unibo.wildenc.mvc.view.api.ViewRenderer;
 import javafx.scene.Scene;
@@ -99,6 +100,7 @@ public class GameViewImpl implements GameView, GamePointerView {
 
         gameStage.setOnCloseRequest((e) -> {
             eg.unregisterView(this);
+            gameStage.close();
         });
 
         gameStage.setScene(scene);
@@ -120,8 +122,10 @@ public class GameViewImpl implements GameView, GamePointerView {
             this.gameStarted = true;
         }
         this.backupColl = mObj;
-        renderer.clean();
-        renderer.renderAll(mObj);
+        Platform.runLater(() -> {
+            renderer.clean();
+            renderer.renderAll(mObj);
+        });
     }
 
     @Override

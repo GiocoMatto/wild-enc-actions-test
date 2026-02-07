@@ -71,12 +71,16 @@ public class EngineImpl implements Engine {
      * {@inheritDoc}
      */
     @Override
-    public void processInput(final MovementInput movement, final boolean isPressed) {
-        if (isPressed) {
-            activeMovements.add(movement);
-        } else {
-            activeMovements.remove(movement);
-        }
+    public void addInput(final MovementInput movement) {
+        activeMovements.add(movement);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void removeInput(MovementInput movement) {
+        activeMovements.remove(movement);
     }
 
     /**
@@ -184,18 +188,8 @@ public class EngineImpl implements Engine {
                     final long now = System.nanoTime();
                     final long dt = now - lastTime;
                     lastTime = now;
-                    final Vector2d movementVector;
-
-                    if (activeMovements.isEmpty()) {
-                        //se nessun tasto è premuto il giocatore non si muove
-                        movementVector = new Vector2d(0, 0);
-                    } else {
-                        //se ci sono tasti, l'InputHandler ne fa la somma
-                        movementVector = new Vector2d(ih.handleMovement(activeMovements));
-                    }
                     //passo il nuovo vettore calcolato
-                    model.updateEntities(dt, movementVector);
-
+                    model.updateEntities(dt, ih.handleMovement(activeMovements));
                     if (model.hasPlayerLevelledUp()) {
                         setPause(true);
                         final var levelUpChoise = model.weaponToChooseFrom();
@@ -212,7 +206,6 @@ public class EngineImpl implements Engine {
                         .orElse(() -> new Vector2d(0,0))
                         .getMousePointerInfo()
                     );
-
                     model.getAllMapObjects().stream()
                         .filter(o -> o instanceof Entity)
                         .map(e -> (Entity) e)
@@ -221,7 +214,6 @@ public class EngineImpl implements Engine {
                         .forEach(wp -> {
                             ((PointerWeapon) wp).setPosToHit(() -> currentMousePos);
                         });
-                    
                     final Collection<MapObjViewData> mapDataColl = model.getAllMapObjects().stream()
                         .map(mapObj -> {
                             if (mapObj instanceof Entity e) {
@@ -252,4 +244,5 @@ public class EngineImpl implements Engine {
             }
         }
     }
+
 }

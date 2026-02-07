@@ -88,13 +88,13 @@ public class GameViewImpl implements GameView, GamePointerView {
         //listener tasto premuto
         scene.setOnKeyPressed(event -> {
             if (keyToInputMap.containsKey(event.getCode())) {
-                eg.processInput(keyToInputMap.get(event.getCode()), true);
+                eg.addInput(keyToInputMap.get(event.getCode()));
             }
         });
         //listener tasto rilasciato
         scene.setOnKeyReleased(event -> {
             if (keyToInputMap.containsKey(event.getCode())) {
-                eg.processInput(keyToInputMap.get(event.getCode()), false);
+                eg.removeInput(keyToInputMap.get(event.getCode()));
             }
         });
 

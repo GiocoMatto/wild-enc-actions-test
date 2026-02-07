@@ -10,12 +10,18 @@ import it.unibo.wildenc.mvc.view.api.GameView;
 public interface Engine {
 
     /**
-     * Accept che movement of the player.
+     * Accept the movement of the player to add.
      * 
      * @param movement the movemente of type {@link MovementInput}.
-     * @param isPressed true if a key is pressed, false if released
      */
-    void processInput(MovementInput movement, boolean isPressed);
+    void addInput(MovementInput movement);
+
+    /**
+     * Accept the movemet of the player to remove.
+     * 
+     * @param movement the movemente of type {@link MovementInput}.
+     */
+    void removeInput(MovementInput movement);
 
     /**
      * Update the status of the gameLoop.

@@ -205,7 +205,7 @@ public class GameMapImpl implements GameMap {
         mapObjects.parallelStream()
             .filter(e -> e instanceof Movable)
             .map(o -> (Movable) o)
-            // .peek(this::log) // FIXME: temp just for debug phase
+            .peek(this::log) // FIXME: temp just for debug phase
             .forEach(o -> {
                 o.updatePosition(deltaSeconds);
                 // cleanup dead objects like projectiles after TTL expiry
@@ -231,7 +231,9 @@ public class GameMapImpl implements GameMap {
             return;
         }
         e.takeDamage(p.getDamage());
-        toRemove.add(p);
+        if (!p.isImmortal()) {
+            toRemove.add(p);
+        }
         if (!e.isAlive()) {
             toRemove.add(e);
             if (e instanceof Enemy en) {

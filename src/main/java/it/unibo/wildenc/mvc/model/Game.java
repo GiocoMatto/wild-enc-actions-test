@@ -75,12 +75,21 @@ public interface Game {
                 0.5, 
                 30.0, 
                 5.0,
-                100.0,
+                600.0,
                 3,
                 1,
                 5,
                 p,
                 () -> new Vector2d(1, 0)
+            ));
+            p.addWeapon(wf.getShurikenWeapon(
+                10, 
+                32, 
+                5, 
+                3, 
+                75, 
+                2, 
+                p
             )); 
         }),
         BULBASAUR(20, 30, 200, (wf, p) -> {

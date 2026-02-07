@@ -22,6 +22,7 @@ public class ProjectileStats {
     private final double timeToLive;
     private final String projID;
     private final Entity projOwner;
+    private final boolean immortal;
     private final BiFunction<Double, AttackContext, Vector2d> projMovementFunction;
 
     /**
@@ -33,6 +34,7 @@ public class ProjectileStats {
      * @param baseVelocity the base movement velocity of the Projectile (could be angular in case of orbitals)
      * @param ttl the time of life of the Projectile, after which it's considered gone
      * @param id an identifier for the Projectile
+     * @param areProjImmortal specifies if projectiles are destroyed on collision
      * @param ownedBy the {@link Entity} who generated this Projectile
      * @param moveFunc the function that defines the Projectile's movement
      */
@@ -42,6 +44,7 @@ public class ProjectileStats {
         final double baseVelocity,
         final double ttl,
         final String id,
+        final boolean areProjImmortal,
         final Entity ownedBy,
         final BiFunction<Double, AttackContext, Vector2d> moveFunc
 
@@ -52,6 +55,7 @@ public class ProjectileStats {
         this.timeToLive = ttl;
         this.projID = id;
         this.projOwner = ownedBy;
+        this.immortal = areProjImmortal;
         this.projMovementFunction = moveFunc;
     }
 
@@ -113,6 +117,15 @@ public class ProjectileStats {
      */
     public Entity getOwner() {
         return this.projOwner;
+    }
+
+    /**
+     * Method for knowing a projectile is immortal.
+     * 
+     * @return true if the projectile is immortal, false otherwise. 
+     */
+    public boolean isImmortal() {
+        return this.immortal;
     }
 
     /**

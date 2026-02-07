@@ -93,5 +93,13 @@ public class ConcreteProjectile extends AbstractMovable implements Projectile {
     public Entity getOwner() {
         return this.projStats.getOwner();
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isImmortal() {
+        return this.projStats.isImmortal();
+    }
 }
 

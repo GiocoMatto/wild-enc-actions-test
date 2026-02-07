@@ -2,6 +2,7 @@ package it.unibo.wildenc.mvc.model.weaponary.weapons;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 import java.util.function.Supplier;
 
 import org.joml.Vector2d;
@@ -12,6 +13,7 @@ import it.unibo.wildenc.mvc.model.Weapon;
 import it.unibo.wildenc.mvc.model.weaponary.AttackContext;
 import it.unibo.wildenc.mvc.model.weaponary.projectiles.ProjectileStats;
 import it.unibo.wildenc.mvc.model.weaponary.projectiles.ProjectileStats.ProjStatType;
+import it.unibo.wildenc.util.Utilities;
 
 /**
  * Factory class for generating different kinds of weapon.
@@ -59,6 +61,7 @@ public class WeaponFactory {
                 baseVelocity,
                 baseTTL,
                 "BasicPointing",
+                false,
                 ownedBy,
                 (dt, atkInfo) -> {
                     final Vector2dc start = atkInfo.getLastPosition();
@@ -84,7 +87,7 @@ public class WeaponFactory {
                     final double velocity = weaponStats.getProjStats().getStatValue(ProjStatType.VELOCITY);
                     final Vector2dc targetPos = weaponStats.getPosToHit().get();
 
-                    final Vector2d centralDirection = new Vector2d(targetPos).normalize();
+                    final Vector2d centralDirection = new Vector2d(Utilities.normalizeVector(new Vector2d(targetPos)));
 
                     final List<AttackContext> projContext = new ArrayList<>();
 
@@ -136,6 +139,7 @@ public class WeaponFactory {
                 baseVelocity,
                 baseTTL,
                 "BasicWeapon",
+                false,
                 ownedBy,
                 (dt, atkInfo) -> {
                     final Vector2dc start = atkInfo.getLastPosition();
@@ -161,7 +165,7 @@ public class WeaponFactory {
                     final double velocity = weaponStats.getProjStats().getStatValue(ProjStatType.VELOCITY);
                     final Vector2dc targetPos = weaponStats.getPosToHit().get();
 
-                    final Vector2d centralDirection = new Vector2d(targetPos).sub(origin).normalize();
+                    final Vector2d centralDirection = new Vector2d(Utilities.normalizeVector(new Vector2d(targetPos).sub(origin)));
 
                     final List<AttackContext> projContext = new ArrayList<>();
 
@@ -187,6 +191,65 @@ public class WeaponFactory {
                     }
                     return projContext;
                 }
+        );
+    }
+
+    public Weapon getShurikenWeapon(
+    final double baseDamage,
+    final double hbRadius,
+    final double orbitSpeed,
+    final double baseTTL,
+    final double orbitRadius,
+    final int shurikenCount,
+    final Entity ownedBy
+) {
+    return new GenericWeapon(
+        "ShurikenOrbit",
+        7,
+        1, 
+        shurikenCount,
+        ownedBy::getPosition,
+        new ProjectileStats(
+            baseDamage, hbRadius, orbitSpeed, baseTTL, "ShurikenOrbit", true, ownedBy,
+            (dt, atkInfo) -> {
+                Vector2dc center = ownedBy.getPosition();
+                Vector2dc dir = atkInfo.getDirectionVersor();
+                double currentRad = Math.atan2(dir.y(), dir.x());
+                double nextRad = currentRad + (atkInfo.getVelocity() * dt);
+                atkInfo.setDirection(Math.toDegrees(nextRad));
+                double deltaAngleRad = atkInfo.getVelocity() * dt;
+                double nextAngleRad = currentRad + deltaAngleRad;
+                double nextAngleDeg = Math.toDegrees(nextAngleRad);
+                atkInfo.setDirection(nextAngleDeg); 
+
+                return new Vector2d(
+                    center.x() + orbitRadius * Math.cos(nextAngleRad),
+                    center.y() + orbitRadius * Math.sin(nextAngleRad)
+                );
+            }
+        ),
+        (level, weaponStats) -> {
+            weaponStats.getProjStats().setMultiplier(ProjStatType.DAMAGE, level);
+        },
+        weaponStats -> {
+            final int pelletNumber = weaponStats.getProjectilesShotAtOnce();
+            final List<AttackContext> projContext = new ArrayList<>();
+            final double velocity = weaponStats.getProjStats().getStatValue(ProjStatType.VELOCITY);
+            final double step = Math.toRadians(360) / pelletNumber; 
+            for (int i = 0; i < pelletNumber; i++) {
+                final double currentAngle = i * step;
+                final Vector2d offsetDir = new Vector2d(Math.cos(currentAngle), Math.sin(currentAngle));
+
+                projContext.add(new AttackContext(
+                    weaponStats.getProjStats().getOwner().getPosition(), 
+                    velocity, 
+                    () -> {
+                        return new Vector2d(ownedBy.getPosition()).add(offsetDir);
+                    }
+                ).protectiveCopy());
+            }
+                return projContext;
+            }
         );
     }
 }

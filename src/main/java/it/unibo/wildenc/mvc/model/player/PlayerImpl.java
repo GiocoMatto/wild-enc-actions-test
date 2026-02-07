@@ -41,7 +41,7 @@ public class PlayerImpl extends AbstractEntity implements Player {
     @Override
     public boolean canTakeDamage() {
         //il giocatore non è mai invulnerabile
-        return false; 
+        return true; 
     }
 
     public void setDirection(final Vector2dc direction) {

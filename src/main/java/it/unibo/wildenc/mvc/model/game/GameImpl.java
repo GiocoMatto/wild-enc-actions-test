@@ -1,6 +1,7 @@
 package it.unibo.wildenc.mvc.model.game;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -98,8 +99,7 @@ public class GameImpl implements Game {
      */
     @Override
     public Map<String, Integer> getGameStatistics() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getGameStatistics'");
+        return Collections.unmodifiableMap(map.getMapBestiary());
     }
 
     private Player getPlayerByPlayerType(final PlayerType playerType) {

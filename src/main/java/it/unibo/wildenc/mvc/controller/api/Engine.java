@@ -12,6 +12,8 @@ import it.unibo.wildenc.mvc.view.api.GameView;
  */
 public interface Engine {
 
+    void start(Game.PlayerType pt);
+
     /**
      * Accept the movement of the player to add.
      * 

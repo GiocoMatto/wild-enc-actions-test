@@ -31,6 +31,8 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -56,13 +58,23 @@ public class GameViewImpl implements GameView, GamePointerView {
 
     public GameViewImpl() {
         renderer = new ViewRendererImpl();        
-        renderer.setCanvas(canvas);
+    }
+
+    @Override
+    public void start(final Game.PlayerType pt) {
         gameStage = new Stage();
         gameStage.setTitle("Wild Encounter");
-        gameStage.setX(1600);
-        gameStage.setY(600);
+        gameStage.setHeight(900);
+        gameStage.setWidth(1600);
+        //ngine.menu(Game.PlayerType.CHARMANDER);
+        Scene scene = new Scene(new StackPane());
+        gameStage.setScene(scene);
+        this.gameStage.show();
+        gameStage.toFront();
         gameStage.centerOnScreen();
+        switchRoot(menu(pt));
     }
+
 
     /**
      * {@inheritDoc}
@@ -72,16 +84,16 @@ public class GameViewImpl implements GameView, GamePointerView {
         this.engine = e;
     }
 
-    private void switchScene(final Scene scene) {
-        this.gameStage.setScene(scene);
-        this.gameStage.show();
+    public void switchRoot(final Parent root) {
+        this.gameStage.getScene().setRoot(root);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void game() {
+    public Parent game() {
+        renderer.setCanvas(canvas);
         final VBox root = new VBox();
         this.renderer.setContainer(root);
         canvas.widthProperty().bind(root.widthProperty());
@@ -126,7 +138,7 @@ public class GameViewImpl implements GameView, GamePointerView {
             gameStage.close();
         });
         root.requestFocus();
-        switchScene(scene);
+        return root;
     }
 
     /**
@@ -213,7 +225,7 @@ public class GameViewImpl implements GameView, GamePointerView {
     }
 
     @Override
-    public void pokedexView(Map<String, Integer> pokedexView) {
+    public Parent pokedexView(Map<String, Integer> pokedexView) {
         Button goToMenu = new Button("Torna al menù");
         goToMenu.setOnAction(e -> engine.menu(engine.getPlayerTypeChoise()));
         ListView<Map.Entry<String, Integer>> listView = new ListView<>();
@@ -234,33 +246,24 @@ public class GameViewImpl implements GameView, GamePointerView {
             }
         });
         VBox root = new VBox(goToMenu, listView);
-        Scene scene = new Scene(root, 500, 500);
-        switchScene(scene);
+        return root;
     }
 
     @Override
-    public void menu(final Game.PlayerType pt) {
-        final BorderPane root = new BorderPane();
-        root.setPadding(new Insets(15));
+    public Parent menu(final Game.PlayerType pt) {
+        /* top bar statistic */
         Label xp = new Label("XP");
         Label level = new Label("LVL");
         Label wc = new Label("WC");
         HBox topBar = new HBox(20, xp, level, wc);
         topBar.setAlignment(Pos.CENTER);
-        root.setTop(topBar);
-        Button boxBtn = new Button("POKEDEX");
-        boxBtn.setOnAction(e -> engine.pokedex());
-        Button shopBtn = new Button("SHOP");
-        boxBtn.setMaxWidth(Double.MAX_VALUE);
-        shopBtn.setMaxWidth(Double.MAX_VALUE);
-        VBox leftMenu = new VBox(10, boxBtn, shopBtn);
-        leftMenu.setPrefWidth(120);
-        root.setLeft(leftMenu);
+        /* start game play */
         Label avatar = new Label(pt.name());
         avatar.setMinSize(120, 120);
         avatar.setStyle("-fx-border-color: black");
         HBox infoBar = new HBox(10);
-        infoBar.setStyle("-fx-background-color: #ff0000;");;
+        infoBar.setAlignment(Pos.CENTER);
+        infoBar.setStyle("-fx-background-color: #ff0000;");
         for (final var e : engine.getPlayerType()) {
             final Button btnPoke = new Button(e.name());
             btnPoke.setOnAction(btn -> {
@@ -268,17 +271,28 @@ public class GameViewImpl implements GameView, GamePointerView {
             });
             infoBar.getChildren().add(btnPoke);
         }
-        infoBar.setAlignment(Pos.CENTER);
-        VBox centerBox = new VBox(15, avatar, infoBar);
-        centerBox.setAlignment(Pos.CENTER);
-        root.setCenter(centerBox);
         Button playBtn = new Button("Gioca");
         playBtn.setPrefHeight(50);
-        playBtn.setMaxWidth(Double.MAX_VALUE);
-        root.setBottom(playBtn);
+        playBtn.setMaxWidth(300);
         playBtn.setOnAction(e -> engine.startGameLoop());
-
-        switchScene(new Scene(root));
+        VBox centerBox = new VBox(15, avatar, infoBar, playBtn);
+        centerBox.setAlignment(Pos.CENTER);
+        centerBox.setFillWidth(true);
+        /* oter buttons */
+        Button boxBtn = new Button("POKEDEX");
+        boxBtn.setOnAction(e -> engine.pokedex());
+        Button shopBtn = new Button("SHOP");
+        HBox downMenu = new HBox(10, boxBtn, shopBtn);
+        downMenu.setAlignment(Pos.CENTER);
+        downMenu.setMaxWidth(300);
+        boxBtn.setMaxWidth(Double.MAX_VALUE);
+        shopBtn.setMaxWidth(Double.MAX_VALUE);
+        HBox.setHgrow(boxBtn, Priority.ALWAYS);
+        HBox.setHgrow(shopBtn, Priority.ALWAYS);
+        VBox root = new VBox(10, topBar, centerBox, downMenu);
+        root.setAlignment(Pos.CENTER);
+        root.setFillWidth(true);
+        return root;
     }
 
     @Override

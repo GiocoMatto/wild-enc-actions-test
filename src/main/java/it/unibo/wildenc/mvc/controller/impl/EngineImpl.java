@@ -49,6 +49,12 @@ public class EngineImpl implements Engine {
      */
     public enum STATUS { RUNNING, PAUSE, END }
 
+    @Override
+    public void start(final Game.PlayerType pt) {
+        playerType = pt;
+        this.views.forEach(e -> e.start(pt));
+    }
+
     /**
      * Create a Engine.
      */
@@ -66,7 +72,7 @@ public class EngineImpl implements Engine {
     @Override
     public void startGameLoop() {
         model = new GameImpl(playerType);
-        this.views.forEach(v -> v.game());
+        this.views.forEach(v -> v.switchRoot(v.game()));
         this.loop.setDaemon(true);
         this.loop.start();
     }
@@ -121,7 +127,7 @@ public class EngineImpl implements Engine {
     @Override
     public void pokedex() {
         // this.views.forEach(e -> e.pokedexView(data.getPokedex()));
-        this.views.forEach(e -> e.pokedexView(Map.of("caio", 1, "caio1", 3, "caio2", 0, "caio3", 9)));
+        this.views.forEach(e -> e.switchRoot(e.pokedexView(Map.of("caio", 1, "caio1", 3, "caio2", 0, "caio3", 9))));
     }
 
     /**
@@ -143,7 +149,7 @@ public class EngineImpl implements Engine {
     @Override
     public void menu(final Game.PlayerType pt) {
         this.playerType = pt;
-        this.views.forEach(e -> e.menu(pt));
+        this.views.forEach(e -> e.switchRoot(e.menu(pt)));
     }
 
     /**

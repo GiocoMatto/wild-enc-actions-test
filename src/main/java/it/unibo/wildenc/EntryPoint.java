@@ -14,8 +14,8 @@ public class EntryPoint extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         e.registerView(new GameViewImpl());
-        e.registerView(new GameViewImpl());
-        e.menu(Game.PlayerType.CHARMANDER);
+        //e.registerView(new GameViewImpl());
+        e.start(Game.PlayerType.CHARMANDER);
     }
 
 }

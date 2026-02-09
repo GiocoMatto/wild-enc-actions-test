@@ -69,6 +69,10 @@ public class GameViewImpl implements GameView, GamePointerView {
         //ngine.menu(Game.PlayerType.CHARMANDER);
         Scene scene = new Scene(new StackPane());
         gameStage.setScene(scene);
+        gameStage.setOnCloseRequest((e) -> {
+            engine.unregisterView(this);
+            gameStage.close();
+        });
         this.gameStage.show();
         gameStage.toFront();
         gameStage.centerOnScreen();
@@ -85,6 +89,7 @@ public class GameViewImpl implements GameView, GamePointerView {
     }
 
     public void switchRoot(final Parent root) {
+        root.requestFocus();
         this.gameStage.getScene().setRoot(root);
     }
 
@@ -106,9 +111,11 @@ public class GameViewImpl implements GameView, GamePointerView {
 
         root.getChildren().add(canvas);
 
-        final Scene scene = new Scene(root, 1600, 900);
+        //final Scene scene = new Scene(root, 1600, 900);
         //listener tasto premuto
-        scene.setOnKeyPressed(event -> {
+        canvas.setFocusTraversable(true);
+        canvas.requestFocus();
+        canvas.setOnKeyPressed(event -> {
             if (keyToInputMap.containsKey(event.getCode())) {
                 engine.addInput(keyToInputMap.get(event.getCode()));
             }
@@ -121,23 +128,17 @@ public class GameViewImpl implements GameView, GamePointerView {
         });
         
         //listener tasto rilasciato
-        scene.setOnKeyReleased(event -> {
+        canvas.setOnKeyReleased(event -> {
             if (keyToInputMap.containsKey(event.getCode())) {
                 engine.removeInput(keyToInputMap.get(event.getCode()));
             }
         });
 
-        gameStage.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
+        canvas.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
             if (!isNowFocused) {
                 engine.removeAllInput();
             }
         });
-
-        gameStage.setOnCloseRequest((e) -> {
-            engine.unregisterView(this);
-            gameStage.close();
-        });
-        root.requestFocus();
         return root;
     }
 

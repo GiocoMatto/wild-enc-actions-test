@@ -18,9 +18,9 @@ import static it.unibo.wildenc.util.Utilities.pickRandom;
  * Spawn enemy.
  */
 public class EnemySpawnerImpl implements EnemySpawner {
-    private static final List<String> CLOSE_RANGE_ENEMY_NAMES = List.of("Koffing", "Zubat", "Haunter", "Croagunk");
-    private static final List<String> RANGED_ENEMY_NAMES = List.of("Marowak", "Shiftry", "Banette");
-    private static final List<String> ROAMING_ENEMY_NAMES = List.of("Exeggcute", "Wingull");
+    private static final List<String> CLOSE_RANGE_ENEMY_NAMES = List.of("koffing", "zubat", "haunter", "croagunk");
+    private static final List<String> RANGED_ENEMY_NAMES = List.of("marowak", "shiftry", "banette");
+    private static final List<String> ROAMING_ENEMY_NAMES = List.of("exeggcute", "wingull");
     private static final int DS_X = 300;
     private static final int DS_Y = 130;
     private static final int BASE_ENEMY = 10;

@@ -15,9 +15,9 @@ import it.unibo.wildenc.mvc.model.weaponary.projectiles.ProjectileStats.ProjStat
 
 public class ShurikenFactory implements WeaponFactory {
 
-    private final int distanceFromPlayer;
+    private final double distanceFromPlayer;
 
-    public ShurikenFactory(final int fromPlayer) {
+    public ShurikenFactory(final double fromPlayer) {
         this.distanceFromPlayer = fromPlayer;
     }
 
@@ -32,6 +32,7 @@ public class ShurikenFactory implements WeaponFactory {
         int baseProjAtOnce, 
         int baseBurst, 
         Entity ownedBy,
+        boolean immortal,
         Supplier<Vector2dc> posToHit
     ) {
         return new GenericWeapon(
@@ -46,6 +47,7 @@ public class ShurikenFactory implements WeaponFactory {
                 .id(weaponName)
                 .owner(ownedBy)
                 .ttl(baseTTL)
+                .immortal(immortal)
                 .physics(
                     (dt, atkInfo) -> circularMovement(baseBurst, atkInfo, ownedBy, distanceFromPlayer)
                 ).build(), 

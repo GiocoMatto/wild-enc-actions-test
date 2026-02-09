@@ -259,8 +259,8 @@ public class ProjectileStats {
             return this;
         }
 
-        public ProjStatsBuilder immortal() {
-            this.immortal = true;
+        public ProjStatsBuilder immortal(final boolean immortal) {
+            this.immortal = immortal;
             return this;
         }
 

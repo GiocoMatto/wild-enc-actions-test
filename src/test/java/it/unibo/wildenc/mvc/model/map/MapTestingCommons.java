@@ -13,6 +13,7 @@ import it.unibo.wildenc.mvc.model.Entity;
 import it.unibo.wildenc.mvc.model.MapObject;
 import it.unibo.wildenc.mvc.model.Player;
 import it.unibo.wildenc.mvc.model.Weapon;
+import it.unibo.wildenc.mvc.model.dataloaders.StatLoader;
 import it.unibo.wildenc.mvc.model.enemies.AbstractEnemy.AbstractEnemyField;
 import it.unibo.wildenc.mvc.model.enemies.CloseRangeEnemy;
 import it.unibo.wildenc.mvc.model.map.objects.AbstractCollectible;
@@ -20,7 +21,6 @@ import it.unibo.wildenc.mvc.model.map.objects.AbstractMapObject;
 import it.unibo.wildenc.mvc.model.map.objects.AbstractMovable;
 import it.unibo.wildenc.mvc.model.map.objects.ExperienceGem;
 import it.unibo.wildenc.mvc.model.player.PlayerImpl;
-import it.unibo.wildenc.mvc.model.weaponary.weapons.WeaponFactory;
 
 /**
  * Testing constants for the map.
@@ -266,19 +266,8 @@ public final class MapTestingCommons {
             this.baseBurst = baseBurst;
             this.posToHit = posToHit;
         }
-
         Weapon getAsWeapon(final Entity owner, final Vector2dc target) {
-            return new WeaponFactory().getDefaultPointerWeapon(
-                baseCooldown,
-                baseDamage,
-                hbRadius,
-                baseVelocity,
-                baseTTL,
-                baseProjAtOnce,
-                baseBurst,
-                owner,
-                posToHit.apply(target)
-            );
+            return StatLoader.getInstance().getWeaponFactoryForWeapon("testingpistol", owner, () -> target);
         }
     }
 

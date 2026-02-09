@@ -27,6 +27,7 @@ public class PointerFactory implements WeaponFactory {
         int baseProjAtOnce, 
         int baseBurst, 
         Entity ownedBy,
+        final boolean immortal,
         Supplier<Vector2dc> posToHit
     ) {
         return new PointerWeapon(

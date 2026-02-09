@@ -43,6 +43,5 @@ public class PointerWeapon extends GenericWeapon {
      */
     public void setPosToHit(final Supplier<Vector2dc> newPosToHit) {
         this.weaponStats.setPosToHit(newPosToHit);
-
     }
 }

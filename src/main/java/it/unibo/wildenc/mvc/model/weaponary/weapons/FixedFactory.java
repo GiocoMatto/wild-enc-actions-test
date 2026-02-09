@@ -1,5 +1,6 @@
 package it.unibo.wildenc.mvc.model.weaponary.weapons;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -25,6 +26,7 @@ public class FixedFactory implements WeaponFactory {
         int baseProjAtOnce, 
         int baseBurst, 
         Entity ownedBy,
+        final boolean immortal,
         Supplier<Vector2dc> posToHit
     ) {
         return new GenericWeapon(
@@ -56,13 +58,15 @@ public class FixedFactory implements WeaponFactory {
     }
 
     private List<AttackContext> basicSpawn(WeaponStats weaponStats) {
-        return List.of(
-            new AttackContext(
+        final List<AttackContext> toRet = new ArrayList<>();
+        for (int i = 0; i < weaponStats.getProjectilesShotAtOnce(); i++) {
+            toRet.add(new AttackContext(
                 new Vector2d(weaponStats.getProjStats().getOwner().getPosition()), 
                 weaponStats.getProjStats().getStatValue(ProjStatType.VELOCITY), 
                 weaponStats.getPosToHit()
-            )
-        );
+            ));
+        }
+        return toRet;
     }
 
     private Vector2d straightMovement(Double dt, AttackContext atkInfo) {

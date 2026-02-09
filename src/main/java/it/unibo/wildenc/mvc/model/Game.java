@@ -8,8 +8,9 @@ import java.util.function.BiConsumer;
 import org.joml.Vector2d;
 import org.joml.Vector2dc;
 
+import it.unibo.wildenc.mvc.model.dataloaders.StatLoader;
+import it.unibo.wildenc.mvc.model.weaponary.weapons.PointerFactory;
 import it.unibo.wildenc.mvc.model.weaponary.weapons.WeaponFactory;
-import it.unibo.wildenc.mvc.model.weaponary.weapons.WepFaktro;
 
 /**
  * Main game model logics, it provides infos outside of the model.
@@ -71,40 +72,9 @@ public interface Game {
      */
     enum PlayerType {
         CHARMANDER(300, 15, 100, (wf, p) -> {
-            // FIXME: understand how to pass the Vector2d Supplier. It should be the mouse position.
-            p.addWeapon(wf.getDefaultPointerWeapon(
-                0.5, 
-                30.0, 
-                5.0,
-                600.0,
-                3,
-                1,
-                5,
-                p,
-                () -> new Vector2d(1, 0)
-            ));
-            p.addWeapon(wf.getShurikenWeapon(
-                10, 
-                32, 
-                5, 
-                3, 
-                75, 
-                2, 
-                p
-            )); 
+            p.addWeapon(StatLoader.getInstance().getWeaponFactoryForWeapon("shuriken", p, () -> new Vector2d(0, 0)));
         }),
         BULBASAUR(20, 30, 200, (wf, p) -> {
-            p.addWeapon(wf.getDefaultPointerWeapon(
-                2,
-                30,
-                7,
-                3,
-                1,
-                1,
-                1,
-                p,
-                () -> new Vector2d(0, 0)
-            ));
         }),
         SQUIRTLE(10, 5, 90, (wf, p) -> {
             // p.addWeapon(wf.getMeleeWeapon(8,4, p));

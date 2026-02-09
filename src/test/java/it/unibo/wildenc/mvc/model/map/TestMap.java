@@ -145,5 +145,4 @@ public class TestMap {
 
         assertTrue(map.getAllObjects().size() > initialSize, "No enemies were spawend.");
     }
-
 }

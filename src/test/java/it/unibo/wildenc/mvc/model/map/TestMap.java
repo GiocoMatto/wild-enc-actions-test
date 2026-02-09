@@ -108,7 +108,6 @@ public class TestMap {
         final Enemy enemy = enemyConf.getAsCloseRangeEnemy(new LinkedHashSet<>(), "testEnemy", Optional.of(p));
         final var weapon = TestWeapon.DEFAULT_WEAPON.getAsWeapon(enemy, p.getPosition());
         final GameMap map = getEmptyMapWithObjects(p, Set.of(enemy));
-
         enemy.addWeapon(weapon);
 
         // Enemy should arrive in player hitbox at the 20th tick
@@ -116,8 +115,8 @@ public class TestMap {
             map.updateEntities(TEST_TIME_NANOSECONDS, TestDirections.STILL.getVect());
         }
 
-        assertTrue(p.getCurrentHealth() < p.getMaxHealth(), "Player health didn't change.");
         assertTrue(enemy.getCurrentHealth() == enemy.getMaxHealth(), "Enemy health must not change.");
+        assertTrue(p.getCurrentHealth() < p.getMaxHealth(), "Player health didn't change.");
     }
 
     @Test

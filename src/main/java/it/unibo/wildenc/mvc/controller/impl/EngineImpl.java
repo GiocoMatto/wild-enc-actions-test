@@ -8,7 +8,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.LinkedBlockingQueue;
 import org.joml.Vector2d;
 import org.joml.Vector2dc;
 
@@ -25,6 +24,7 @@ import it.unibo.wildenc.mvc.model.game.GameImpl;
 import it.unibo.wildenc.mvc.model.weaponary.weapons.PointerWeapon;
 import it.unibo.wildenc.mvc.view.api.GamePointerView;
 import it.unibo.wildenc.mvc.view.api.GameView;
+
 /**
  * {@inheritDoc}.
  */
@@ -44,7 +44,7 @@ public class EngineImpl implements Engine {
     /**
      * The status of the game loop.
      */
-    public enum STATUS {RUNNING, PAUSE}
+    public enum STATUS { RUNNING, PAUSE, END }
 
     /**
      * Create a Engine.
@@ -64,6 +64,7 @@ public class EngineImpl implements Engine {
     public void startGameLoop() {
         chosePlayerType(Game.PlayerType.CHARMANDER);
         model = new GameImpl(playerType);
+        this.loop.setDaemon(true);
         this.loop.start();
     }
 
@@ -71,12 +72,24 @@ public class EngineImpl implements Engine {
      * {@inheritDoc}
      */
     @Override
-    public void processInput(final MovementInput movement, final boolean isPressed) {
-        if (isPressed) {
-            activeMovements.add(movement);
-        } else {
-            activeMovements.remove(movement);
-        }
+    public void addInput(final MovementInput movement) {
+        activeMovements.add(movement);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void removeInput(final MovementInput movement) {
+        activeMovements.remove(movement);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void removeAllInput() {
+        activeMovements.clear();
     }
 
     /**
@@ -122,6 +135,7 @@ public class EngineImpl implements Engine {
     public void close() {
         try {
             this.dataHandler.saveData(data);
+            gameStatus = STATUS.END;
         } catch (final IOException e) {
             System.out.println(e.getMessage());
         }
@@ -154,17 +168,27 @@ public class EngineImpl implements Engine {
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void unregisterView(final GameView gv) {
+        this.views.remove(gv);
+        if (this.views.isEmpty()) {
+            this.close();
+        }
+    }
+
+    /**
      * The game loop.
      */
     public final class GameLoop extends Thread {
         private static final long SLEEP_TIME = 20;
-        private boolean running = true;
 
         @Override
         public void run() {
             try {
                 long lastTime = System.nanoTime();
-                while (running) {
+                while (STATUS.RUNNING == gameStatus) {
                     synchronized (pauseLock) {
                         while (gameStatus == STATUS.PAUSE) {
                             pauseLock.wait();
@@ -173,18 +197,8 @@ public class EngineImpl implements Engine {
                     final long now = System.nanoTime();
                     final long dt = now - lastTime;
                     lastTime = now;
-                    final Vector2d movementVector;
-
-                    if (activeMovements.isEmpty()) {
-                        //se nessun tasto è premuto il giocatore non si muove
-                        movementVector = new Vector2d(0, 0);
-                    } else {
-                        //se ci sono tasti, l'InputHandler ne fa la somma
-                        movementVector = new Vector2d(ih.handleMovement(activeMovements));
-                    }
                     //passo il nuovo vettore calcolato
-                    model.updateEntities(dt, movementVector);
-
+                    model.updateEntities(dt, ih.handleMovement(activeMovements));
                     if (model.hasPlayerLevelledUp()) {
                         setPause(true);
                         final var levelUpChoise = model.weaponToChooseFrom();
@@ -192,16 +206,14 @@ public class EngineImpl implements Engine {
                     }
                     if (model.isGameEnded()) {
                         views.forEach(e -> e.lost(model.getGameStatistics()));
-                        running = false;
+                        gameStatus = STATUS.END;
                     }
-                    final Vector2dc currentMousePos = (views.stream()
+                    final Vector2dc currentMousePos = views.stream()
                         .filter(view -> view instanceof GamePointerView)
                         .map(view -> (GamePointerView) view)
                         .findFirst()
-                        .get()
-                        .getMousePointerInfo()
-                    );
-
+                        .orElse(() -> new Vector2d(0, 0))
+                        .getMousePointerInfo();
                     model.getAllMapObjects().stream()
                         .filter(o -> o instanceof Entity)
                         .map(e -> (Entity) e)
@@ -210,7 +222,6 @@ public class EngineImpl implements Engine {
                         .forEach(wp -> {
                             ((PointerWeapon) wp).setPosToHit(() -> currentMousePos);
                         });
-                    
                     final Collection<MapObjViewData> mapDataColl = model.getAllMapObjects().stream()
                         .map(mapObj -> {
                             if (mapObj instanceof Entity e) {
@@ -218,6 +229,7 @@ public class EngineImpl implements Engine {
                                     mapObj.getName(), 
                                     mapObj.getPosition().x(), 
                                     mapObj.getPosition().y(), 
+                                    mapObj.getHitbox(),
                                     Optional.of(e.getDirection().x()), 
                                     Optional.of(e.getDirection().y())
                                 );
@@ -226,6 +238,7 @@ public class EngineImpl implements Engine {
                                     mapObj.getName(),
                                     mapObj.getPosition().x(),
                                     mapObj.getPosition().y(),
+                                    mapObj.getHitbox(),
                                     Optional.empty(), Optional.empty()
                                 );
                             }
@@ -236,8 +249,10 @@ public class EngineImpl implements Engine {
                     Thread.sleep(SLEEP_TIME);
                 }
             } catch (final InterruptedException e) {
+                System.out.println(e.toString());
                 Thread.currentThread().interrupt();
             }
         }
     }
+
 }

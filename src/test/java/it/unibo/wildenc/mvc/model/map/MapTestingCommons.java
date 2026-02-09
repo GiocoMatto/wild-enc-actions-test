@@ -244,7 +244,7 @@ public final class MapTestingCommons {
      * Some default weapons for testing purposes.
      */
     public enum TestWeapon {
-        DEFAULT_WEAPON(5, 10, 2, 2, 99, 1, e -> () -> new Vector2d(e));
+        DEFAULT_WEAPON(5, 10, 2, 2, 99, 1, 1, e -> () -> new Vector2d(e));
 
         private double baseCooldown;
         private double baseDamage;
@@ -256,7 +256,7 @@ public final class MapTestingCommons {
         private Function<Vector2dc, Supplier<Vector2dc>> posToHit;
 
         TestWeapon(final double baseCooldown, final double baseDamage, final double hbRadius, 
-            final double baseVelocity, final double baseTTL, final int baseBurst, 
+            final double baseVelocity, final double baseTTL, final int baseBurst, final int baseProjAtOnce, 
             final Function<Vector2dc, Supplier<Vector2dc>> posToHit) {
             this.baseCooldown = baseCooldown;
             this.baseDamage = baseDamage;
@@ -265,6 +265,7 @@ public final class MapTestingCommons {
             this.baseTTL = baseTTL;
             this.baseBurst = baseBurst;
             this.posToHit = posToHit;
+            this.baseProjAtOnce = baseProjAtOnce;
         }
         Weapon getAsWeapon(final Entity owner, final Vector2dc target) {
             return StatLoader.getInstance().getWeaponFactoryForWeapon("testingpistol", owner, () -> target);

@@ -8,7 +8,9 @@ import it.unibo.wildenc.mvc.view.api.SpriteManager.Sprite;
 import it.unibo.wildenc.mvc.view.api.ViewRenderer;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.image.Image;
+import javafx.scene.layout.Region;
+
+
 
 public class ViewRendererImpl implements ViewRenderer {
 
@@ -16,15 +18,15 @@ public class ViewRendererImpl implements ViewRenderer {
     private static final int INITIAL_CANVAS_WIDTH = 1600;
 
     private final SpriteManager spriteManager;
-    private final Image grassTile;
     private Canvas canvas;
     private int frameCount;
     private double cameraX;
     private double cameraY;
 
+    private Region backgroundContainer;
+
     public ViewRendererImpl () {
         this.spriteManager = new SpriteManagerImpl();
-        this.grassTile = spriteManager.getGrassTile();
     }
 
     @Override
@@ -34,8 +36,6 @@ public class ViewRendererImpl implements ViewRenderer {
 
         draw.save();
         draw.scale(scale, scale);
-        
-        drawGrassTiles(draw);
 
         updateCamera(
             objectDatas.stream()
@@ -44,9 +44,14 @@ public class ViewRendererImpl implements ViewRenderer {
                 .orElse(null)
         );
 
+        final double bgX = -this.cameraX % SPRITE_SIZE;
+        final double bgY = -this.cameraY % SPRITE_SIZE;
+        backgroundContainer.setStyle("-fx-background-position: " + bgX + "px " + bgY + "px;");
+
         objectDatas.stream()
             .forEach(objectData -> {
                 Sprite currentSprite = spriteManager.getSprite(frameCount, objectData);
+
                 draw.drawImage(
                     currentSprite.spriteImage(), 
                     currentSprite.currentFrame(), 
@@ -56,6 +61,18 @@ public class ViewRendererImpl implements ViewRenderer {
                     objectData.y() - this.cameraY - (SPRITE_SIZE / 2), 
                     SPRITE_SIZE, SPRITE_SIZE
                 );
+
+                /* HITBOX VISUALIZATION
+                draw.setStroke(javafx.scene.paint.Color.LIME);
+                draw.setLineWidth(1);
+                double radius = objectData.hbRad();
+                draw.strokeOval(
+                    objectData.x() - this.cameraX - radius, 
+                    objectData.y() - this.cameraY - radius, 
+                    radius * 2, 
+                    radius * 2
+                );
+                */
         });
         draw.restore();
 
@@ -65,6 +82,7 @@ public class ViewRendererImpl implements ViewRenderer {
     @Override
     public void setCanvas(Canvas c) {
         canvas = c;
+        this.canvas.getGraphicsContext2D().setImageSmoothing(false);
     }
 
     @Override
@@ -82,18 +100,8 @@ public class ViewRendererImpl implements ViewRenderer {
         this.cameraY = playerObj.y() - effectiveHeight / 2;
     }
 
-    private void drawGrassTiles(GraphicsContext draw) {
-        final double scale = canvas.getWidth() / INITIAL_CANVAS_WIDTH;
-        final double effectiveWidth = canvas.getWidth() / scale;
-        final double effectiveHeight = canvas.getHeight() / scale;
-
-        final double offsetX = -cameraX % SPRITE_SIZE;
-        final double offsetY = -cameraY % SPRITE_SIZE;
-    
-        for (double x = offsetX - SPRITE_SIZE; x < effectiveWidth; x += SPRITE_SIZE) {
-            for (double y = offsetY - SPRITE_SIZE; y < effectiveHeight; y += SPRITE_SIZE) {
-                draw.drawImage(grassTile, x, y, SPRITE_SIZE, SPRITE_SIZE);
-            }
-        }
+    public void setContainer(Region container) {
+        this.backgroundContainer = container;
+        backgroundContainer.getStylesheets().add(ClassLoader.getSystemResource("css/style.css").toExternalForm());
     }
 }

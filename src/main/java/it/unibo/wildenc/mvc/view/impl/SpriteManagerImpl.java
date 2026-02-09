@@ -2,6 +2,8 @@ package it.unibo.wildenc.mvc.view.impl;
 
 import java.io.FileInputStream;
 import java.net.URL;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -88,7 +90,10 @@ public class SpriteManagerImpl implements SpriteManager {
     }
 
     public void loadAllResources() {
+        // Getting the sprites + decoding the path into something readable to Java
+        // This prevents blank spaces in folders and files!
         URL resourceFolder = getClass().getClassLoader().getResource(SPRITES_LOCATION);
+        String decodedPath = URLDecoder.decode(resourceFolder.getPath(), StandardCharsets.UTF_8);
 
         if (resourceFolder.getProtocol().equals("file")) {
             try (Stream<Path> paths = Files.list(Paths.get(resourceFolder.toURI()))) {
@@ -102,7 +107,7 @@ public class SpriteManagerImpl implements SpriteManager {
             }
         } else if (resourceFolder.getProtocol().equals("jar")) {
             try {
-                String jarPath = resourceFolder.getPath().substring(5, resourceFolder.getPath().indexOf("!"));
+                String jarPath = decodedPath.substring(5, decodedPath.indexOf("!"));
                 try (ZipInputStream zip = new ZipInputStream(new FileInputStream(jarPath))) {
                     ZipEntry entry;
                     while ((entry = zip.getNextEntry()) != null) {

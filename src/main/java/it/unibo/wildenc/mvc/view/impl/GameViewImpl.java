@@ -1,7 +1,6 @@
 package it.unibo.wildenc.mvc.view.impl;
 
 import java.util.Collection;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 import java.util.Set;
@@ -16,6 +15,7 @@ import java.util.Map;
 import it.unibo.wildenc.mvc.model.Game;
 import it.unibo.wildenc.mvc.view.api.GamePointerView;
 import it.unibo.wildenc.mvc.view.api.GameView;
+import javafx.application.Platform;
 import javafx.geometry.Pos;
 import it.unibo.wildenc.mvc.view.api.ViewRenderer;
 import javafx.scene.Scene;
@@ -37,6 +37,7 @@ public class GameViewImpl implements GameView, GamePointerView {
     private final Canvas canvas = new Canvas(1600, 900);
     private Collection<MapObjViewData> backupColl = List.of();
     private boolean gameStarted = false;
+
     //mappa associa wasd ai comandi MovementInput
     private final Map<KeyCode, MovementInput> keyToInputMap = Map.of(
         KeyCode.W, MovementInput.GO_UP,
@@ -71,6 +72,7 @@ public class GameViewImpl implements GameView, GamePointerView {
         gameStage.setY(600);
 
         final VBox root = new VBox();
+        this.renderer.setContainer(root);
         canvas.widthProperty().bind(root.widthProperty());
         canvas.heightProperty().bind(root.heightProperty());
 
@@ -85,14 +87,26 @@ public class GameViewImpl implements GameView, GamePointerView {
         //listener tasto premuto
         scene.setOnKeyPressed(event -> {
             if (keyToInputMap.containsKey(event.getCode())) {
-                eg.processInput(keyToInputMap.get(event.getCode()), true);
+                eg.addInput(keyToInputMap.get(event.getCode()));
             }
         });
+        
         //listener tasto rilasciato
         scene.setOnKeyReleased(event -> {
             if (keyToInputMap.containsKey(event.getCode())) {
-                eg.processInput(keyToInputMap.get(event.getCode()), false);
+                eg.removeInput(keyToInputMap.get(event.getCode()));
             }
+        });
+
+        gameStage.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
+            if (!isNowFocused) {
+                eg.removeAllInput();
+            }
+        });
+
+        gameStage.setOnCloseRequest((e) -> {
+            eg.unregisterView(this);
+            gameStage.close();
         });
 
         gameStage.setScene(scene);
@@ -114,8 +128,10 @@ public class GameViewImpl implements GameView, GamePointerView {
             this.gameStarted = true;
         }
         this.backupColl = mObj;
-        renderer.clean();
-        renderer.renderAll(mObj);
+        Platform.runLater(() -> {
+            renderer.clean();
+            renderer.renderAll(mObj);
+        });
     }
 
     @Override

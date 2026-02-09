@@ -8,10 +8,10 @@ import javafx.application.Application;
 import javafx.stage.Stage;
 
 public class EntryPoint extends Application {
+    final Engine e = new EngineImpl();
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        Engine e = new EngineImpl();
         e.registerView(new GameViewImpl());
         e.startGameLoop();
     }

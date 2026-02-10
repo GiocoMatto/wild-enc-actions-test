@@ -67,6 +67,13 @@ public interface Game {
     Collection<MapObject> getAllMapObjects();
 
     /**
+     * Gets earned money in this game.
+     * 
+     * @return earned money.
+     */
+    int getEarnedMoney();
+
+    /**
      * Constant default player types.
      */
     enum PlayerType {

@@ -133,16 +133,8 @@ public class EngineImpl implements Engine {
      */
     @Override
     public void close() {
-        try {
-            model.getGameStatistics()
-                .entrySet()
-                .stream()
-                .forEach(entry -> data.updatePokedex(entry.getKey(), entry.getValue()));
-            this.dataHandler.saveData(data);
-            gameStatus = STATUS.END;
-        } catch (final IOException e) {
-            System.out.println(e.getMessage());
-        }
+        saveAllData();
+        gameStatus = STATUS.END;
     }
 
     /**
@@ -209,6 +201,7 @@ public class EngineImpl implements Engine {
                         views.forEach(e -> e.powerUp(levelUpChoise));
                     }
                     if (model.isGameEnded()) {
+                        saveAllData();
                         views.forEach(e -> e.lost(model.getGameStatistics()));
                         gameStatus = STATUS.END;
                     }
@@ -259,4 +252,19 @@ public class EngineImpl implements Engine {
         }
     }
 
+    private void saveAllData() {
+        try {
+            model.getGameStatistics()
+                .entrySet()
+                .stream()
+                .forEach(entry -> data.updatePokedex(entry.getKey(), entry.getValue()));
+            data.updateCoins(model.getEarnedMoney());
+            dataHandler.saveData(data);
+        } catch (final IOException e) { 
+            /*
+                If got any exception while saving,
+                no data will be saved instead.
+            */
+        }
+    }
 }

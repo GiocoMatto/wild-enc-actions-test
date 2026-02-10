@@ -8,6 +8,7 @@ import java.util.function.BiConsumer;
 import org.joml.Vector2d;
 import org.joml.Vector2dc;
 
+import it.unibo.wildenc.mvc.model.dataloaders.StatLoader;
 import it.unibo.wildenc.mvc.model.weaponary.weapons.WeaponFactory;
 
 /**
@@ -66,35 +67,20 @@ public interface Game {
     Collection<MapObject> getAllMapObjects();
 
     /**
+     * Gets earned money in this game.
+     * 
+     * @return earned money.
+     */
+    int getEarnedMoney();
+
+    /**
      * Constant default player types.
      */
     enum PlayerType {
         CHARMANDER(300, 15, 100, (wf, p) -> {
-            // FIXME: understand how to pass the Vector2d Supplier. It should be the mouse position.
-            p.addWeapon(wf.getDefaultPointerWeapon(
-                0.5, 
-                30.0, 
-                5.0,
-                100.0,
-                3,
-                1,
-                5,
-                p,
-                () -> new Vector2d(1, 0)
-            )); 
+            p.addWeapon(StatLoader.getInstance().getWeaponFactoryForWeapon("shuriken", p, () -> new Vector2d(0, 0)));
         }),
-        BULBASAUR(570, 30, 200, (wf, p) -> {
-            p.addWeapon(wf.getDefaultPointerWeapon(
-                2,
-                30,
-                7,
-                3,
-                1,
-                1,
-                1,
-                p,
-                () -> new Vector2d(0, 0)
-            ));
+        BULBASAUR(20, 30, 200, (wf, p) -> {
         }),
         SQUIRTLE(1000, 5, 90, (wf, p) -> {
             // p.addWeapon(wf.getMeleeWeapon(8,4, p));

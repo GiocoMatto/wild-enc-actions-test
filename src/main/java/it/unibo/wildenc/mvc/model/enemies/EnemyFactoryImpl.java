@@ -10,31 +10,19 @@ import it.unibo.wildenc.mvc.model.Collectible;
 import it.unibo.wildenc.mvc.model.Enemy;
 import it.unibo.wildenc.mvc.model.EnemyFactory;
 import it.unibo.wildenc.mvc.model.MapObject;
+import it.unibo.wildenc.mvc.model.dataloaders.StatLoader;
+import it.unibo.wildenc.mvc.model.dataloaders.StatLoader.LoadedEntityStats;
 import it.unibo.wildenc.mvc.model.enemies.AbstractEnemy.AbstractEnemyField;
 import it.unibo.wildenc.mvc.model.map.objects.ExperienceGem;
-import it.unibo.wildenc.mvc.model.weaponary.weapons.WeaponFactory;
 
 /**
  * {@inheritDoc}.
  */
 public class EnemyFactoryImpl implements EnemyFactory {
-    /* Enemy */
-    private static final double BASE_HITBOX_ENEMY = 32;
-    private static final double BASE_VELOCITY_ENEMY = 100;
-    /* Projectile */
-    private static final double BASE_COOLDOWN_PROJECTILE = 3;
-    private static final double BASE_DAMAGE_PROJECTILE = 25;
-    private static final double BASE_HITBOX_PROJECTILE = 2;
-    private static final double BASE_VELOCITY_PROJECTILE = 25 * 5;
-    private static final double BASE_TIME_TO_LIVE_PROJECTILE = 3;
-    private static final int BASE_PROJ_AT_ONCE = 1;
-    private static final int BASE_BURST_PROJECTILE = 5;
-    /* Collectible */
-    private static final double HITBOX_COLLECTIBLE = 5;
     private static final int VALUE_COLLECTIBLE = 34;
 
-    private final WeaponFactory wf;
     private final MapObject target;
+    private final StatLoader statLoader = StatLoader.getInstance();
 
     /**
      * Create a Factory that associate the same target to all enemys.
@@ -43,11 +31,10 @@ public class EnemyFactoryImpl implements EnemyFactory {
      */
     public EnemyFactoryImpl(final MapObject target) {
         this.target = target;
-        this.wf = new WeaponFactory();
     }
 
     private void addDefaultWeaponTo(final Enemy e) {
-        e.addWeapon(wf.getDefaultStaticPointWeapon(
+        /*e.addWeapon(wf.getDefaultStaticPointWeapon(
             BASE_COOLDOWN_PROJECTILE,
             BASE_DAMAGE_PROJECTILE, 
             BASE_HITBOX_PROJECTILE, 
@@ -58,6 +45,7 @@ public class EnemyFactoryImpl implements EnemyFactory {
             e,
             () -> new Vector2d(target.getPosition())
         ));
+        */
     }
 
     private void addMeleeWeaponTo(final Enemy e) {
@@ -77,11 +65,12 @@ public class EnemyFactoryImpl implements EnemyFactory {
      */
     @Override
     public Enemy closeRangeEnemy(final Vector2d spawnPosition, final int healt, final String name) {
+        final LoadedEntityStats loadedEntityStats = loadEntityFromName(name);
         final Enemy e = new CloseRangeEnemy(new AbstractEnemyField(
             spawnPosition, 
-            BASE_HITBOX_ENEMY, 
-            BASE_VELOCITY_ENEMY, 
-            healt, 
+            loadedEntityStats.hbRadius(), 
+            loadedEntityStats.velocity(), 
+            loadedEntityStats.maxHealth(), 
             name, 
             Optional.of(target),
             Set.of(experienceLoot(spawnPosition))
@@ -95,11 +84,12 @@ public class EnemyFactoryImpl implements EnemyFactory {
      */
     @Override
     public Enemy closeRangeFastEnemy(final Vector2d spawnPosition, final int healt, final String name) {
+        final LoadedEntityStats loadedEntityStats = loadEntityFromName(name);
         final Enemy e = new CloseRangeEnemy(new AbstractEnemyField(
             spawnPosition, 
-            BASE_HITBOX_ENEMY, 
-            2 * BASE_VELOCITY_ENEMY, 
-            healt, 
+            loadedEntityStats.hbRadius(), 
+            2 * loadedEntityStats.velocity(), 
+            loadedEntityStats.maxHealth(), 
             name, 
             Optional.of(target),
             Set.of(experienceLoot(spawnPosition))
@@ -113,11 +103,12 @@ public class EnemyFactoryImpl implements EnemyFactory {
      */
     @Override
     public Enemy rangedEnemy(final Vector2d spawnPosition, final int healt, final String name) {
+        final LoadedEntityStats loadedEntityStats = loadEntityFromName(name);
         final Enemy e = new RangedEnemy(new AbstractEnemyField(
             spawnPosition, 
-            BASE_HITBOX_ENEMY, 
-            BASE_VELOCITY_ENEMY, 
-            healt, 
+            loadedEntityStats.hbRadius(), 
+            loadedEntityStats.velocity(), 
+            loadedEntityStats.maxHealth(), 
             name, 
             Optional.of(target),
             Set.of(experienceLoot(spawnPosition))
@@ -131,11 +122,12 @@ public class EnemyFactoryImpl implements EnemyFactory {
      */
     @Override
     public Enemy rangedDoubleShotEnemy(final Vector2d spawnPosition, final int healt, final String name) {
+        final LoadedEntityStats loadedEntityStats = loadEntityFromName(name);
         final Enemy e = new RangedEnemy(new AbstractEnemyField(
             spawnPosition, 
-            BASE_HITBOX_ENEMY, 
-            BASE_VELOCITY_ENEMY, 
-            healt, 
+            loadedEntityStats.hbRadius(), 
+            loadedEntityStats.velocity(), 
+            loadedEntityStats.maxHealth(), 
             name, 
             Optional.of(target),
             Set.of(experienceLoot(spawnPosition))
@@ -150,11 +142,12 @@ public class EnemyFactoryImpl implements EnemyFactory {
      */
     @Override
     public Enemy roamingEnemy(final Vector2d spawnPosition, final int healt, final String name) {
+        final LoadedEntityStats loadedEntityStats = loadEntityFromName(name);
         final Enemy e = new RoamingEnemy(new AbstractEnemyField(
             spawnPosition, 
-            BASE_HITBOX_ENEMY, 
-            BASE_VELOCITY_ENEMY, 
-            healt, 
+            loadedEntityStats.hbRadius(), 
+            loadedEntityStats.velocity(), 
+            loadedEntityStats.maxHealth(), 
             name, 
             Optional.empty(), 
             Set.of(experienceLoot(spawnPosition))
@@ -168,16 +161,21 @@ public class EnemyFactoryImpl implements EnemyFactory {
      */
     @Override
     public Enemy roamingLongLifeEnemy(final Vector2d spawnPosition, final int healt, final String name) {
+        final LoadedEntityStats loadedEntityStats = loadEntityFromName(name);
         final Enemy e = new RoamingEnemy(new AbstractEnemyField(
             spawnPosition, 
-            BASE_HITBOX_ENEMY, 
-            BASE_VELOCITY_ENEMY, 
-            healt + healt / 2, 
+            loadedEntityStats.hbRadius(), 
+            loadedEntityStats.velocity(), 
+            loadedEntityStats.maxHealth() + loadedEntityStats.maxHealth() / 2, 
             name, 
             Optional.empty(), 
             Set.of(experienceLoot(spawnPosition))
         ));
         addMeleeWeaponTo(e);
         return e;
+    }
+
+    private LoadedEntityStats loadEntityFromName(final String name) {
+        return statLoader.getLoadedEnemyStats(name);
     }
 }

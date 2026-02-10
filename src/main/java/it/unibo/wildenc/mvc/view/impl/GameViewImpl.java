@@ -1,10 +1,11 @@
 package it.unibo.wildenc.mvc.view.impl;
 
 import java.util.Collection;
-import java.util.LinkedHashMap;
 import java.util.List;
-
 import java.util.Set;
+
+import java.awt.Dimension;
+import java.awt.Toolkit;
 
 import org.joml.Vector2d;
 import org.joml.Vector2dc;
@@ -22,6 +23,7 @@ import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import it.unibo.wildenc.mvc.view.api.ViewRenderer;
 import javafx.scene.Parent;
+
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Button;
@@ -49,6 +51,9 @@ import javafx.stage.StageStyle;
 
 public class GameViewImpl implements GameView, GamePointerView {
     private Engine engine; // TODO: should be final?
+
+    private static final int PROPORTION = 5;
+
     private final ViewRenderer renderer;
     private Stage gameStage = new Stage(StageStyle.DECORATED);
     private final Canvas canvas = new Canvas(1600, 900);

@@ -1,6 +1,7 @@
 package it.unibo.wildenc.mvc.model.game;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -14,7 +15,6 @@ import it.unibo.wildenc.mvc.model.MapObject;
 import it.unibo.wildenc.mvc.model.Player;
 import it.unibo.wildenc.mvc.model.map.GameMapImpl;
 import it.unibo.wildenc.mvc.model.player.PlayerImpl;
-import it.unibo.wildenc.mvc.model.weaponary.weapons.WeaponFactory;
 
 /**
  * Basic implementation of the Game.
@@ -99,8 +99,7 @@ public class GameImpl implements Game {
      */
     @Override
     public Map<String, Integer> getGameStatistics() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getGameStatistics'");
+        return Collections.unmodifiableMap(map.getMapBestiary());
     }
 
     private Player getPlayerByPlayerType(final PlayerType playerType) {
@@ -111,7 +110,12 @@ public class GameImpl implements Game {
             playerStats.speed(),
             playerStats.health()
         );
-        playerStats.addDefaultWeapon().accept(new WeaponFactory(), actualPlayer);
+        playerStats.addDefaultWeapon().accept(null, actualPlayer);;
         return actualPlayer;
+    }
+
+    @Override
+    public int getEarnedMoney() {
+        return player.getMoney();
     }
 }

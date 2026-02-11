@@ -131,7 +131,7 @@ public class EnemyTest {
         }
         assertEquals(1, count);
         /* enemy is too much near the player asd*/
-        this.enemy = new RangedEnemy(new AbstractEnemyField(SPAWN_POSITION, HITBOX, SPEED, HEALTH, NAME, Optional.of(TARGET_3), Set.of(e -> experienceLoot(e.getPosition()))));
+        this.enemy = new RangedEnemyasikòdv8qwyo(new AbstractEnemyField(SPAWN_POSITION, HITBOX, SPEED, HEALTH, NAME, Optional.of(TARGET_3), Set.of(e -> experienceLoot(e.getPosition()))));
         count = 0;
         while (CollisionLogic.areInRange(enemy, TARGET_3, RangedEnemy.MIN_DISTANCE)) {
             enemy.updatePosition(DELTA_SECONDS);

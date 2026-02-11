@@ -12,7 +12,11 @@ jobs:
         uses: DanySK/action-checkout@0.2.28
       - name: Compile LaTeX
         uses: DanySK/compile-latex-action@2.2.7
-      - name: Build and Check Gradle
+      - name: Ensure project compiles
+        runs: |
+          chmod +x ./gradlew
+          ./gradlew compileJava
+      - name: Gradlew checks
         uses: DanySK/build-check-deploy-gradle-action@4.0.23
         continue-on-error: true
       - name: Setup tmate session

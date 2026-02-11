@@ -28,9 +28,9 @@ jobs:
         run: |
           TAG=$(git describe --tags --exact-match HEAD 2>/dev/null || echo "")
           echo "VERSION=$TAG" >> $GITHUB_ENV
-      - name: Release
-        uses: DanySK/create-release-action@0.1.44
+      - uses: ncipollo/release-action@v1.20.0
+        name: Create GitHub Release
         with:
           artifacts: "build/libs/*-all.jar, report/report.pdf"
           token: ${{ secrets.GITHUB_TOKEN }}
-          version: ${{ env.VERSION }}
+          tag: ${{ env.VERSION }}

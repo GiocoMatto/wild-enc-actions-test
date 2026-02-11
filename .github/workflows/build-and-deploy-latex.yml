@@ -18,7 +18,7 @@ jobs:
       - name: Setup tmate session
         uses: mxschmitt/action-tmate@v3
       - name: Fetch tags
-        run: git fetch --tags -f
+        run: git fetch --tags
       - name: Autotag
         id: autotag
         uses: DanySK/semver-autotag-action@0.1.0

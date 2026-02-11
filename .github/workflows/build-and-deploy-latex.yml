@@ -1,18 +1,35 @@
-name: Build LaTeX and deploy on GitHub Releases
+name: Build Report + Project ShadowJar and deploy to GitHub Releases
 on:
   push:
     paths:
       - 'report/**'
     branches:
       - master
-    
 
 jobs:
   Setup-Compile-Deploy:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
     steps:
-      - uses: DanySK/compile-and-publish-all-latex@2.2.1
+      - name: Checkout
+        uses: DanySK/action-checkout@0.2.28
+      - name: Compile LaTeX
+        uses: DanySK/compile-latex-action@2.2.7
+      - name: Build and Check Gradle
+        uses: DanySK/build-check-deploy-gradle-action@4.0.23
+      - name: Fetch tags
+        run: git fetch --tags -f
+      - name: Autotag
+        id: autotag
+        uses: DanySK/semver-autotag-action@0.1.0
+      - name: Get created tag
+        id: get_tag 
+        shell: bash
+        run: |
+          TAG=$(git describe --tags --exact-match HEAD 2>/dev/null || echo "")
+          echo "VERSION=$TAG" >> $GITHUB_ENV
+      - name: Release
+        uses: https://github.com/DanySK/create-release-action@0.1.44
         with:
+          artifacts: "build/libs/*-all.jar, report/report.pdf"
           token: ${{ secrets.GITHUB_TOKEN }}
+          version: ${{ env.VERSION }}

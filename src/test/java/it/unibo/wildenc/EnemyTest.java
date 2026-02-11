@@ -122,7 +122,7 @@ public class EnemyTest {
 
     @Test
     public void RangedEnemyTest() {
-        /* enemy is fare away the player */
+        /* enemy is fare away the playesr */
         this.enemy = new RangedEnemy(new AbstractEnemyField(SPAWN_POSITION, HITBOX, SPEED, HEALTH, NAME, Optional.of(TARGET_2), Set.of(e -> experienceLoot(e.getPosition()))));
         int count = 0;
         while (!CollisionLogic.areInRange(enemy, TARGET_2, RangedEnemy.MAX_DISTANCE)) {

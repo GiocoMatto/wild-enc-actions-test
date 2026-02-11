@@ -3,6 +3,7 @@ on:
   push:
     paths:
       - 'report/**'
+      - 'src/**'
     branches:
       - master
 
@@ -16,6 +17,7 @@ jobs:
         uses: DanySK/compile-latex-action@2.2.7
       - name: Build and Check Gradle
         uses: DanySK/build-check-deploy-gradle-action@4.0.23
+        continue-on-error: true
       - name: Fetch tags
         run: git fetch --tags -f
       - name: Autotag

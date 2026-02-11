@@ -1,9 +1,6 @@
 name: Build Report + Project ShadowJar and deploy to GitHub Releases
 on:
   push:
-    paths:
-      - 'report/**'
-      - 'src/**'
     branches:
       - master
 

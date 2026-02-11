@@ -27,7 +27,7 @@ jobs:
           TAG=$(git describe --tags --exact-match HEAD 2>/dev/null || echo "")
           echo "VERSION=$TAG" >> $GITHUB_ENV
       - name: Release
-        uses: https://github.com/DanySK/create-release-action@0.1.44
+        uses: DanySK/create-release-action@0.1.44
         with:
           artifacts: "build/libs/*-all.jar, report/report.pdf"
           token: ${{ secrets.GITHUB_TOKEN }}
